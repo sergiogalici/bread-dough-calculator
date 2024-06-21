@@ -35,31 +35,47 @@ const App = () => {
     let totalWater = 0
     let totalSalt = 0
     let totalYeast = 0
+    let totalProtein = 0
+    let waterRatio = 1
 
     flours.forEach((flour) => {
       const { flourAmount, proteinContent, flourType } = flour
       totalFlourAmount += flourAmount
 
-      // Calcola l'acqua basata sul contenuto di proteine e sul tipo di farina
-      let waterRatio = 0.6 + ((proteinContent - 10) / 10) * 0.4
+      // // Calcola l'acqua basata sul contenuto di proteine e sul tipo di farina
+      // let waterRatio = 0.6 + ((proteinContent - 10) / 10) * 0.4
 
       if (flourType === "integrale") {
-        waterRatio += 0.02 // Aggiungi 2% di acqua per la farina integrale
+        waterRatio = 1.02 // Aggiungi 2% di acqua per la farina integrale
       }
 
-      // Calcola l'acqua effettiva necessaria in base alla quantità di farina e al rapporto di acqua aggiustato
-      const flourWater = flourAmount * waterRatio
-      totalWater += flourWater
+      // // Calcola l'acqua effettiva necessaria in base alla quantità di farina e al rapporto di acqua aggiustato
+      // const flourWater = flourAmount * waterRatio
+      // totalWater += flourWater
+
+      console.log("proteinContent", proteinContent)
+
+      console.log("current proteins = ", flourAmount * (proteinContent / 100))
+
+      totalProtein += flourAmount * (proteinContent / 100)
+
+      console.log("flour amount = ", flourAmount)
+
+      console.log("total protein = ", totalProtein)
 
       totalSalt += flourAmount * 0.02
 
       let baseYeast = flourAmount * 0.2 // Base 20% della quantità di farina
 
       // Regola la quantità di lievito in base alla temperatura
-      if (temperature < 20) {
-        baseYeast *= 1 + (20 - temperature) / 40 // Aumenta linearmente con la temperatura sotto i 20°C
+      if (temperature < 10) {
+        baseYeast *= 1.2 // Aumento del 20% per temperature molto basse
+      } else if (temperature < 20) {
+        baseYeast *= 1 + (20 - temperature) / 50 // Aumento gradualmente con temperature sotto i 20°C
+      } else if (temperature < 30) {
+        baseYeast *= 1 - (temperature - 20) / 20 // Decremento gradualmente con temperature sopra i 20°C
       } else {
-        baseYeast *= 1 - (temperature - 20) / 40 // Diminuisce linearmente con la temperatura sopra i 20°C
+        baseYeast *= 0.5 // Riduzione del 50% per temperature molto alte
       }
 
       // Assicurati che la quantità di lievito non sia mai inferiore a 0
@@ -85,6 +101,47 @@ const App = () => {
     } else {
       riseTime = "4 ore"
     }
+
+    const proteinRatio =
+      (totalProtein / (totalFlourAmount - totalProtein)) * 100
+
+    console.log("proteinRatio", proteinRatio)
+
+    if (proteinRatio < 10) {
+      totalWater = totalFlourAmount * 0.6
+    }
+
+    if (proteinRatio >= 10 && proteinRatio < 11) {
+      totalWater = totalFlourAmount * 0.65
+    }
+
+    if (proteinRatio >= 11 && proteinRatio < 12) {
+      totalWater = totalFlourAmount * 0.7
+    }
+
+    if (proteinRatio >= 12 && proteinRatio < 13) {
+      totalWater = totalFlourAmount * 0.75
+    }
+
+    if (proteinRatio >= 13 && proteinRatio < 14) {
+      totalWater = totalFlourAmount * 0.8
+    }
+
+    if (proteinRatio >= 14 && proteinRatio < 15) {
+      totalWater = totalFlourAmount * 0.85
+    }
+
+    if (proteinRatio >= 15 && proteinRatio < 16) {
+      totalWater = totalFlourAmount * 0.9
+    }
+
+    if (proteinRatio >= 16) {
+      totalWater = totalFlourAmount * 0.9
+    }
+
+    totalWater = totalWater * waterRatio
+
+    totalWater = totalWater.toFixed(2)
 
     // Imposta i risultati con i valori calcolati
     setResults({
@@ -165,6 +222,7 @@ const App = () => {
                             >
                               <Option value="grano duro">Grano Duro</Option>
                               <Option value="grano tenero">Grano Tenero</Option>
+                              <Option value="glutine puro">Glutine Puro</Option>
                             </Select>
                           </Form.Item>
 
@@ -176,7 +234,7 @@ const App = () => {
                             rules={[
                               {
                                 required: true,
-                                message: "Seleziona il tipo di farina!",
+                                message: "Seleziona il tipo di farina",
                               },
                             ]}
                           >
@@ -194,7 +252,11 @@ const App = () => {
                                   <Option value="tipo 2">Tipo 2</Option>
                                   <Option value="tipo 1">Tipo 1</Option>
                                 </>
-                              ) : (
+                              ) : form.getFieldValue([
+                                  "flours",
+                                  index,
+                                  "flourKind",
+                                ]) === "grano tenero" ? (
                                 <>
                                   <Option value="integrale">Integrale</Option>
                                   <Option value="tipo 2">Tipo 2</Option>
@@ -202,6 +264,8 @@ const App = () => {
                                   <Option value="0">0</Option>
                                   <Option value="00">00</Option>
                                 </>
+                              ) : (
+                                <Option value="integrale">Glutine Puro</Option>
                               )}
                             </Select>
                           </Form.Item>
@@ -291,7 +355,7 @@ const App = () => {
             <div className="results-box">
               <Title level={4}>Risultati</Title>
               <Alert
-                message={`Totale Farina: ${results.totalFlourAmount} g`}
+                message={`Totale Polveri: ${results.totalFlourAmount} g`}
                 type="info"
                 showIcon
               />
