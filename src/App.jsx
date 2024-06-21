@@ -40,33 +40,58 @@ const App = () => {
       const { flourAmount, proteinContent, flourType } = flour
       totalFlourAmount += flourAmount
 
-      // Calculate water based on protein content
+      // Calcola l'acqua basata sul contenuto di proteine e sul tipo di farina
       let waterRatio = 0.6 + ((proteinContent - 10) / 10) * 0.4
 
       if (flourType === "integrale") {
         waterRatio += 0.02 // Aggiungi 2% di acqua per la farina integrale
       }
 
-      // Calculate actual water needed based on flour amount and adjusted water ratio
+      // Calcola l'acqua effettiva necessaria in base alla quantità di farina e al rapporto di acqua aggiustato
       const flourWater = flourAmount * waterRatio
       totalWater += flourWater
 
       totalSalt += flourAmount * 0.02
 
-      // Calculate the amount of yeast
-      const baseYeast = flourAmount * 0.2 // Base 20% of flour amount
-      const adjustedYeast = temperature < 20 ? baseYeast * 1.5 : baseYeast // Increase by 50% if temperature is below 20°C
-      totalYeast += adjustedYeast
+      let baseYeast = flourAmount * 0.2 // Base 20% della quantità di farina
+
+      // Regola la quantità di lievito in base alla temperatura
+      if (temperature < 20) {
+        baseYeast *= 1 + (20 - temperature) / 40 // Aumenta linearmente con la temperatura sotto i 20°C
+      } else {
+        baseYeast *= 1 - (temperature - 20) / 40 // Diminuisce linearmente con la temperatura sopra i 20°C
+      }
+
+      // Assicurati che la quantità di lievito non sia mai inferiore a 0
+      baseYeast = Math.max(baseYeast, 0)
+
+      totalYeast += baseYeast
     })
 
-    const riseTime = temperature < 20 ? "24 ore" : "12 ore"
+    // Calcola il tempo di lievitazione in base alla temperatura
+    let riseTime
+    if (temperature < 10) {
+      riseTime = "36 ore"
+    } else if (temperature < 15) {
+      riseTime = "24 ore"
+    } else if (temperature < 20) {
+      riseTime = "18 ore"
+    } else if (temperature < 25) {
+      riseTime = "12 ore"
+    } else if (temperature < 30) {
+      riseTime = "8 ore"
+    } else if (temperature < 35) {
+      riseTime = "6 ore"
+    } else {
+      riseTime = "4 ore"
+    }
 
-    // Assuming setResults is a placeholder for setting the calculated values somewhere else
+    // Imposta i risultati con i valori calcolati
     setResults({
       totalFlourAmount,
       totalWater,
       totalSalt,
-      totalYeast,
+      totalYeast: totalYeast > 100 ? 100 : totalYeast < 50 ? 50 : totalYeast,
       riseTime,
     })
   }
