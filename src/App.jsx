@@ -203,6 +203,7 @@ const App = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          height: 120,
         }}
       >
         <Title style={{ color: "white", textAlign: "center" }}>
