@@ -9,8 +9,6 @@
 }
 
 .results-box {
-  background: #f0f2f5;
-  padding: 20px;
   margin-top: 20px;
   display: flex;
   flex-direction: column;

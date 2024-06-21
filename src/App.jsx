@@ -6,11 +6,9 @@ import {
   Select,
   Button,
   Typography,
-  Row,
-  Col,
-  Card,
-  Alert,
   Space,
+  Modal,
+  Alert,
 } from "antd"
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons"
 import "./App.css"
@@ -22,6 +20,7 @@ const { Option } = Select
 const App = () => {
   const [results, setResults] = useState(null)
   const [form] = Form.useForm()
+  const [modalVisible, setModalVisible] = useState(false)
 
   const handleGrainChange = (index, value) => {
     const currentFlours = form.getFieldValue("flours")
@@ -41,9 +40,6 @@ const App = () => {
     flours.forEach((flour) => {
       const { flourAmount, proteinContent, flourType, flourKind } = flour
       totalFlourAmount += flourAmount
-
-      // // Calcola l'acqua basata sul contenuto di proteine e sul tipo di farina
-      // let waterRatio = 0.6 + ((proteinContent - 10) / 10) * 0.4
 
       if (flourKind === "grano duro") {
         if (flourType === "integrale") {
@@ -71,20 +67,7 @@ const App = () => {
         }
       }
 
-      // // Calcola l'acqua effettiva necessaria in base alla quantità di farina e al rapporto di acqua aggiustato
-      // const flourWater = flourAmount * waterRatio
-      // totalWater += flourWater
-
-      console.log("proteinContent", proteinContent)
-
-      console.log("current proteins = ", flourAmount * (proteinContent / 100))
-
       totalProtein += flourAmount * (proteinContent / 100)
-
-      console.log("flour amount = ", flourAmount)
-
-      console.log("total protein = ", totalProtein)
-
       totalSalt += flourAmount * 0.02
 
       let baseYeast = flourAmount * 0.2 // Base 20% della quantità di farina
@@ -127,9 +110,7 @@ const App = () => {
     const proteinRatio =
       (totalProtein / (totalFlourAmount - totalProtein)) * 100
 
-    console.log("proteinRatio", proteinRatio)
-
-    let wRating = 0
+    let wRating = ""
 
     if (proteinRatio < 10) {
       totalWater = `${(totalFlourAmount * 0.55 * waterRatio).toFixed(0)} - ${(
@@ -138,63 +119,49 @@ const App = () => {
         waterRatio
       ).toFixed(0)}`
       wRating = "90 - 220"
-    }
-
-    if (proteinRatio >= 10 && proteinRatio < 11) {
+    } else if (proteinRatio >= 10 && proteinRatio < 11) {
       totalWater = `${(totalFlourAmount * 0.6 * waterRatio).toFixed(0)} - ${(
         totalFlourAmount *
         0.7 *
         waterRatio
       ).toFixed(0)}`
       wRating = "160 - 240"
-    }
-
-    if (proteinRatio >= 11 && proteinRatio < 12) {
+    } else if (proteinRatio >= 11 && proteinRatio < 12) {
       totalWater = `${(totalFlourAmount * 0.6 * waterRatio).toFixed(0)} - ${(
         totalFlourAmount *
         0.75 *
         waterRatio
       ).toFixed(0)}`
       wRating = "220 - 260"
-    }
-
-    if (proteinRatio >= 12 && proteinRatio < 13) {
+    } else if (proteinRatio >= 12 && proteinRatio < 13) {
       totalWater = `${(totalFlourAmount * 0.6 * waterRatio).toFixed(0)} - ${(
         totalFlourAmount *
         0.8 *
         waterRatio
       ).toFixed(0)}`
       wRating = "240 - 290"
-    }
-
-    if (proteinRatio >= 13 && proteinRatio < 14) {
+    } else if (proteinRatio >= 13 && proteinRatio < 14) {
       totalWater = `${(totalFlourAmount * 0.65 * waterRatio).toFixed(0)} - ${(
         totalFlourAmount *
         0.8 *
         waterRatio
       ).toFixed(0)}`
       wRating = "270 - 340"
-    }
-
-    if (proteinRatio >= 14 && proteinRatio < 15) {
-      totalWater = `${totalFlourAmount * 0.7 * waterRatio.toFixed(0)} - ${(
+    } else if (proteinRatio >= 14 && proteinRatio < 15) {
+      totalWater = `${(totalFlourAmount * 0.7 * waterRatio).toFixed(0)} - ${(
         totalFlourAmount *
         1 *
         waterRatio
       ).toFixed(0)}`
       wRating = "320 - 430"
-    }
-
-    if (proteinRatio >= 15 && proteinRatio < 16) {
+    } else if (proteinRatio >= 15 && proteinRatio < 16) {
       totalWater = `${(totalFlourAmount * 0.8 * waterRatio).toFixed(0)} - ${(
         totalFlourAmount *
         1 *
         waterRatio
       ).toFixed(0)}`
       wRating = "360 - 400++"
-    }
-
-    if (proteinRatio >= 16) {
+    } else if (proteinRatio >= 16) {
       totalWater = `${(totalFlourAmount * 0.8 * waterRatio).toFixed(0)} - ${(
         totalFlourAmount *
         1 *
@@ -208,15 +175,25 @@ const App = () => {
       totalFlourAmount: totalFlourAmount.toFixed(0),
       totalWater,
       totalSalt: totalSalt.toFixed(0),
-      totalYeast:
-        totalYeast > 100
-          ? 100
-          : totalYeast.toFixed(0) < 50
-          ? 50
-          : totalYeast.toFixed(0),
+      totalYeast: totalYeast > 100 ? 100 : totalYeast.toFixed(0),
       riseTime,
       wRating,
     })
+
+    // Mostra la modale dei risultati
+    setModalVisible(true)
+  }
+
+  const handleModalOk = () => {
+    // Chiudi la modale e resetta i risultati
+    setModalVisible(false)
+    setResults(null)
+    form.resetFields()
+  }
+
+  const handleModalCancel = () => {
+    // Chiudi la modale e mantieni i risultati
+    setModalVisible(false)
   }
 
   return (
@@ -417,40 +394,47 @@ const App = () => {
             </Form>
           </div>
 
-          {results && (
-            <div className="results-box">
-              <Title style={{ textAlign: "center" }} level={4}>
-                Risultati
-              </Title>
-              <Alert
-                message={`Totale Polveri: ${results.totalFlourAmount} g`}
-                type="info"
-                showIcon
-              />
-              <Alert message={`W: ${results.wRating}`} type="info" showIcon />
+          <Modal
+            title="Risultati"
+            open={modalVisible}
+            onOk={handleModalOk}
+            onCancel={handleModalCancel}
+            style={{ gap: 20 }}
+            okText="Nuovo calcolo"
+            cancelText="Torna al calcolo"
+          >
+            {results && (
+              <div className="results-box">
+                <Alert
+                  message={`Totale Polveri: ${results.totalFlourAmount} g`}
+                  type="info"
+                  showIcon
+                />
+                <Alert message={`W: ${results.wRating}`} type="info" showIcon />
 
-              <Alert
-                message={`Acqua: ${results.totalWater} g`}
-                type="info"
-                showIcon
-              />
-              <Alert
-                message={`Sale: ${results.totalSalt} g`}
-                type="info"
-                showIcon
-              />
-              <Alert
-                message={`Lievito Madre: ${results.totalYeast} g`}
-                type="info"
-                showIcon
-              />
-              <Alert
-                message={`Tempo di Lievitazione: ${results.riseTime}`}
-                type="info"
-                showIcon
-              />
-            </div>
-          )}
+                <Alert
+                  message={`Acqua: ${results.totalWater} g`}
+                  type="info"
+                  showIcon
+                />
+                <Alert
+                  message={`Sale: ${results.totalSalt} g`}
+                  type="info"
+                  showIcon
+                />
+                <Alert
+                  message={`Lievito Madre: ${results.totalYeast} g`}
+                  type="info"
+                  showIcon
+                />
+                <Alert
+                  message={`Tempo di Lievitazione: ${results.riseTime}`}
+                  type="info"
+                  showIcon
+                />
+              </div>
+            )}
+          </Modal>
         </div>
       </Content>
       <Footer style={{ textAlign: "center" }}>
