@@ -31,7 +31,7 @@
   padding: 10px;
   margin-bottom: 10px;
   width: 100%;
-  box-sizing: border-box;
+  border-radius: 8px;
 }
 
 /* Stili per layout responsive */
