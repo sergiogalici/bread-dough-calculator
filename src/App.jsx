@@ -39,14 +39,36 @@ const App = () => {
     let waterRatio = 1
 
     flours.forEach((flour) => {
-      const { flourAmount, proteinContent, flourType } = flour
+      const { flourAmount, proteinContent, flourType, flourKind } = flour
       totalFlourAmount += flourAmount
 
       // // Calcola l'acqua basata sul contenuto di proteine e sul tipo di farina
       // let waterRatio = 0.6 + ((proteinContent - 10) / 10) * 0.4
 
-      if (flourType === "integrale") {
-        waterRatio = 1.02 // Aggiungi 2% di acqua per la farina integrale
+      if (flourKind === "grano duro") {
+        if (flourType === "integrale") {
+          waterRatio = 1.02 // Aggiungi 2% di acqua per la farina integrale di grano duro
+        } else if (flourType === "tipo 2") {
+          waterRatio = 1 // Imposta waterRatio per il tipo 2 di grano duro
+        } else if (flourType === "tipo 1") {
+          waterRatio = 0.95 // Imposta waterRatio per il tipo 1 di grano duro
+        } else if (flourType === "0") {
+          waterRatio = 0.93 // Imposta waterRatio per il tipo 0 di grano duro
+        } else if (flourType === "00") {
+          waterRatio = 0.91 // Imposta waterRatio per il tipo 00 di grano duro
+        }
+      } else if (flourKind === "grano tenero") {
+        if (flourType === "integrale") {
+          waterRatio = 1.05 // Aggiungi 5% di acqua per la farina integrale di grano tenero
+        } else if (flourType === "tipo 2") {
+          waterRatio = 1.02 // Imposta waterRatio per il tipo 2 di grano tenero
+        } else if (flourType === "tipo 1") {
+          waterRatio = 0.98 // Imposta waterRatio per il tipo 1 di grano tenero
+        } else if (flourType === "0") {
+          waterRatio = 0.96 // Imposta waterRatio per il tipo 0 di grano tenero
+        } else if (flourType === "00") {
+          waterRatio = 0.95 // Imposta waterRatio per il tipo 00 di grano tenero
+        }
       }
 
       // // Calcola l'acqua effettiva necessaria in base alla quantità di farina e al rapporto di acqua aggiustato
@@ -183,15 +205,15 @@ const App = () => {
 
     // Imposta i risultati con i valori calcolati
     setResults({
-      totalFlourAmount: totalFlourAmount.toFixed(2),
+      totalFlourAmount: totalFlourAmount.toFixed(0),
       totalWater,
-      totalSalt: totalSalt.toFixed(2),
+      totalSalt: totalSalt.toFixed(0),
       totalYeast:
         totalYeast > 100
           ? 100
-          : totalYeast.toFixed(2) < 50
+          : totalYeast.toFixed(0) < 50
           ? 50
-          : totalYeast.toFixed(2),
+          : totalYeast.toFixed(0),
       riseTime,
       wRating,
     })
