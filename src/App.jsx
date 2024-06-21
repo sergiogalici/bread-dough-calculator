@@ -155,18 +155,18 @@ const App = () => {
       ).toFixed(0)}`
       wRating = "320 - 430"
     } else if (proteinRatio >= 15 && proteinRatio < 16) {
-      totalWater = `${(totalFlourAmount * 0.8 * waterRatio).toFixed(0)} - ${(
-        totalFlourAmount *
-        1 *
-        waterRatio
-      ).toFixed(0)}`
+      totalWater = `${(totalFlourAmount * 0.8 * waterRatio).toFixed(0)} - ${
+        totalFlourAmount * 1 * waterRatio > totalFlourAmount
+          ? totalFlourAmount
+          : totalFlourAmount * 1 * waterRatio.toFixed(0)
+      }`
       wRating = "360 - 400++"
     } else if (proteinRatio >= 16) {
-      totalWater = `${(totalFlourAmount * 0.8 * waterRatio).toFixed(0)} - ${(
-        totalFlourAmount *
-        1 *
-        waterRatio
-      ).toFixed(0)}`
+      totalWater = `${(totalFlourAmount * 0.8 * waterRatio).toFixed(0)} - ${
+        totalFlourAmount * 1 * waterRatio > totalFlourAmount
+          ? totalFlourAmount
+          : totalFlourAmount * 1 * waterRatio.toFixed(0)
+      }`
       wRating = "400++"
     }
 
