@@ -107,49 +107,93 @@ const App = () => {
 
     console.log("proteinRatio", proteinRatio)
 
+    let wRating = 0
+
     if (proteinRatio < 10) {
-      totalWater = totalFlourAmount * 0.6
+      totalWater = `${(totalFlourAmount * 0.55 * waterRatio).toFixed(0)} - ${(
+        totalFlourAmount *
+        0.6 *
+        waterRatio
+      ).toFixed(0)}`
+      wRating = "90 - 220"
     }
 
     if (proteinRatio >= 10 && proteinRatio < 11) {
-      totalWater = totalFlourAmount * 0.65
+      totalWater = `${(totalFlourAmount * 0.6 * waterRatio).toFixed(0)} - ${(
+        totalFlourAmount *
+        0.7 *
+        waterRatio
+      ).toFixed(0)}`
+      wRating = "160 - 240"
     }
 
     if (proteinRatio >= 11 && proteinRatio < 12) {
-      totalWater = totalFlourAmount * 0.7
+      totalWater = `${(totalFlourAmount * 0.6 * waterRatio).toFixed(0)} - ${(
+        totalFlourAmount *
+        0.75 *
+        waterRatio
+      ).toFixed(0)}`
+      wRating = "220 - 260"
     }
 
     if (proteinRatio >= 12 && proteinRatio < 13) {
-      totalWater = totalFlourAmount * 0.75
+      totalWater = `${(totalFlourAmount * 0.6 * waterRatio).toFixed(0)} - ${(
+        totalFlourAmount *
+        0.8 *
+        waterRatio
+      ).toFixed(0)}`
+      wRating = "240 - 290"
     }
 
     if (proteinRatio >= 13 && proteinRatio < 14) {
-      totalWater = totalFlourAmount * 0.8
+      totalWater = `${(totalFlourAmount * 0.65 * waterRatio).toFixed(0)} - ${(
+        totalFlourAmount *
+        0.8 *
+        waterRatio
+      ).toFixed(0)}`
+      wRating = "270 - 340"
     }
 
     if (proteinRatio >= 14 && proteinRatio < 15) {
-      totalWater = totalFlourAmount * 0.85
+      totalWater = `${totalFlourAmount * 0.7 * waterRatio.toFixed(0)} - ${(
+        totalFlourAmount *
+        1 *
+        waterRatio
+      ).toFixed(0)}`
+      wRating = "320 - 430"
     }
 
     if (proteinRatio >= 15 && proteinRatio < 16) {
-      totalWater = totalFlourAmount * 0.9
+      totalWater = `${(totalFlourAmount * 0.8 * waterRatio).toFixed(0)} - ${(
+        totalFlourAmount *
+        1 *
+        waterRatio
+      ).toFixed(0)}`
+      wRating = "360 - 400++"
     }
 
     if (proteinRatio >= 16) {
-      totalWater = totalFlourAmount * 0.9
+      totalWater = `${(totalFlourAmount * 0.8 * waterRatio).toFixed(0)} - ${(
+        totalFlourAmount *
+        1 *
+        waterRatio
+      ).toFixed(0)}`
+      wRating = "400++"
     }
-
-    totalWater = totalWater * waterRatio
-
-    totalWater = totalWater.toFixed(2)
 
     // Imposta i risultati con i valori calcolati
     setResults({
-      totalFlourAmount,
+      totalFlourAmount: totalFlourAmount.toFixed(2),
       totalWater,
-      totalSalt,
-      totalYeast: totalYeast > 100 ? 100 : totalYeast < 50 ? 50 : totalYeast,
+      totalSalt: totalSalt.toFixed(2),
+      totalYeast:
+        totalYeast > 100
+          ? 100
+          : totalYeast.toFixed(2) < 50
+          ? 50
+          : totalYeast.toFixed(2),
       riseTime,
+      wRating,
     })
   }
 
@@ -163,7 +207,7 @@ const App = () => {
         }}
       >
         <Title style={{ color: "white", textAlign: "center" }}>
-          Bread Dough Calculator
+          Calcolatore per Impasti
         </Title>
       </Header>
       <Content
@@ -353,12 +397,16 @@ const App = () => {
 
           {results && (
             <div className="results-box">
-              <Title level={4}>Risultati</Title>
+              <Title style={{ textAlign: "center" }} level={4}>
+                Risultati
+              </Title>
               <Alert
                 message={`Totale Polveri: ${results.totalFlourAmount} g`}
                 type="info"
                 showIcon
               />
+              <Alert message={`W: ${results.wRating}`} type="info" showIcon />
+
               <Alert
                 message={`Acqua: ${results.totalWater} g`}
                 type="info"
@@ -384,7 +432,7 @@ const App = () => {
         </div>
       </Content>
       <Footer style={{ textAlign: "center" }}>
-        Bread Dough Calculator ©2024
+        Calcolatore per Impasti - Macco di Favole 2024
       </Footer>
     </Layout>
   )

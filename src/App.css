@@ -35,11 +35,6 @@
   box-sizing: border-box;
 }
 
-/* Stili per rendere ogni Select della stessa larghezza */
-.ant-select {
-  width: 200px; /* Larghezza desiderata per ogni Select */
-}
-
 /* Stili per layout responsive */
 @media screen and (max-width: 1100px) {
   .flour-box {
