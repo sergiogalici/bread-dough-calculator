@@ -48,7 +48,7 @@ const App = () => {
         }}
       >
         <Title style={{ color: "white", textAlign: "center" }}>
-          🥖Calcolatore per Impasti 🍞
+          🥖 Sourdough Bread Calculator 🍞
         </Title>
       </Header>
       <Content
@@ -92,17 +92,17 @@ const App = () => {
                             {...field}
                             name={[field.name, "flourKind"]}
                             fieldKey={[field.fieldKey, "flourKind"]}
-                            label="Tipo di Grano"
+                            label="Type of flour"
                             rules={[
                               {
                                 required: true,
-                                message: "Seleziona il tipo di grano!",
+                                message: "Choose your flour type",
                               },
                             ]}
                           >
                             <Select
                               style={{ width: 200 }}
-                              placeholder="Seleziona il tipo di grano"
+                              placeholder="Choose flour type"
                               onChange={(value) => {
                                 setSelectedFlourKind(value)
                                 form.setFieldsValue({
@@ -111,17 +111,11 @@ const App = () => {
                                 })
                               }}
                             >
-                              <Option value="grano duro">Grano Duro</Option>
-                              <Option value="grano tenero">Grano Tenero</Option>
-                              <Option value="farina di mais">
-                                Farina di Mais
-                              </Option>
-                              <Option value="farina di farro">
-                                Farina di Farro
-                              </Option>
-                              <Option value="farina di segale">
-                                Farina di Segale
-                              </Option>
+                              <Option value="grano duro">Durum Wheat</Option>
+                              <Option value="grano tenero">Soft Wheat</Option>
+                              <Option value="farina di mais">Cornmeal</Option>
+                              <Option value="farina di farro">Spelt</Option>
+                              <Option value="farina di segale">Rye</Option>
                             </Select>
                           </Form.Item>
 
@@ -129,20 +123,19 @@ const App = () => {
                             {...field}
                             name={[field.name, "proteinContent"]}
                             fieldKey={[field.fieldKey, "proteinContent"]}
-                            label="Contenuto di Proteine (%)"
+                            label="Protein Content (%)"
                             style={{ width: 200 }}
-                            disabled={selectedFlourKind === "farina di mais"}
                             rules={[
                               {
                                 required: true,
-                                message: "Inserisci il contenuto di proteine!",
+                                message: "Insert your flour's protein content",
                               },
                             ]}
                           >
                             <InputNumber
                               min={0}
                               max={100}
-                              placeholder="Inserisci il contenuto di proteine"
+                              placeholder="Insert your flour water content"
                               style={{ width: "100%" }}
                             />
                           </Form.Item>
@@ -151,19 +144,19 @@ const App = () => {
                             {...field}
                             name={[field.name, "fiberContent"]}
                             fieldKey={[field.fieldKey, "fiberContent"]}
-                            label="Contenuto di Fibre (%)"
+                            label="Fiber Content (%)"
                             style={{ width: 200 }}
                             rules={[
                               {
                                 required: true,
-                                message: "Inserisci il contenuto di fibre!",
+                                message: "Insert your flout fiber content",
                               },
                             ]}
                           >
                             <InputNumber
                               min={0}
                               max={100}
-                              placeholder="Inserisci il contenuto di fibre"
+                              placeholder="Insert your flour's fiber content"
                               style={{ width: "100%" }}
                             />
                           </Form.Item>
@@ -172,18 +165,18 @@ const App = () => {
                             {...field}
                             name={[field.name, "flourAmount"]}
                             fieldKey={[field.fieldKey, "flourAmount"]}
-                            label="Quantità di Farina (g)"
+                            label="Flour amount (g)"
                             style={{ width: 200 }}
                             rules={[
                               {
                                 required: true,
-                                message: "Inserisci la quantità di farina!",
+                                message: "Insert your flour amount in grams",
                               },
                             ]}
                           >
                             <InputNumber
                               min={0}
-                              placeholder="Inserisci la quantità di farina"
+                              placeholder="Insert your flour amount in grams"
                               style={{ width: "100%" }}
                             />
                           </Form.Item>
@@ -200,7 +193,7 @@ const App = () => {
                         block
                         icon={<PlusOutlined />}
                       >
-                        Aggiungi Farina
+                        Add another flour to the mix
                       </Button>
                     </Form.Item>
                   </>
@@ -209,22 +202,22 @@ const App = () => {
 
               <Form.Item
                 name="temperature"
-                label="Temperatura dell'Ambiente (°C)"
+                label="Room temperature (°C)"
                 rules={[
-                  { required: true, message: "Inserisci la temperatura!" },
+                  { required: true, message: "Insert your room temperature" },
                 ]}
               >
                 <InputNumber
                   min={-10}
                   max={50}
-                  placeholder="Inserisci la temperatura dell'ambiente"
+                  placeholder="Insert your room temperature"
                   style={{ width: "100%" }}
                 />
               </Form.Item>
 
               <Form.Item>
                 <Button type="primary" htmlType="submit">
-                  Calcola
+                  Calculate
                 </Button>
               </Form.Item>
             </Form>
@@ -232,17 +225,17 @@ const App = () => {
         </div>
       </Content>
       <Footer style={{ textAlign: "center" }}>
-        Calcolatore per Impasti - Macco di Favole 2024
+        Bread Calculator - Macco di Favole 2024
       </Footer>
 
       <Modal
-        title="Risultati"
+        title="Results"
         open={modalVisible}
         onOk={handleModalOk}
         onCancel={handleModalCancel}
         style={{ gap: 20 }}
-        okText="Nuovo calcolo"
-        cancelText="Torna al calcolo"
+        okText="Nuovo mix"
+        cancelText="Back to your mix"
       >
         {results ? (
           <div className="results-box">
