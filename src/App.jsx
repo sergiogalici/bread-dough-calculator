@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import {
   Layout,
   Form,
@@ -22,177 +22,201 @@ const App = () => {
   const [form] = Form.useForm()
   const [modalVisible, setModalVisible] = useState(false)
 
-  const handleGrainChange = (index, value) => {
-    const currentFlours = form.getFieldValue("flours")
-    currentFlours[index].flourType = undefined
-    form.setFieldsValue({ flours: currentFlours })
-  }
+  useEffect(() => {
+    console.log("Modal is visible:", modalVisible)
+  }, [setModalVisible])
 
   const calculateDough = (values) => {
     const { flours, temperature } = values
-    let totalFlourAmount = 0
     let totalWater = 0
     let totalSalt = 0
     let totalYeast = 0
+    let totalFiber = 0
+    let totalFat = 0
     let totalProtein = 0
-    let waterRatio = 1
+    let totalDurumWheat = 0
+    let totalSoftWheat = 0
 
     flours.forEach((flour) => {
-      const { flourAmount, proteinContent, flourType, flourKind } = flour
-      totalFlourAmount += flourAmount
+      const {
+        flourAmount,
+        proteinContent,
+        fiberContent,
+        fatContent,
+        flourKind,
+      } = flour
+
+      console.log("type = ", flourKind)
+      totalProtein += flourAmount * (proteinContent / 100)
+      totalFiber += flourAmount * (fiberContent / 100)
+      totalFat += flourAmount * (fatContent / 100)
+      totalSalt += flourAmount * 0.02 // Assumo 2% di sale in base alla quantità di farina
 
       if (flourKind === "grano duro") {
-        if (flourType === "integrale") {
-          waterRatio = 1.02 // Aggiungi 2% di acqua per la farina integrale di grano duro
-        } else if (flourType === "tipo 2") {
-          waterRatio = 1 // Imposta waterRatio per il tipo 2 di grano duro
-        } else if (flourType === "tipo 1") {
-          waterRatio = 0.95 // Imposta waterRatio per il tipo 1 di grano duro
-        } else if (flourType === "0") {
-          waterRatio = 0.93 // Imposta waterRatio per il tipo 0 di grano duro
-        } else if (flourType === "00") {
-          waterRatio = 0.91 // Imposta waterRatio per il tipo 00 di grano duro
-        }
-      } else if (flourKind === "grano tenero") {
-        if (flourType === "integrale") {
-          waterRatio = 1.05 // Aggiungi 5% di acqua per la farina integrale di grano tenero
-        } else if (flourType === "tipo 2") {
-          waterRatio = 1.02 // Imposta waterRatio per il tipo 2 di grano tenero
-        } else if (flourType === "tipo 1") {
-          waterRatio = 0.98 // Imposta waterRatio per il tipo 1 di grano tenero
-        } else if (flourType === "0") {
-          waterRatio = 0.96 // Imposta waterRatio per il tipo 0 di grano tenero
-        } else if (flourType === "00") {
-          waterRatio = 0.95 // Imposta waterRatio per il tipo 00 di grano tenero
-        }
-      }
-
-      totalProtein += flourAmount * (proteinContent / 100)
-      totalSalt += flourAmount * 0.02
-
-      let baseYeast = flourAmount * 0.2 // Base 20% della quantità di farina
-
-      // Regola la quantità di lievito in base alla temperatura
-      if (temperature < 10) {
-        baseYeast *= 1.2 // Aumento del 20% per temperature molto basse
-      } else if (temperature < 20) {
-        baseYeast *= 1 + (20 - temperature) / 50 // Aumento gradualmente con temperature sotto i 20°C
-      } else if (temperature < 30) {
-        baseYeast *= 1 - (temperature - 20) / 20 // Decremento gradualmente con temperature sopra i 20°C
+        totalDurumWheat += flourAmount
       } else {
-        baseYeast *= 0.5 // Riduzione del 50% per temperature molto alte
+        totalSoftWheat += flourAmount
       }
-
-      // Assicurati che la quantità di lievito non sia mai inferiore a 0
-      baseYeast = Math.max(baseYeast, 0)
-
-      totalYeast += baseYeast
     })
 
-    // Calcola il tempo di lievitazione in base alla temperatura
-    let riseTime
+    console.log("Total protein:", totalProtein)
+    console.log("Total fiber:", totalFiber)
+    console.log("Total fat:", totalFat)
+    console.log("Total durum wheat:", totalDurumWheat)
+    console.log("Total soft wheat:", totalSoftWheat)
+
+    totalFat = totalFat ?? 0
+
+    const totalFlourAmount = totalDurumWheat + totalSoftWheat
+
+    // Calcolo della quantità di lievito in base alla temperatura
     if (temperature < 10) {
-      riseTime = "36 ore"
-    } else if (temperature < 15) {
-      riseTime = "24 ore"
-    } else if (temperature < 20) {
-      riseTime = "18 ore"
-    } else if (temperature < 25) {
-      riseTime = "12 ore"
-    } else if (temperature < 30) {
-      riseTime = "8 ore"
-    } else if (temperature < 35) {
-      riseTime = "6 ore"
+      totalYeast = totalFlourAmount * 0.2
+    } else if (temperature >= 10 && temperature < 20) {
+      totalYeast = totalFlourAmount * (0.2 - (temperature - 10) * 0.01)
+    } else if (temperature >= 20 && temperature < 30) {
+      totalYeast = totalFlourAmount * (0.1 + (30 - temperature) * 0.01)
     } else {
-      riseTime = "4 ore"
+      totalYeast = totalFlourAmount * 0.1
+    }
+
+    // Assicurati che la quantità di lievito sia tra il 10% e il 20% della quantità di farina
+    totalYeast = Math.max(
+      totalFlourAmount * 0.1,
+      Math.min(totalYeast, totalFlourAmount * 0.2)
+    )
+
+    // Calcolo del tempo di lievitazione in base alla temperatura
+    let firstProofingTime
+    let secondProofingTime
+
+    if (temperature < 10) {
+      firstProofingTime = "12-18 ore"
+      secondProofingTime = "6-12 ore"
+    } else if (temperature < 15) {
+      firstProofingTime = "8-12 ore"
+      secondProofingTime = "4-8 ore"
+    } else if (temperature < 20) {
+      firstProofingTime = "6-8 ore"
+      secondProofingTime = "3-6 ore"
+    } else if (temperature < 25) {
+      firstProofingTime = "4-6 ore"
+      secondProofingTime = "2-4 ore"
+    } else if (temperature < 30) {
+      firstProofingTime = "2-4 ore"
+      secondProofingTime = "1-2 ore"
+    } else {
+      firstProofingTime = "1-2 ore"
+      secondProofingTime = "1 ora"
+    }
+
+    const riseTime = `${firstProofingTime} (prima lievitazione), ${secondProofingTime} (seconda lievitazione)`
+
+    // Calcolo dei macronutrienti e indice glicemico
+    const fiberRatio = (totalFiber / totalFlourAmount) * 100
+    const fatRatio = (totalFat / totalFlourAmount) * 100
+
+    let glycemicIndex
+    if (fiberRatio > 10) {
+      glycemicIndex = "Basso"
+    } else if (fiberRatio > 5) {
+      glycemicIndex = "Medio"
+    } else {
+      glycemicIndex = "Alto"
     }
 
     const proteinRatio =
-      (totalProtein / (totalFlourAmount - totalProtein)) * 100
+      (totalProtein / (totalFlourAmount - totalProtein - totalFat)) * 100
 
     let wRating = ""
+    let waterRangeMin, waterRangeMax
+    let waterRatio = 1 + totalFiber * 0.001
+
+    // Se totalFlourAmount è maggiore di zero, calcola la percentuale di grano duro e grano tenero
+    const durumWheatPercentage = (totalDurumWheat / totalFlourAmount) * 100
+
+    console.log("Durum wheat percentage:", durumWheatPercentage)
+
+    // Definisci gli scaglioni in base alla percentuale di grano duro o grano tenero
+    if (durumWheatPercentage >= 50) {
+      // Più del 50% di grano duro
+      waterRatio *= 0.9 // Riduci il water ratio in modo graduale
+    } else if (durumWheatPercentage >= 30) {
+      // Tra il 30% e il 50% di grano duro
+      const factor =
+        0.9 + ((durumWheatPercentage - 30) * (0.93 - 0.9)) / (50 - 30)
+      waterRatio *= factor // Adatta il water ratio in modo più graduale
+    } else if (durumWheatPercentage >= 20) {
+      // Tra il 20% e il 30% di grano duro
+      const factor =
+        0.93 + ((durumWheatPercentage - 20) * (0.95 - 0.93)) / (30 - 20)
+      waterRatio *= factor // Adatta il water ratio in modo più graduale
+    } else {
+      // Meno del 20% di grano duro
+      const factor = 0.95 + ((durumWheatPercentage - 0) * (1 - 0.95)) / (20 - 0)
+      waterRatio *= factor // Adatta il water ratio in modo più graduale
+    }
+
+    console.log("Water ratio:", waterRatio)
+    console.log("Protein ratio:", proteinRatio)
 
     if (proteinRatio < 10) {
-      totalWater = `${(totalFlourAmount * 0.55 * waterRatio).toFixed(0)} - ${(
-        totalFlourAmount *
-        0.6 *
-        waterRatio
-      ).toFixed(0)}`
+      waterRangeMin = totalFlourAmount * 0.55 * waterRatio
+      waterRangeMax = totalFlourAmount * 0.6 * waterRatio
       wRating = "90 - 220"
     } else if (proteinRatio >= 10 && proteinRatio < 11) {
-      totalWater = `${(totalFlourAmount * 0.6 * waterRatio).toFixed(0)} - ${(
-        totalFlourAmount *
-        0.7 *
-        waterRatio
-      ).toFixed(0)}`
+      waterRangeMin = totalFlourAmount * 0.6 * waterRatio
+      waterRangeMax = totalFlourAmount * 0.7 * waterRatio
       wRating = "160 - 240"
     } else if (proteinRatio >= 11 && proteinRatio < 12) {
-      totalWater = `${(totalFlourAmount * 0.6 * waterRatio).toFixed(0)} - ${(
-        totalFlourAmount *
-        0.75 *
-        waterRatio
-      ).toFixed(0)}`
+      waterRangeMin = totalFlourAmount * 0.6 * waterRatio
+      waterRangeMax = totalFlourAmount * 0.75 * waterRatio
       wRating = "220 - 260"
     } else if (proteinRatio >= 12 && proteinRatio < 13) {
-      totalWater = `${(totalFlourAmount * 0.6 * waterRatio).toFixed(0)} - ${(
-        totalFlourAmount *
-        0.8 *
-        waterRatio
-      ).toFixed(0)}`
+      waterRangeMin = totalFlourAmount * 0.6 * waterRatio
+      waterRangeMax = totalFlourAmount * 0.8 * waterRatio
       wRating = "240 - 290"
     } else if (proteinRatio >= 13 && proteinRatio < 14) {
-      totalWater = `${(totalFlourAmount * 0.65 * waterRatio).toFixed(0)} - ${(
-        totalFlourAmount *
-        0.8 *
-        waterRatio
-      ).toFixed(0)}`
+      waterRangeMin = totalFlourAmount * 0.65 * waterRatio
+      waterRangeMax = totalFlourAmount * 0.8 * waterRatio
       wRating = "270 - 340"
     } else if (proteinRatio >= 14 && proteinRatio < 15) {
-      totalWater = `${(totalFlourAmount * 0.7 * waterRatio).toFixed(0)} - ${(
-        totalFlourAmount *
-        1 *
-        waterRatio
-      ).toFixed(0)}`
+      waterRangeMin = totalFlourAmount * 0.7 * waterRatio
+      waterRangeMax = totalFlourAmount * 1 * waterRatio
       wRating = "320 - 430"
     } else if (proteinRatio >= 15 && proteinRatio < 16) {
-      totalWater = `${(totalFlourAmount * 0.8 * waterRatio).toFixed(0)} - ${
-        totalFlourAmount * 1 * waterRatio > totalFlourAmount
-          ? totalFlourAmount
-          : totalFlourAmount * 1 * waterRatio.toFixed(0)
-      }`
+      waterRangeMin = totalFlourAmount * 0.8 * waterRatio
+      waterRangeMax = Math.min(totalFlourAmount * 1, totalFlourAmount)
       wRating = "360 - 400++"
     } else if (proteinRatio >= 16) {
-      totalWater = `${(totalFlourAmount * 0.8 * waterRatio).toFixed(0)} - ${
-        totalFlourAmount * 1 * waterRatio > totalFlourAmount
-          ? totalFlourAmount
-          : totalFlourAmount * 1 * waterRatio.toFixed(0)
-      }`
+      waterRangeMin = totalFlourAmount * 0.8 * waterRatio
+      waterRangeMax = Math.min(totalFlourAmount * 1, totalFlourAmount)
       wRating = "400++"
     }
 
-    // Imposta i risultati con i valori calcolati
     setResults({
       totalFlourAmount: totalFlourAmount.toFixed(0),
-      totalWater,
+      totalWater: `${waterRangeMin.toFixed(0)} - ${waterRangeMax.toFixed(0)}`,
       totalSalt: totalSalt.toFixed(0),
-      totalYeast: totalYeast > 100 ? 100 : totalYeast.toFixed(0),
+      totalYeast: totalYeast.toFixed(0),
       riseTime,
+      proteinRatio: proteinRatio.toFixed(1),
+      fiberRatio: fiberRatio.toFixed(1),
+      fatRatio: fatRatio.toFixed(1),
+      glycemicIndex,
       wRating,
     })
 
-    // Mostra la modale dei risultati
     setModalVisible(true)
   }
 
   const handleModalOk = () => {
-    // Chiudi la modale e resetta i risultati
     setModalVisible(false)
     setResults(null)
     form.resetFields()
   }
 
   const handleModalCancel = () => {
-    // Chiudi la modale e mantieni i risultati
     setModalVisible(false)
   }
 
@@ -229,9 +253,10 @@ const App = () => {
                 flours: [
                   {
                     flourKind: undefined,
-                    flourType: undefined,
                     flourAmount: 0,
                     proteinContent: 0,
+                    fiberContent: 0,
+                    fatContent: 0,
                   },
                 ],
               }}
@@ -260,57 +285,9 @@ const App = () => {
                             <Select
                               style={{ width: 200 }}
                               placeholder="Seleziona il tipo di grano"
-                              onChange={(value) =>
-                                handleGrainChange(index, value)
-                              }
                             >
                               <Option value="grano duro">Grano Duro</Option>
                               <Option value="grano tenero">Grano Tenero</Option>
-                              <Option value="glutine puro">Glutine Puro</Option>
-                            </Select>
-                          </Form.Item>
-
-                          <Form.Item
-                            {...field}
-                            name={[field.name, "flourType"]}
-                            fieldKey={[field.fieldKey, "flourType"]}
-                            label="Tipo di Farina"
-                            rules={[
-                              {
-                                required: true,
-                                message: "Seleziona il tipo di farina",
-                              },
-                            ]}
-                          >
-                            <Select
-                              style={{ width: 200 }}
-                              placeholder="Seleziona il tipo di farina"
-                            >
-                              {form.getFieldValue([
-                                "flours",
-                                index,
-                                "flourKind",
-                              ]) === "grano duro" ? (
-                                <>
-                                  <Option value="integrale">Integrale</Option>
-                                  <Option value="tipo 2">Tipo 2</Option>
-                                  <Option value="tipo 1">Tipo 1</Option>
-                                </>
-                              ) : form.getFieldValue([
-                                  "flours",
-                                  index,
-                                  "flourKind",
-                                ]) === "grano tenero" ? (
-                                <>
-                                  <Option value="integrale">Integrale</Option>
-                                  <Option value="tipo 2">Tipo 2</Option>
-                                  <Option value="tipo 1">Tipo 1</Option>
-                                  <Option value="0">0</Option>
-                                  <Option value="00">00</Option>
-                                </>
-                              ) : (
-                                <Option value="integrale">Glutine Puro</Option>
-                              )}
                             </Select>
                           </Form.Item>
 
@@ -319,6 +296,7 @@ const App = () => {
                             name={[field.name, "proteinContent"]}
                             fieldKey={[field.fieldKey, "proteinContent"]}
                             label="Contenuto di Proteine (%)"
+                            style={{ width: 200 }}
                             rules={[
                               {
                                 required: true,
@@ -336,9 +314,46 @@ const App = () => {
 
                           <Form.Item
                             {...field}
+                            name={[field.name, "fiberContent"]}
+                            fieldKey={[field.fieldKey, "fiberContent"]}
+                            label="Contenuto di Fibre (%)"
+                            style={{ width: 200 }}
+                            rules={[
+                              {
+                                required: true,
+                                message: "Inserisci il contenuto di fibre!",
+                              },
+                            ]}
+                          >
+                            <InputNumber
+                              min={0}
+                              max={100}
+                              placeholder="Inserisci il contenuto di fibre"
+                              style={{ width: "100%" }}
+                            />
+                          </Form.Item>
+
+                          <Form.Item
+                            {...field}
+                            name={[field.name, "fatContent"]}
+                            fieldKey={[field.fieldKey, "fatContent"]}
+                            label="Contenuto di Grassi (%)"
+                            style={{ width: 200 }}
+                          >
+                            <InputNumber
+                              min={0}
+                              max={100}
+                              placeholder="Inserisci il contenuto di grassi"
+                              style={{ width: "100%" }}
+                            />
+                          </Form.Item>
+
+                          <Form.Item
+                            {...field}
                             name={[field.name, "flourAmount"]}
                             fieldKey={[field.fieldKey, "flourAmount"]}
                             label="Quantità di Farina (g)"
+                            style={{ width: 200 }}
                             rules={[
                               {
                                 required: true,
@@ -394,53 +409,74 @@ const App = () => {
               </Form.Item>
             </Form>
           </div>
-
-          <Modal
-            title="Risultati"
-            open={modalVisible}
-            onOk={handleModalOk}
-            onCancel={handleModalCancel}
-            style={{ gap: 20 }}
-            okText="Nuovo calcolo"
-            cancelText="Torna al calcolo"
-          >
-            {results && (
-              <div className="results-box">
-                <Alert
-                  message={`Totale Polveri: ${results.totalFlourAmount} g`}
-                  type="info"
-                  showIcon
-                />
-                <Alert message={`W: ${results.wRating}`} type="info" showIcon />
-
-                <Alert
-                  message={`Acqua: ${results.totalWater} g`}
-                  type="info"
-                  showIcon
-                />
-                <Alert
-                  message={`Sale: ${results.totalSalt} g`}
-                  type="info"
-                  showIcon
-                />
-                <Alert
-                  message={`Lievito Madre: ${results.totalYeast} g`}
-                  type="info"
-                  showIcon
-                />
-                <Alert
-                  message={`Tempo di Lievitazione: ${results.riseTime}`}
-                  type="info"
-                  showIcon
-                />
-              </div>
-            )}
-          </Modal>
         </div>
       </Content>
       <Footer style={{ textAlign: "center" }}>
         Calcolatore per Impasti - Macco di Favole 2024
       </Footer>
+
+      <Modal
+        title="Risultati"
+        open={modalVisible}
+        onOk={handleModalOk}
+        onCancel={handleModalCancel}
+        style={{ gap: 20 }}
+        okText="Nuovo calcolo"
+        cancelText="Torna al calcolo"
+      >
+        {results ? (
+          <div className="results-box">
+            <Alert
+              message={`Totale Polveri: ${results.totalFlourAmount} g`}
+              type="info"
+              showIcon
+            />
+            <Alert message={`W: ${results.wRating}`} type="info" showIcon />
+            <Alert
+              message={`Acqua: ${results.totalWater} g`}
+              type="info"
+              showIcon
+            />
+            <Alert
+              message={`Sale: ${results.totalSalt} g`}
+              type="info"
+              showIcon
+            />
+            <Alert
+              message={`Lievito Madre: ${results.totalYeast} g`}
+              type="info"
+              showIcon
+            />
+            <Alert
+              message={`Tempo di Lievitazione: ${results.riseTime}`}
+              type="info"
+              showIcon
+            />
+            <Alert
+              message={`Rapporto di Proteine: ${results.proteinRatio} %`}
+              type="info"
+              showIcon
+            />
+            <Alert
+              message={`Rapporto di Fibre: ${results.fiberRatio} %`}
+              type="info"
+              showIcon
+            />
+            <Alert
+              message={`Rapporto di Grassi: ${results.fatRatio} %`}
+              type="info"
+              showIcon
+            />
+            <Alert
+              message={`Indice Glicemico: ${results.glycemicIndex}`}
+              type="info"
+              showIcon
+            />
+          </div>
+        ) : (
+          <Alert message="Errore nel calcolo dei risultati" type="error" />
+        )}
+      </Modal>
     </Layout>
   )
 }
