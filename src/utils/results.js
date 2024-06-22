@@ -9,6 +9,7 @@ export const calculateDough = (values, setResults, setModalVisible) => {
   let totalRye = 0
   let totalSpelt = 0
   let totalCorn = 0
+  let totalRice = 0
 
   flours.forEach((flour) => {
     const { flourAmount, proteinContent, fiberContent, flourKind } = flour
@@ -16,16 +17,16 @@ export const calculateDough = (values, setResults, setModalVisible) => {
     console.log("type = ", flourKind)
     console.log("protein = ", proteinContent)
 
-    if (flourKind === "farina di mais") {
+    if (flourKind === "farina di mais" || flourKind === "farina di riso") {
       totalProtein += 0
     } else if (flourKind === "farina di farro") {
-      totalProtein += flourAmount * ((proteinContent * 0.75) / 100)
+      totalProtein += flourAmount * ((proteinContent * 0.15) / 100)
     } else if (flourKind === "farina di segale") {
-      totalProtein += flourAmount * ((proteinContent * 0.4) / 100)
+      totalProtein += flourAmount * ((proteinContent * 0.01) / 100)
     } else if (flourKind === "grano duro") {
       totalProtein += flourAmount * ((proteinContent * 0.75) / 100)
     } else {
-      totalProtein += flourAmount * (proteinContent / 100)
+      totalProtein += flourAmount * ((proteinContent * 0.85) / 100)
     }
 
     totalFiber += flourAmount * (fiberContent / 100)
@@ -39,8 +40,12 @@ export const calculateDough = (values, setResults, setModalVisible) => {
       totalRye += flourAmount
     } else if (flourKind === "farina di farro") {
       totalSpelt += flourAmount
-    } else {
+    } else if (flourKind === "farina di mais") {
       totalCorn += flourAmount
+    } else if (flourKind === "farina di riso") {
+      totalRice += flourAmount
+    } else {
+      console.error("Tipo di farina non riconosciuto")
     }
   })
 
@@ -113,25 +118,13 @@ export const calculateDough = (values, setResults, setModalVisible) => {
   let waterRangeMin, waterRangeMax
   let waterRatio = 1 + fiberRatio / 100
 
-  // Se totalFlourAmount è maggiore di zero, calcola la percentuale di grano duro e grano tenero
-  const durumWheatPercentage = (totalDurumWheat / totalFlourAmount) * 100
-  const softWheatPercentage = (totalSoftWheat / totalFlourAmount) * 100
-  const ryePercentage = (totalRye / totalFlourAmount) * 100
-  const speltPercentage = (totalSpelt / totalFlourAmount) * 100
-  const cornPercentage = (totalCorn / totalFlourAmount) * 100
-
-  console.log("Durum wheat percentage:", durumWheatPercentage)
-  console.log("Soft wheat percentage:", softWheatPercentage)
-  console.log("Rye percentage:", ryePercentage)
-  console.log("Spelt percentage:", speltPercentage)
-  console.log("Corn percentage:", cornPercentage)
-
   // Definisci i fattori di assorbimento acqua per ogni tipo di farina
-  const durumWheatWaterRatio = 0.97
+  const durumWheatWaterRatio = 0.9
   const softWheatWaterRatio = 1
   const ryeWaterRatio = 1.2
-  const speltWaterRatio = 1.15
-  const cornWaterRatio = 1.25
+  const speltWaterRatio = 0.9
+  const cornWaterRatio = 2.3
+  const riceWaterRatio = 0.8
 
   // Calcola il water ratio totale come media ponderata
   waterRatio =
@@ -139,7 +132,7 @@ export const calculateDough = (values, setResults, setModalVisible) => {
       totalSoftWheat * softWheatWaterRatio +
       totalRye * ryeWaterRatio +
       totalSpelt * speltWaterRatio +
-      totalCorn * cornWaterRatio) /
+      totalCorn * cornWaterRatio + totalRice * riceWaterRatio) /
     totalFlourAmount
 
   waterRatio += totalFiber * 0.002
@@ -183,10 +176,9 @@ export const calculateDough = (values, setResults, setModalVisible) => {
 
   setResults({
     totalFlourAmount: totalFlourAmount.toFixed(0),
-    totalWater: `${waterRangeMin.toFixed(0)} - ${Math.min(
-      totalFlourAmount,
-      waterRangeMax
-    ).toFixed(0)}`,
+    totalWater: `${Math.min(totalFlourAmount, waterRangeMin).toFixed(
+      0
+    )} - ${Math.min(totalFlourAmount, waterRangeMax).toFixed(0)}`,
     totalSalt: totalSalt.toFixed(0),
     totalYeast: totalYeast.toFixed(0),
     riseTime,

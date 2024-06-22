@@ -116,6 +116,7 @@ const App = () => {
                               <Option value="farina di mais">Cornmeal</Option>
                               <Option value="farina di farro">Spelt</Option>
                               <Option value="farina di segale">Rye</Option>
+                              <Option value="farina di riso">Rice</Option>
                             </Select>
                           </Form.Item>
 
