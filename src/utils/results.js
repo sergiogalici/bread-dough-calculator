@@ -124,41 +124,21 @@ export const calculateDough = (values, setResults, setModalVisible) => {
   console.log("Spelt percentage:", speltPercentage)
   console.log("Corn percentage:", cornPercentage)
 
-  // Definisci gli scaglioni in base alla percentuale di grano duro o grano tenero
-  if (durumWheatPercentage >= 50) {
-    // Più del 50% di grano duro
-    waterRatio *= 0.9 // Riduci il water ratio in modo graduale
-  } else if (durumWheatPercentage >= 30) {
-    // Tra il 30% e il 50% di grano duro
-    const factor =
-      0.9 + ((durumWheatPercentage - 30) * (0.93 - 0.9)) / (50 - 30)
-    waterRatio *= factor // Adatta il water ratio in modo più graduale
-  } else if (durumWheatPercentage >= 20) {
-    // Tra il 20% e il 30% di grano duro
-    const factor =
-      0.93 + ((durumWheatPercentage - 20) * (0.95 - 0.93)) / (30 - 20)
-    waterRatio *= factor // Adatta il water ratio in modo più graduale
-  } else {
-    // Meno del 20% di grano duro
-    const factor = 0.95 + ((durumWheatPercentage - 0) * (1 - 0.95)) / (20 - 0)
-    waterRatio *= factor // Adatta il water ratio in modo più graduale
-  }
+  // Definisci i fattori di assorbimento acqua per ogni tipo di farina
+  const durumWheatWaterRatio = 0.95
+  const softWheatWaterRatio = 1
+  const ryeWaterRatio = 1.2
+  const speltWaterRatio = 1.1
+  const cornWaterRatio = 1.3
 
-  if (speltPercentage > 0) {
-    // Se c'è farro, considera il suo effetto sull'assorbimento dell'acqua
-    const speltFactor = 0.85 + speltPercentage * 0.01 // Esempio di fattore per il farro
-    waterRatio *= speltFactor // Adatta il water ratio in base al farro
-  } else if (ryePercentage > 0) {
-    // Se c'è segale, considera il suo effetto sull'assorbimento dell'acqua
-    const ryeFactor = 0.88 + ryePercentage * 0.01 // Esempio di fattore per la segale
-    waterRatio *= ryeFactor // Adatta il water ratio in base alla segale
-  }
-
-  if (cornPercentage > 0) {
-    // Se c'è mais, considera il suo effetto sull'assorbimento dell'acqua
-    const cornFactor = 0.95 + cornPercentage * 0.005 // Esempio di fattore per il mais
-    waterRatio *= cornFactor // Adatta il water ratio in base al mais
-  }
+  // Calcola il water ratio totale come media ponderata
+  waterRatio =
+    (totalDurumWheat * durumWheatWaterRatio +
+      totalSoftWheat * softWheatWaterRatio +
+      totalRye * ryeWaterRatio +
+      totalSpelt * speltWaterRatio +
+      totalCorn * cornWaterRatio) /
+    totalFlourAmount
 
   console.log("Water ratio:", waterRatio)
   console.log("Protein ratio:", proteinRatio)
