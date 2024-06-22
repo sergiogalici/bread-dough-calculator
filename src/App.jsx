@@ -234,7 +234,7 @@ const App = () => {
         onOk={handleModalOk}
         onCancel={handleModalCancel}
         style={{ gap: 20 }}
-        okText="Nuovo mix"
+        okText="New mix"
         cancelText="Back to your mix"
       >
         {results ? (
