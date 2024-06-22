@@ -23,7 +23,7 @@ export const calculateDough = (values, setResults, setModalVisible) => {
     } else if (flourKind === "farina di segale") {
       totalProtein += flourAmount * ((proteinContent * 0.4) / 100)
     } else if (flourKind === "grano duro") {
-      totalProtein += flourAmount * ((proteinContent * 0.85) / 100)
+      totalProtein += flourAmount * ((proteinContent * 0.75) / 100)
     } else {
       totalProtein += flourAmount * (proteinContent / 100)
     }
@@ -127,11 +127,11 @@ export const calculateDough = (values, setResults, setModalVisible) => {
   console.log("Corn percentage:", cornPercentage)
 
   // Definisci i fattori di assorbimento acqua per ogni tipo di farina
-  const durumWheatWaterRatio = 0.9
+  const durumWheatWaterRatio = 0.97
   const softWheatWaterRatio = 1
-  const ryeWaterRatio = 1.5
-  const speltWaterRatio = 1.2
-  const cornWaterRatio = 1.8
+  const ryeWaterRatio = 1.2
+  const speltWaterRatio = 1.15
+  const cornWaterRatio = 1.25
 
   // Calcola il water ratio totale come media ponderata
   waterRatio =
