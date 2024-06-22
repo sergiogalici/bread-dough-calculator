@@ -127,9 +127,9 @@ export const calculateDough = (values, setResults, setModalVisible) => {
   // Definisci i fattori di assorbimento acqua per ogni tipo di farina
   const durumWheatWaterRatio = 0.95
   const softWheatWaterRatio = 1
-  const ryeWaterRatio = 1.2
-  const speltWaterRatio = 1.1
-  const cornWaterRatio = 1.3
+  const ryeWaterRatio = 1.5
+  const speltWaterRatio = 1.2
+  const cornWaterRatio = 1.8
 
   // Calcola il water ratio totale come media ponderata
   waterRatio =
