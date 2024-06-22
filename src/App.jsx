@@ -140,6 +140,7 @@ const App = () => {
                               style={{ width: "100%" }}
                               addonAfter="%"
                               inputMode="numeric"
+                              datatype="number"
                             />
                           </Form.Item>
 
@@ -163,6 +164,7 @@ const App = () => {
                               style={{ width: "100%" }}
                               addonAfter="%"
                               inputMode="numeric"
+                              datatype="number"
                             />
                           </Form.Item>
 
@@ -185,6 +187,7 @@ const App = () => {
                               style={{ width: "100%" }}
                               addonAfter="g"
                               inputMode="numeric"
+                              datatype="number"
                             />
                           </Form.Item>
 
@@ -223,6 +226,7 @@ const App = () => {
                   defaultValue={25}
                   addonAfter="°C"
                   inputMode="numeric"
+                  datatype="number"
                 />
               </Form.Item>
 
