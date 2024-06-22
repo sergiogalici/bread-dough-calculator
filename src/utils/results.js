@@ -93,18 +93,18 @@ export const calculateDough = (values, setResults, setModalVisible) => {
     secondProofingTime = "1-2 ore"
   }
 
-  const riseTime = `${firstProofingTime} (prima lievitazione), ${secondProofingTime} (seconda lievitazione)`
+  const riseTime = `${firstProofingTime} (first proofing), ${secondProofingTime} (second proofing)`
 
   // Calcolo dei macronutrienti e indice glicemico
   const fiberRatio = (totalFiber / totalFlourAmount) * 100
 
   let glycemicIndex
   if (fiberRatio > 10) {
-    glycemicIndex = "Basso"
+    glycemicIndex = "Low"
   } else if (fiberRatio > 5) {
-    glycemicIndex = "Medio"
+    glycemicIndex = "Average"
   } else {
-    glycemicIndex = "Alto"
+    glycemicIndex = "High"
   }
 
   const proteinRatio = (totalProtein / totalFlourAmount) * 100

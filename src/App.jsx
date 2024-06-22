@@ -240,43 +240,47 @@ const App = () => {
         {results ? (
           <div className="results-box">
             <Alert
-              message={`Totale Polveri: ${results.totalFlourAmount} g`}
-              type="info"
-              showIcon
-            />
-            <Alert message={`W: ${results.wRating}`} type="info" showIcon />
-            <Alert
-              message={`Acqua: ${results.totalWater} g`}
+              message={`Total flour: ${results.totalFlourAmount} g`}
               type="info"
               showIcon
             />
             <Alert
-              message={`Sale: ${results.totalSalt} g`}
+              message={`W rating: ${results.wRating}`}
               type="info"
               showIcon
             />
             <Alert
-              message={`Lievito Madre: ${results.totalYeast} g`}
+              message={`Water: ${results.totalWater} g`}
               type="info"
               showIcon
             />
             <Alert
-              message={`Tempo di Lievitazione: ${results.riseTime}`}
+              message={`Salt: ${results.totalSalt} g`}
               type="info"
               showIcon
             />
             <Alert
-              message={`Rapporto di Proteine (Glutine): ${results.proteinRatio} %`}
+              message={`Sourdough starter: ${results.totalYeast} g`}
               type="info"
               showIcon
             />
             <Alert
-              message={`Rapporto di Fibre: ${results.fiberRatio} %`}
+              message={`Proofing time: ${results.riseTime}`}
               type="info"
               showIcon
             />
             <Alert
-              message={`Indice Glicemico: ${results.glycemicIndex}`}
+              message={`Protein Content (gluten): ${results.proteinRatio} %`}
+              type="info"
+              showIcon
+            />
+            <Alert
+              message={`Fiber content: ${results.fiberRatio} %`}
+              type="info"
+              showIcon
+            />
+            <Alert
+              message={`Glycemic index: ${results.glycemicIndex}`}
               type="info"
               showIcon
             />
