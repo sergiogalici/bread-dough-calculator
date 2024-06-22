@@ -123,7 +123,7 @@ const App = () => {
                             {...field}
                             name={[field.name, "proteinContent"]}
                             fieldKey={[field.fieldKey, "proteinContent"]}
-                            label="Protein Content (%)"
+                            label="Protein Content"
                             style={{ width: 200 }}
                             rules={[
                               {
@@ -137,6 +137,7 @@ const App = () => {
                               max={100}
                               placeholder="Insert your flour water content"
                               style={{ width: "100%" }}
+                              addonAfter="%"
                             />
                           </Form.Item>
 
@@ -144,7 +145,7 @@ const App = () => {
                             {...field}
                             name={[field.name, "fiberContent"]}
                             fieldKey={[field.fieldKey, "fiberContent"]}
-                            label="Fiber Content (%)"
+                            label="Fiber Content"
                             style={{ width: 200 }}
                             rules={[
                               {
@@ -158,6 +159,7 @@ const App = () => {
                               max={100}
                               placeholder="Insert your flour's fiber content"
                               style={{ width: "100%" }}
+                              addonAfter="%"
                             />
                           </Form.Item>
 
@@ -165,7 +167,7 @@ const App = () => {
                             {...field}
                             name={[field.name, "flourAmount"]}
                             fieldKey={[field.fieldKey, "flourAmount"]}
-                            label="Flour amount (g)"
+                            label="Flour amount"
                             style={{ width: 200 }}
                             rules={[
                               {
@@ -178,6 +180,7 @@ const App = () => {
                               min={0}
                               placeholder="Insert your flour amount in grams"
                               style={{ width: "100%" }}
+                              addonAfter="g"
                             />
                           </Form.Item>
 
@@ -206,6 +209,7 @@ const App = () => {
                 rules={[
                   { required: true, message: "Insert your room temperature" },
                 ]}
+                initialValue={25}
               >
                 <InputNumber
                   min={-10}
@@ -213,6 +217,7 @@ const App = () => {
                   placeholder="Insert your room temperature"
                   style={{ width: "100%" }}
                   defaultValue={25}
+                  addonAfter="°C"
                 />
               </Form.Item>
 
