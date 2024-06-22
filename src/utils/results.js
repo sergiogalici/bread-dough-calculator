@@ -22,7 +22,7 @@ export const calculateDough = (values, setResults, setModalVisible) => {
     } else if (flourKind === "farina di farro") {
       totalProtein += flourAmount * ((proteinContent * 0.15) / 100)
     } else if (flourKind === "farina di segale") {
-      totalProtein += flourAmount * ((proteinContent * 0.01) / 100)
+      totalProtein += flourAmount * ((proteinContent * 0.05) / 100)
     } else if (flourKind === "grano duro") {
       totalProtein += flourAmount * ((proteinContent * 0.85) / 100)
     } else {
@@ -123,7 +123,7 @@ export const calculateDough = (values, setResults, setModalVisible) => {
   const softWheatWaterRatio = 1
   const ryeWaterRatio = 1.2
   const speltWaterRatio = 0.85
-  const cornWaterRatio = 2.3
+  const cornWaterRatio = 1.8
   const riceWaterRatio = 0.8
 
   // Calcola il water ratio totale come media ponderata
@@ -136,7 +136,7 @@ export const calculateDough = (values, setResults, setModalVisible) => {
       totalRice * riceWaterRatio) /
     totalFlourAmount
 
-  waterRatio += totalFiber * 0.002
+  waterRatio += totalFiber * 0.0005
 
   console.log("Water ratio:", waterRatio)
   console.log("Protein ratio:", proteinRatio)
