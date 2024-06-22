@@ -270,11 +270,6 @@ const App = () => {
               showIcon
             />
             <Alert
-              message={`Protein Content (gluten): ${results.proteinRatio} %`}
-              type="info"
-              showIcon
-            />
-            <Alert
               message={`Fiber content: ${results.fiberRatio} %`}
               type="info"
               showIcon
