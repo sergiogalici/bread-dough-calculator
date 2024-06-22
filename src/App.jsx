@@ -244,7 +244,7 @@ const App = () => {
         okText="New mix"
         cancelText="Back to your mix"
       >
-        {results ? (
+        {results && results.totalFlourAmount > 0 ? (
           <div className="results-box">
             <Alert
               message={`Total flour: ${results.totalFlourAmount} g`}
@@ -288,7 +288,7 @@ const App = () => {
             />
           </div>
         ) : (
-          <Alert message="Errore nel calcolo dei risultati" type="error" />
+          <Alert message="Invalid Input" type="error" />
         )}
       </Modal>
     </Layout>
