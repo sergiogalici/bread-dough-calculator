@@ -119,10 +119,10 @@ export const calculateDough = (values, setResults, setModalVisible) => {
   let waterRatio = 1 + fiberRatio / 100
 
   // Definisci i fattori di assorbimento acqua per ogni tipo di farina
-  const durumWheatWaterRatio = 0.9
+  const durumWheatWaterRatio = 1.05
   const softWheatWaterRatio = 1
   const ryeWaterRatio = 1.2
-  const speltWaterRatio = 0.9
+  const speltWaterRatio = 0.85
   const cornWaterRatio = 2.3
   const riceWaterRatio = 0.8
 
@@ -132,7 +132,8 @@ export const calculateDough = (values, setResults, setModalVisible) => {
       totalSoftWheat * softWheatWaterRatio +
       totalRye * ryeWaterRatio +
       totalSpelt * speltWaterRatio +
-      totalCorn * cornWaterRatio + totalRice * riceWaterRatio) /
+      totalCorn * cornWaterRatio +
+      totalRice * riceWaterRatio) /
     totalFlourAmount
 
   waterRatio += totalFiber * 0.002
