@@ -28,46 +28,55 @@ const App = () => {
 
   const calculateDough = (values) => {
     const { flours, temperature } = values
-    let totalWater = 0
     let totalSalt = 0
     let totalYeast = 0
     let totalFiber = 0
-    let totalFat = 0
     let totalProtein = 0
     let totalDurumWheat = 0
     let totalSoftWheat = 0
+    let totalRye = 0
+    let totalSpelt = 0
+    let totalCorn = 0
 
     flours.forEach((flour) => {
-      const {
-        flourAmount,
-        proteinContent,
-        fiberContent,
-        fatContent,
-        flourKind,
-      } = flour
+      const { flourAmount, proteinContent, fiberContent, flourKind } = flour
 
       console.log("type = ", flourKind)
-      totalProtein += flourAmount * (proteinContent / 100)
+      console.log("protein = ", proteinContent)
+
+      if (flourKind === "farina di mais") {
+        totalProtein += 0
+      } else if (flourKind === "farina di farro") {
+        totalProtein += flourAmount * ((proteinContent * 0.85) / 100)
+      } else if (flourKind === "farina di segale") {
+        totalProtein += flourAmount * ((proteinContent * 0.5) / 100)
+      } else {
+        totalProtein += flourAmount * (proteinContent / 100)
+      }
+
       totalFiber += flourAmount * (fiberContent / 100)
-      totalFat += flourAmount * (fatContent / 100)
       totalSalt += flourAmount * 0.02 // Assumo 2% di sale in base alla quantità di farina
 
       if (flourKind === "grano duro") {
         totalDurumWheat += flourAmount
-      } else {
+      } else if (flourKind === "grano tenero") {
         totalSoftWheat += flourAmount
+      } else if (flourKind === "farina di segale") {
+        totalRye += flourAmount
+      } else if (flourKind === "farina di farro") {
+        totalSpelt += flourAmount
+      } else {
+        totalCorn += flourAmount
       }
     })
 
     console.log("Total protein:", totalProtein)
     console.log("Total fiber:", totalFiber)
-    console.log("Total fat:", totalFat)
     console.log("Total durum wheat:", totalDurumWheat)
     console.log("Total soft wheat:", totalSoftWheat)
 
-    totalFat = totalFat ?? 0
-
-    const totalFlourAmount = totalDurumWheat + totalSoftWheat
+    const totalFlourAmount =
+      totalDurumWheat + totalSoftWheat + totalRye + totalSpelt + totalCorn
 
     // Calcolo della quantità di lievito in base alla temperatura
     if (temperature < 10) {
@@ -114,7 +123,6 @@ const App = () => {
 
     // Calcolo dei macronutrienti e indice glicemico
     const fiberRatio = (totalFiber / totalFlourAmount) * 100
-    const fatRatio = (totalFat / totalFlourAmount) * 100
 
     let glycemicIndex
     if (fiberRatio > 10) {
@@ -125,7 +133,7 @@ const App = () => {
       glycemicIndex = "Alto"
     }
 
-    const proteinRatio = (totalProtein / (totalFlourAmount - totalFat)) * 100
+    const proteinRatio = (totalProtein / totalFlourAmount) * 100
 
     let wRating = ""
     let waterRangeMin, waterRangeMax
@@ -133,8 +141,16 @@ const App = () => {
 
     // Se totalFlourAmount è maggiore di zero, calcola la percentuale di grano duro e grano tenero
     const durumWheatPercentage = (totalDurumWheat / totalFlourAmount) * 100
+    const softWheatPercentage = (totalSoftWheat / totalFlourAmount) * 100
+    const ryePercentage = (totalRye / totalFlourAmount) * 100
+    const speltPercentage = (totalSpelt / totalFlourAmount) * 100
+    const cornPercentage = (totalCorn / totalFlourAmount) * 100
 
     console.log("Durum wheat percentage:", durumWheatPercentage)
+    console.log("Soft wheat percentage:", softWheatPercentage)
+    console.log("Rye percentage:", ryePercentage)
+    console.log("Spelt percentage:", speltPercentage)
+    console.log("Corn percentage:", cornPercentage)
 
     // Definisci gli scaglioni in base alla percentuale di grano duro o grano tenero
     if (durumWheatPercentage >= 50) {
@@ -154,6 +170,22 @@ const App = () => {
       // Meno del 20% di grano duro
       const factor = 0.95 + ((durumWheatPercentage - 0) * (1 - 0.95)) / (20 - 0)
       waterRatio *= factor // Adatta il water ratio in modo più graduale
+    }
+
+    if (speltPercentage > 0) {
+      // Se c'è farro, considera il suo effetto sull'assorbimento dell'acqua
+      const speltFactor = 0.85 + speltPercentage * 0.01 // Esempio di fattore per il farro
+      waterRatio *= speltFactor // Adatta il water ratio in base al farro
+    } else if (ryePercentage > 0) {
+      // Se c'è segale, considera il suo effetto sull'assorbimento dell'acqua
+      const ryeFactor = 0.88 + ryePercentage * 0.01 // Esempio di fattore per la segale
+      waterRatio *= ryeFactor // Adatta il water ratio in base alla segale
+    }
+
+    if (cornPercentage > 0) {
+      // Se c'è mais, considera il suo effetto sull'assorbimento dell'acqua
+      const cornFactor = 0.95 + cornPercentage * 0.005 // Esempio di fattore per il mais
+      waterRatio *= cornFactor // Adatta il water ratio in base al mais
     }
 
     console.log("Water ratio:", waterRatio)
@@ -201,7 +233,6 @@ const App = () => {
       riseTime,
       proteinRatio: proteinRatio.toFixed(1),
       fiberRatio: fiberRatio.toFixed(1),
-      fatRatio: fatRatio.toFixed(1),
       glycemicIndex,
       wRating,
     })
@@ -255,7 +286,6 @@ const App = () => {
                     flourAmount: 0,
                     proteinContent: 0,
                     fiberContent: 0,
-                    fatContent: 0,
                   },
                 ],
               }}
@@ -287,6 +317,15 @@ const App = () => {
                             >
                               <Option value="grano duro">Grano Duro</Option>
                               <Option value="grano tenero">Grano Tenero</Option>
+                              <Option value="farina di mais">
+                                Farina di Mais
+                              </Option>
+                              <Option value="farina di farro">
+                                Farina di Farro
+                              </Option>
+                              <Option value="farina di segale">
+                                Farina di Segale
+                              </Option>
                             </Select>
                           </Form.Item>
 
@@ -328,21 +367,6 @@ const App = () => {
                               min={0}
                               max={100}
                               placeholder="Inserisci il contenuto di fibre"
-                              style={{ width: "100%" }}
-                            />
-                          </Form.Item>
-
-                          <Form.Item
-                            {...field}
-                            name={[field.name, "fatContent"]}
-                            fieldKey={[field.fieldKey, "fatContent"]}
-                            label="Contenuto di Grassi (%)"
-                            style={{ width: 200 }}
-                          >
-                            <InputNumber
-                              min={0}
-                              max={100}
-                              placeholder="Inserisci il contenuto di grassi"
                               style={{ width: "100%" }}
                             />
                           </Form.Item>
@@ -452,17 +476,12 @@ const App = () => {
               showIcon
             />
             <Alert
-              message={`Rapporto di Proteine: ${results.proteinRatio} %`}
+              message={`Rapporto di Proteine (Glutine): ${results.proteinRatio} %`}
               type="info"
               showIcon
             />
             <Alert
               message={`Rapporto di Fibre: ${results.fiberRatio} %`}
-              type="info"
-              showIcon
-            />
-            <Alert
-              message={`Rapporto di Grassi: ${results.fatRatio} %`}
               type="info"
               showIcon
             />
