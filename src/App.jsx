@@ -139,6 +139,7 @@ const App = () => {
                               placeholder="Insert your flour water content"
                               style={{ width: "100%" }}
                               addonAfter="%"
+                              inputMode="numeric"
                             />
                           </Form.Item>
 
@@ -161,6 +162,7 @@ const App = () => {
                               placeholder="Insert your flour's fiber content"
                               style={{ width: "100%" }}
                               addonAfter="%"
+                              inputMode="numeric"
                             />
                           </Form.Item>
 
@@ -182,6 +184,7 @@ const App = () => {
                               placeholder="Insert your flour amount in grams"
                               style={{ width: "100%" }}
                               addonAfter="g"
+                              inputMode="numeric"
                             />
                           </Form.Item>
 
@@ -219,6 +222,7 @@ const App = () => {
                   style={{ width: "100%" }}
                   defaultValue={25}
                   addonAfter="°C"
+                  inputMode="numeric"
                 />
               </Form.Item>
 
