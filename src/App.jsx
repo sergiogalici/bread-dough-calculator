@@ -44,11 +44,11 @@ const App = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          height: 250,
+          height: 140,
         }}
       >
         <Title style={{ color: "white", textAlign: "center" }}>
-          🥖 Sourdough Bread Calculator 🍞
+          🥖 Bread Calculator 🍞
         </Title>
       </Header>
       <Content

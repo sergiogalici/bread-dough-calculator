@@ -24,9 +24,9 @@ export const calculateDough = (values, setResults, setModalVisible) => {
     } else if (flourKind === "farina di segale") {
       totalProtein += flourAmount * ((proteinContent * 0.01) / 100)
     } else if (flourKind === "grano duro") {
-      totalProtein += flourAmount * ((proteinContent * 0.75) / 100)
-    } else {
       totalProtein += flourAmount * ((proteinContent * 0.85) / 100)
+    } else {
+      totalProtein += flourAmount * ((proteinContent * 0.95) / 100)
     }
 
     totalFiber += flourAmount * (fiberContent / 100)
