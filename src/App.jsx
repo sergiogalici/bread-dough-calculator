@@ -212,6 +212,7 @@ const App = () => {
                   max={50}
                   placeholder="Insert your room temperature"
                   style={{ width: "100%" }}
+                  defaultValue={25}
                 />
               </Form.Item>
 
