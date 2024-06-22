@@ -106,8 +106,8 @@ const App = () => {
       firstProofingTime = "2-4 ore"
       secondProofingTime = "1-2 ore"
     } else {
-      firstProofingTime = "1-2 ore"
-      secondProofingTime = "1 ora"
+      firstProofingTime = "2-4 ore"
+      secondProofingTime = "1-2 ore"
     }
 
     const riseTime = `${firstProofingTime} (prima lievitazione), ${secondProofingTime} (seconda lievitazione)`
@@ -125,8 +125,7 @@ const App = () => {
       glycemicIndex = "Alto"
     }
 
-    const proteinRatio =
-      (totalProtein / (totalFlourAmount - totalProtein - totalFat)) * 100
+    const proteinRatio = (totalProtein / (totalFlourAmount - totalFat)) * 100
 
     let wRating = ""
     let waterRangeMin, waterRangeMax
