@@ -136,7 +136,7 @@ export const calculateDough = (values, setResults, setModalVisible) => {
       totalRice * riceWaterRatio) /
     totalFlourAmount
 
-  waterRatio += totalFiber * 0.0005
+  waterRatio += totalFiber * 0.003
 
   console.log("Water ratio:", waterRatio)
   console.log("Protein ratio:", proteinRatio)
