@@ -1,27 +1,47 @@
 export const calculatePizza = (values, setResults, setModalVisible) => {
-  const { flours, temperature, coldProofing } = values
+  const { numberOfPizzas, weightPerPizza, flours, temperature, coldProofing } =
+    values
 
+  // Calcola il peso totale dell'impasto
+  const totalDoughWeight = numberOfPizzas * weightPerPizza
+
+  // Inizializza i totali
   let totalFlourAmount = 0
   let totalProtein = 0
   let totalFiber = 0
-  let flourComposition = {}
+  let totalSoftWheat = 0
+  let totalDurumWheat = 0
+  let totalCornmeal = 0
+  let totalRiceFlour = 0
 
-  const proteinFactor = {
-    "grano tenero": 1,
-    "grano duro": 0.85,
-    "farina di mais": 0,
-    "farina di riso": 0,
-  }
+  // Calcola la quantità totale di farina (assumiamo che sia il 62% del peso totale dell'impasto)
+  const estimatedTotalFlour = totalDoughWeight * 0.62
 
-  flours.forEach((flour) => {
-    const { flourAmount, proteinContent, fiberContent, flourKind } = flour
-    totalFlourAmount += flourAmount
-    totalFiber += flourAmount * (fiberContent / 100)
-    totalProtein +=
-      flourAmount * (proteinContent / 100) * (proteinFactor[flourKind] || 1)
-    flourComposition[flourKind] =
-      (flourComposition[flourKind] || 0) + flourAmount
-  })
+  // Calcola le quantità di ogni tipo di farina
+  flours.forEach(
+    ({ flourPercentage, proteinContent, fiberContent, flourKind }) => {
+      const flourAmount = estimatedTotalFlour * (flourPercentage / 100)
+      totalFlourAmount += flourAmount
+      totalFiber += flourAmount * (fiberContent / 100)
+
+      switch (flourKind) {
+        case "grano tenero":
+          totalSoftWheat += flourAmount
+          totalProtein += flourAmount * (proteinContent / 100)
+          break
+        case "grano duro":
+          totalDurumWheat += flourAmount
+          totalProtein += flourAmount * (proteinContent / 100)
+          break
+        case "farina di mais":
+          totalCornmeal += flourAmount
+          break
+        case "farina di riso":
+          totalRiceFlour += flourAmount
+          break
+      }
+    }
+  )
 
   const totalSalt = totalFlourAmount * 0.02 // 2% di sale
   const totalYeast = totalFlourAmount * 0.002 // 0.2% di lievito per lievitazione lunga

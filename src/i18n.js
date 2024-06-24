@@ -94,6 +94,17 @@ i18n.use(initReactI18next).init({
         Oil: "Oil",
         Margarine: "Margarine",
         Lard: "Lard",
+        "Number of pizzas": "Number of pizzas",
+        "Weight per pizza (g)": "Weight per pizza (g)",
+        "Please input number of pizzas": "Please input number of pizzas",
+        "Please input weight per pizza": "Please input weight per pizza",
+        "At least one type of flour is required":
+          "At least one type of flour is required",
+        "Total flour percentage must be 100%":
+          "Total flour percentage must be 100%",
+        "Choose flour type": "Choose flour type",
+        "Input flour percentage": "Input flour percentage",
+        "Flour percentage": "Flour percentage",
       },
     },
     fr: {
@@ -104,8 +115,7 @@ i18n.use(initReactI18next).init({
         Focaccia: "Focaccia",
         "Brioche Buns": "Petits Pains Briochés",
         Naan: "Naan",
-        "Desired weight of each bun (g)":
-          "Poids désiré de chaque petit pain",
+        "Desired weight of each bun (g)": "Poids désiré de chaque petit pain",
         "Number of buns": "Nombre de petits pains",
         "Hydration percentage": "Pourcentage d'hydratation",
         "Fat percentage": "Pourcentage de graisse",
@@ -191,6 +201,17 @@ i18n.use(initReactI18next).init({
         Oil: "Huile",
         Margarine: "Margarine",
         Lard: "Saindoux",
+        "Number of pizzas": "Nombre de pizzas",
+        "Weight per pizza (g)": "Poids par pizza (g)",
+        "Please input number of pizzas": "Veuillez saisir le nombre de pizzas",
+        "Please input weight per pizza": "Veuillez saisir le poids par pizza",
+        "At least one type of flour is required":
+          "Au moins un type de farine est requis",
+        "Total flour percentage must be 100%":
+          "Le pourcentage total de farine doit être de 100%",
+        "Choose flour type": "Choisissez le type de farine",
+        "Input flour percentage": "Saisissez le pourcentage de farine",
+        "Flour percentage": "Pourcentage de farine",
       },
     },
     es: {
@@ -289,6 +310,17 @@ i18n.use(initReactI18next).init({
         Margarine: "Margarina",
         Lard: "Manteca de cerdo",
       },
+      "Number of pizzas": "Número de pizzas",
+      "Weight per pizza (g)": "Peso por pizza (g)",
+      "Please input number of pizzas": "Por favor, ingrese el número de pizzas",
+      "Please input weight per pizza": "Por favor, ingrese el peso por pizza",
+      "At least one type of flour is required":
+        "Se requiere al menos un tipo de harina",
+      "Total flour percentage must be 100%":
+        "El porcentaje total de harina debe ser 100%",
+      "Choose flour type": "Elija el tipo de harina",
+      "Input flour percentage": "Ingrese el porcentaje de harina",
+      "Flour percentage": "Porcentaje de harina",
     },
     it: {
       translation: {
@@ -298,8 +330,7 @@ i18n.use(initReactI18next).init({
         Focaccia: "Focaccia",
         "Brioche Buns": "Panini di Brioche",
         Naan: "Naan",
-        "Desired weight of each bun (g)":
-          "Peso desiderato di ciascun panino",
+        "Desired weight of each bun (g)": "Peso desiderato di ciascun panino",
         "Number of buns": "Numero di panini",
         "Hydration percentage": "Percentuale di idratazione",
         "Fat percentage": "Percentuale di grassi",
@@ -354,8 +385,7 @@ i18n.use(initReactI18next).init({
         "W rating": "Valutazione W",
         "Fiber content": "Contenuto di fibra",
         "Add another flour to the mix": "Aggiungi un'altra farina al mix",
-        "Desired weight of each naan (g)":
-          "Peso desiderato di ciascun naan",
+        "Desired weight of each naan (g)": "Peso desiderato di ciascun naan",
         "Number of Naans": "Numero di naan",
         "Hydration percentage": "Percentuale di idratazione",
         "Fat percentage": "Percentuale di grassi",
@@ -388,6 +418,17 @@ i18n.use(initReactI18next).init({
         Oil: "Olio",
         Margarine: "Margarina",
         Lard: "Strutto",
+        "Number of pizzas": "Numero di pizze",
+        "Weight per pizza (g)": "Peso per pizza (g)",
+        "Please input number of pizzas": "Inserisci il numero di pizze",
+        "Please input weight per pizza": "Inserisci il peso per pizza",
+        "At least one type of flour is required":
+          "È richiesto almeno un tipo di farina",
+        "Total flour percentage must be 100%":
+          "La percentuale totale di farina deve essere 100%",
+        "Choose flour type": "Scegli il tipo di farina",
+        "Input flour percentage": "Inserisci la percentuale di farina",
+        "Flour percentage": "Percentuale di farina",
       },
     },
     pt: {
@@ -483,6 +524,17 @@ i18n.use(initReactI18next).init({
         Oil: "Óleo",
         Margarine: "Margarina",
         Lard: "Banha",
+        "Number of pizzas": "Número de pizzas",
+        "Weight per pizza (g)": "Peso por pizza (g)",
+        "Please input number of pizzas": "Por favor, insira o número de pizzas",
+        "Please input weight per pizza": "Por favor, insira o peso por pizza",
+        "At least one type of flour is required":
+          "Pelo menos um tipo de farinha é necessário",
+        "Total flour percentage must be 100%":
+          "A percentagem total de farinha deve ser 100%",
+        "Choose flour type": "Escolha o tipo de farinha",
+        "Input flour percentage": "Insira a percentagem de farinha",
+        "Flour percentage": "Percentagem de farinha",
       },
     },
     de: {
@@ -493,8 +545,7 @@ i18n.use(initReactI18next).init({
         Focaccia: "Focaccia",
         "Brioche Buns": "Brioche Brötchen",
         Naan: "Naan",
-        "Desired weight of each bun (g)":
-          "Gewünschtes Gewicht jedes Brötchens",
+        "Desired weight of each bun (g)": "Gewünschtes Gewicht jedes Brötchens",
         "Number of buns": "Anzahl der Brötchen",
         "Hydration percentage": "Hydrationsprozentsatz",
         "Fat percentage": "Fettprozentsatz",
@@ -581,6 +632,19 @@ i18n.use(initReactI18next).init({
         Oil: "Öl",
         Margarine: "Margarine",
         Lard: "Schmalz",
+        "Number of pizzas": "Anzahl der Pizzen",
+        "Weight per pizza (g)": "Gewicht pro Pizza (g)",
+        "Please input number of pizzas":
+          "Bitte geben Sie die Anzahl der Pizzen ein",
+        "Please input weight per pizza":
+          "Bitte geben Sie das Gewicht pro Pizza ein",
+        "At least one type of flour is required":
+          "Mindestens eine Mehlsorte ist erforderlich",
+        "Total flour percentage must be 100%":
+          "Der Gesamtmehlprozentsatz muss 100% betragen",
+        "Choose flour type": "Wählen Sie die Mehlsorte",
+        "Input flour percentage": "Geben Sie den Mehlprozentsatz ein",
+        "Flour percentage": "Mehlprozentsatz",
       },
     },
   },

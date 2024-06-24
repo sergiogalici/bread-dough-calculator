@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { useTranslation } from "react-i18next"
 import i18n from "./i18n"
 import {
@@ -14,6 +14,7 @@ import {
   Radio,
   Checkbox,
   Drawer,
+  Slider,
 } from "antd"
 import { PlusOutlined, DeleteOutlined, MenuOutlined } from "@ant-design/icons"
 import "./App.css"
@@ -254,6 +255,7 @@ const FlourForm = ({ form, t }) => (
                 ]}
               >
                 <InputNumber
+                  datatype="number"
                   min={0}
                   max={100}
                   placeholder={t("Insert protein content")}
@@ -281,6 +283,7 @@ const FlourForm = ({ form, t }) => (
                 ]}
               >
                 <InputNumber
+                  datatype="number"
                   min={0}
                   max={100}
                   placeholder={t("Insert fiber content")}
@@ -302,6 +305,7 @@ const FlourForm = ({ form, t }) => (
                 ]}
               >
                 <InputNumber
+                  datatype="number"
                   min={0}
                   placeholder={t("Insert flour amount in grams")}
                   style={{ width: "100%" }}
@@ -344,6 +348,7 @@ const FocacciaForm = ({ t }) => (
         ]}
       >
         <InputNumber
+          datatype="number"
           min={0}
           max={100}
           placeholder={t("Insert protein content")}
@@ -360,6 +365,7 @@ const FocacciaForm = ({ t }) => (
         ]}
       >
         <InputNumber
+          datatype="number"
           min={0}
           max={100}
           placeholder={t("Insert fiber content")}
@@ -376,6 +382,7 @@ const FocacciaForm = ({ t }) => (
         ]}
       >
         <InputNumber
+          datatype="number"
           min={0}
           placeholder={t("Insert flour amount in grams")}
           style={{ width: "100%" }}
@@ -397,14 +404,19 @@ const BriocheForm = ({ t }) => (
           { required: true, message: t("Please input weight of each bun") },
         ]}
       >
-        <InputNumber addonAfter="g" min={0} style={{ width: "100%" }} />
+        <InputNumber
+          datatype="number"
+          addonAfter="g"
+          min={0}
+          style={{ width: "100%" }}
+        />
       </Form.Item>
       <Form.Item
         name="bunCount"
         label={t("Number of buns")}
         rules={[{ required: true, message: t("Please input number of buns") }]}
       >
-        <InputNumber min={0} style={{ width: "100%" }} />
+        <InputNumber datatype="number" min={0} style={{ width: "100%" }} />
       </Form.Item>
       <Form.Item
         name="hydrationPercentage"
@@ -415,6 +427,7 @@ const BriocheForm = ({ t }) => (
         ]}
       >
         <InputNumber
+          datatype="number"
           min={0}
           max={100}
           style={{ width: "100%" }}
@@ -428,6 +441,7 @@ const BriocheForm = ({ t }) => (
         rules={[{ required: true, message: t("Please input fat percentage") }]}
       >
         <InputNumber
+          datatype="number"
           min={0}
           max={100}
           style={{ width: "100%" }}
@@ -474,7 +488,7 @@ const NaanForm = ({ t }) => (
         label={t("Number of Naans")}
         rules={[{ required: true, message: t("Please input number of naans") }]}
       >
-        <InputNumber min={0} style={{ width: "100%" }} />
+        <InputNumber datatype="number" min={0} style={{ width: "100%" }} />
       </Form.Item>
       <Form.Item
         name="hydrationPercentage"
@@ -485,6 +499,7 @@ const NaanForm = ({ t }) => (
         ]}
       >
         <InputNumber
+          datatype="number"
           min={0}
           max={100}
           style={{ width: "100%" }}
@@ -498,6 +513,7 @@ const NaanForm = ({ t }) => (
         rules={[{ required: true, message: t("Please input fat percentage") }]}
       >
         <InputNumber
+          datatype="number"
           min={0}
           max={100}
           style={{ width: "100%" }}
@@ -534,11 +550,292 @@ const NaanForm = ({ t }) => (
         label={t("Desired weight of each naan (g)")}
         initialValue={100}
       >
-        <InputNumber addonAfter="g" min={0} style={{ width: "100%" }} />
+        <InputNumber
+          datatype="number"
+          addonAfter="g"
+          min={0}
+          style={{ width: "100%" }}
+        />
       </Form.Item>
     </Space>
   </div>
 )
+
+const PizzaForm = ({ form, t }) => {
+  const [flourCount, setFlourCount] = useState(1)
+  const flours = Form.useWatch("flours", form) || []
+
+  const updateAllFlourPercentages = (newFlours) => {
+    const equalPercentage = 100 / newFlours.length
+    const updatedFlours = newFlours.map((flour) => ({
+      ...flour,
+      flourPercentage: equalPercentage,
+    }))
+    form.setFieldsValue({ flours: updatedFlours })
+  }
+
+  useEffect(() => {
+    // Imposta il valore iniziale per la prima farina se non è già impostato
+    if (flours.length === 0) {
+      form.setFieldsValue({
+        flours: [
+          {
+            flourPercentage: 100,
+          },
+        ],
+      })
+      setFlourCount(1)
+    } else if (flours.length !== flourCount) {
+      updateAllFlourPercentages(flours)
+      setFlourCount(flours.length)
+    }
+  }, [flours.length, form, flourCount])
+
+  const updatePercentages = (index, newValue) => {
+    const currentFlours = form.getFieldValue("flours") || []
+    if (currentFlours.length === 0) return
+
+    let totalOthers = currentFlours.reduce(
+      (sum, flour, i) =>
+        i !== index ? sum + (flour?.flourPercentage || 0) : sum,
+      0
+    )
+
+    // Se il totale degli altri è 0, distribuisci equamente il rimanente
+    if (totalOthers === 0) {
+      const remainingPercentage = 100 - newValue
+      const otherFlourCount = currentFlours.length - 1
+      const equalShare = remainingPercentage / otherFlourCount
+
+      const updatedFlours = currentFlours.map((flour, i) => {
+        if (i === index) {
+          return { ...flour, flourPercentage: newValue }
+        } else {
+          return { ...flour, flourPercentage: equalShare }
+        }
+      })
+
+      form.setFieldsValue({ flours: updatedFlours })
+    } else {
+      const remaining = 100 - newValue
+      const factor = remaining / totalOthers
+
+      const updatedFlours = currentFlours.map((flour, i) => {
+        if (i === index) {
+          return { ...flour, flourPercentage: newValue }
+        } else {
+          const currentPercentage = flour?.flourPercentage || 0
+          return {
+            ...flour,
+            flourPercentage: Math.round(currentPercentage * factor * 10) / 10,
+          }
+        }
+      })
+
+      form.setFieldsValue({ flours: updatedFlours })
+    }
+  }
+  const isGlutenFree = (flourKind) =>
+    flourKind === "farina di mais" || flourKind === "farina di riso"
+
+  return (
+    <>
+      <Form.Item
+        name="numberOfPizzas"
+        label={t("Number of pizzas")}
+        rules={[
+          { required: true, message: t("Please input number of pizzas") },
+        ]}
+      >
+        <InputNumber datatype="number" min={1} style={{ width: "100%" }} />
+      </Form.Item>
+      <Form.Item
+        name="weightPerPizza"
+        label={t("Weight per pizza (g)")}
+        initialValue={250}
+        rules={[
+          { required: true, message: t("Please input weight per pizza") },
+        ]}
+      >
+        <InputNumber
+          datatype="number"
+          min={100}
+          max={500}
+          style={{ width: "100%" }}
+          addonAfter="g"
+        />
+      </Form.Item>
+      <Form.List
+        name="flours"
+        rules={[
+          {
+            validator: async (_, flours) => {
+              if (!flours || flours.length < 1) {
+                return Promise.reject(
+                  new Error(t("At least one type of flour is required"))
+                )
+              }
+              const totalPercentage = flours.reduce(
+                (sum, flour) => sum + (flour?.flourPercentage || 0),
+                0
+              )
+              if (Math.abs(totalPercentage - 100) > 0.1) {
+                return Promise.reject(
+                  new Error(t("Total flour percentage must be 100%"))
+                )
+              }
+            },
+          },
+        ]}
+      >
+        {(fields, { add, remove }) => (
+          <>
+            {fields.map((field, index) => (
+              <div key={field.key} className="flour-box">
+                <Space
+                  align="baseline"
+                  style={{ display: "flex", marginBottom: 8 }}
+                >
+                  <Form.Item
+                    {...field}
+                    name={[field.name, "flourKind"]}
+                    fieldKey={[field.fieldKey, "flourKind"]}
+                    label={t("Type of flour")}
+                    rules={[
+                      { required: true, message: t("Choose your flour type") },
+                    ]}
+                  >
+                    <Select
+                      style={{ width: 200 }}
+                      placeholder={t("Choose flour type")}
+                      onChange={() => {
+                        const currentFlours = form.getFieldValue("flours")
+                        const updatedFlours = [...currentFlours]
+                        updatedFlours[index].proteinContent = undefined
+                        form.setFieldsValue({ flours: updatedFlours })
+                      }}
+                    >
+                      <Option value="grano duro">{t("Durum Wheat")}</Option>
+                      <Option value="grano tenero">{t("Soft Wheat")}</Option>
+                      <Option value="farina di farro">
+                        {t("Spelt Flour")}
+                      </Option>
+                      <Option value="farina di mais">{t("Cornmeal")}</Option>
+                      <Option value="farina di riso">{t("Rice Flour")}</Option>
+                    </Select>
+                  </Form.Item>
+                  <Form.Item
+                    {...field}
+                    name={[field.name, "flourPercentage"]}
+                    fieldKey={[field.fieldKey, "flourPercentage"]}
+                    label={t("Flour percentage")}
+                  >
+                    <Slider
+                      min={0}
+                      max={100}
+                      onChange={(value) => updatePercentages(index, value)}
+                      style={{ width: 200 }}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    {...field}
+                    name={[field.name, "proteinContent"]}
+                    fieldKey={[field.fieldKey, "proteinContent"]}
+                    label={t("Protein Content")}
+                    rules={[
+                      {
+                        required: !isGlutenFree(
+                          form.getFieldValue(["flours", index, "flourKind"])
+                        ),
+                        message: t("Insert your flour's protein content"),
+                      },
+                    ]}
+                  >
+                    <InputNumber
+                      datatype="number"
+                      min={0}
+                      max={100}
+                      placeholder={t("Insert protein content")}
+                      style={{ width: 200 }}
+                      addonAfter="%"
+                      disabled={isGlutenFree(
+                        form.getFieldValue(["flours", index, "flourKind"])
+                      )}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    {...field}
+                    name={[field.name, "fiberContent"]}
+                    fieldKey={[field.fieldKey, "fiberContent"]}
+                    label={t("Fiber Content")}
+                    rules={[
+                      {
+                        required: true,
+                        message: t("Insert your flour fiber content"),
+                      },
+                    ]}
+                  >
+                    <InputNumber
+                      datatype="number"
+                      min={0}
+                      max={100}
+                      placeholder={t("Insert fiber content")}
+                      style={{ width: 200 }}
+                      addonAfter="%"
+                    />
+                  </Form.Item>
+                  {fields.length > 1 && (
+                    <DeleteOutlined
+                      onClick={() => {
+                        remove(field.name)
+                        const newFlours = form
+                          .getFieldValue("flours")
+                          .filter((_, i) => i !== index)
+                        updateAllFlourPercentages(newFlours)
+                      }}
+                    />
+                  )}
+                </Space>
+              </div>
+            ))}
+            <Form.Item>
+              <Button
+                type="dashed"
+                onClick={() => {
+                  add()
+                  const newFlours = [...form.getFieldValue("flours")]
+                  updateAllFlourPercentages(newFlours)
+                }}
+                block
+                icon={<PlusOutlined />}
+              >
+                {t("Add another flour to the mix")}
+              </Button>
+            </Form.Item>
+          </>
+        )}
+      </Form.List>
+      <Form.Item name="coldProofing" valuePropName="checked">
+        <Checkbox>{t("Second proofing in refrigerator")}</Checkbox>
+      </Form.Item>
+      <Form.Item
+        name="temperature"
+        label={t("Room temperature (°C)")}
+        rules={[{ required: true, message: t("Insert your room temperature") }]}
+        initialValue={25}
+      >
+        <InputNumber
+          datatype="number"
+          min={-10}
+          max={50}
+          placeholder={t("Insert your room temperature")}
+          style={{ width: 200 }}
+          addonAfter="°C"
+        />
+      </Form.Item>
+    </>
+  )
+}
 
 const ResultsModal = ({
   modalVisible,
@@ -924,12 +1221,13 @@ const App = () => {
                 ],
               }}
             >
-              {doughType === "sourdough" || doughType === "pizza" ? (
+              {doughType === "sourdough" ? (
                 <FlourForm form={form} t={t} />
               ) : null}
               {doughType === "focaccia" ? <FocacciaForm t={t} /> : null}
               {doughType === "brioche" ? <BriocheForm t={t} /> : null}
               {doughType === "naan" ? <NaanForm t={t} /> : null}
+              {doughType === "pizza" ? <PizzaForm form={form} t={t} /> : null}
               {doughType !== "brioche" && doughType !== "naan" && (
                 <Form.Item name="coldProofing" valuePropName="checked">
                   <Checkbox>{t("Second proofing in refrigerator")}</Checkbox>
@@ -958,6 +1256,7 @@ const App = () => {
                 initialValue={selectedTemperatureUnit === "celsius" ? 20 : 68}
               >
                 <InputNumber
+                  datatype="number"
                   min={
                     form.getFieldValue("temperatureUnit") === "celsius"
                       ? -10
