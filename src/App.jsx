@@ -135,6 +135,7 @@ const DoughTypeSelector = ({ doughType, handleDoughTypeChange }) => {
     <Radio.Group
       onChange={(e) => handleDoughTypeChange(e.target.value)}
       value={doughType}
+      className="radio-group" // Aggiungi questa linea
       style={{ marginBottom: 20, marginTop: 20 }}
     >
       <Radio.Button value="sourdough">{t("Sourdough Bread")}</Radio.Button>
@@ -800,8 +801,11 @@ const App = () => {
           position: "relative",
         }}
       >
-        <Title style={{ color: "white", textAlign: "center" }}>
-          {t("Bread Calculator")} 🍞
+        <Title
+          className="title"
+          style={{ color: "white", textAlign: "center" }}
+        >
+          {t("Bread Calculator")}
         </Title>
         <div
           style={{

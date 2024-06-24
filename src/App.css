@@ -11,11 +11,15 @@ body,
 /* Stili per l'header */
 .ant-layout-header {
   background: #001529;
+  position: relative; /* Necessario per posizionare il burger menu assolutamente rispetto all'header */
 }
 
 .ant-typography-title {
   margin: 0;
   padding: 0;
+  color: white;
+  text-align: center;
+  font-size: 2.5rem; /* Dimensione del font di default */
 }
 
 /* Stili per la container */
@@ -98,6 +102,41 @@ body,
   }
   .mobile-lang-buttons {
     display: block;
-    margin-right: 20px; /* margine a destra per il burger menu */
+    position: absolute;
+    top: 15px; /* Distanza dal fondo dell'header */
+    right: -25px; /* Distanza dal lato destro dell'header */
+  }
+
+  .radio-group {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .radio-group .ant-radio-button-wrapper {
+    flex: 1 0 100%; /* Pane di lievito madre da solo in alto */
+    box-sizing: border-box;
+    text-align: center;
+  }
+
+  .radio-group .ant-radio-button-wrapper:nth-child(2),
+  .radio-group .ant-radio-button-wrapper:nth-child(3) {
+    flex: 1 0 50%; /* Due bottoni nella seconda riga */
+  }
+
+  .radio-group .ant-radio-button-wrapper:nth-child(4),
+  .radio-group .ant-radio-button-wrapper:nth-child(5) {
+    flex: 1 0 100%; /* L'ultimo bottone nella terza riga */
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .ant-typography-title {
+    font-size: 2rem; /* Dimensione del font per schermi medi */
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .ant-typography-title {
+    font-size: 1.5rem; /* Dimensione del font per schermi piccoli */
   }
 }
