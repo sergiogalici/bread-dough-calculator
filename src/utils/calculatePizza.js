@@ -44,7 +44,7 @@ export const calculatePizza = (values, setResults, setModalVisible) => {
         break
       case "grano duro":
         totalDurumWheat += flourAmount
-        totalProtein += flourAmount * (proteinContent / 100)
+        totalProtein += flourAmount * ((proteinContent * 0.8) / 100)
         break
       case "farina di mais":
         totalCornmeal += flourAmount
@@ -54,7 +54,7 @@ export const calculatePizza = (values, setResults, setModalVisible) => {
         break
       case "farina di farro":
         totalSpeltFlour += flourAmount
-        totalProtein += flourAmount * (proteinContent / 100)
+        totalProtein += flourAmount * ((proteinContent * 0.5) / 100)
         break
     }
     flourComposition.push({
@@ -83,7 +83,7 @@ export const calculatePizza = (values, setResults, setModalVisible) => {
     ((Math.min(totalFlourAmount, waterRangeMin) +
       Math.min(totalFlourAmount, waterRangeMax)) /
       2) *
-    0.9
+    0.95
 
   const getProofingTime = (temp, isCold) => {
     if (temp < 20) return isCold ? "24-36 h" : "8-10 h"
