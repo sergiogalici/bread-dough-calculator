@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import { useTranslation } from "react-i18next"
 import i18n from "./i18n"
 import {
@@ -32,10 +32,89 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts"
+import { calculatePita } from "./utils/calculatePita"
 
 const { Header, Content, Footer } = Layout
 const { Title } = Typography
 const { Option } = Select
+
+const exampleRecipes = {
+  sourdough: {
+    flours: [
+      {
+        flourKind: "grano tenero",
+        proteinContent: 12,
+        fiberContent: 2,
+        flourAmount: 400,
+      },
+      {
+        flourKind: "farina di segale",
+        proteinContent: 9,
+        fiberContent: 15,
+        flourAmount: 100,
+      },
+    ],
+    coldProofing: true,
+    temperature: 20,
+    temperatureUnit: "celsius",
+  },
+  pizza: {
+    numberOfPizzas: 4,
+    weightPerPizza: 250,
+    flours: [
+      {
+        flourKind: "grano tenero",
+        proteinContent: 13,
+        fiberContent: 2,
+        flourPercentage: 80,
+      },
+      {
+        flourKind: "grano duro",
+        proteinContent: 12,
+        fiberContent: 3,
+        flourPercentage: 20,
+      },
+    ],
+    temperature: 20,
+    temperatureUnit: "celsius",
+  },
+  focaccia: {
+    flourAmount: 500,
+    proteinContent: 11,
+    fiberContent: 2,
+    coldProofing: false,
+    temperature: 22,
+    temperatureUnit: "celsius",
+  },
+  brioche: {
+    briocheWeight: 80,
+    bunCount: 8,
+    hydrationPercentage: 60,
+    fatPercentage: 25,
+    fatType: "Butter",
+    includeEggs: true,
+    milkType: "Whole Milk",
+    temperature: 21,
+    temperatureUnit: "celsius",
+  },
+  naan: {
+    naanCount: 6,
+    hydrationPercentage: 65,
+    fatPercentage: 10,
+    yogurtType: "Full Fat Yogurt",
+    liquidType: "Water",
+    naanWeight: 100,
+    temperature: 23,
+    temperatureUnit: "celsius",
+  },
+  pita: {
+    pitaCount: 8,
+    hydrationPercentage: 70,
+    pitaWeight: 80,
+    temperature: 22,
+    temperatureUnit: "celsius",
+  },
+}
 
 const celsiusToFahrenheit = (celsius) => {
   return (celsius * 9) / 5 + 32
@@ -72,6 +151,11 @@ const prepareChartData = (results, doughType) => {
       { name: "Sugar", amount: parseAmount(results.totalSugar) },
       { name: "Eggs", amount: parseAmount(results.totalEggs) }
     )
+  } else if (doughType === "pita") {
+    data.push(
+      { name: "Water", amount: parseAmount(results.totalWater) },
+      { name: "Oil", amount: parseAmount(results.totalOil) }
+    )
   } else {
     data.push({ name: "Water", amount: parseAmount(results.totalWater) })
   }
@@ -84,7 +168,20 @@ const LanguageSelector = ({
   setDrawerVisible,
   drawerVisible,
 }) => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+
+  useEffect(() => {
+    // Questo effetto verrà eseguito una volta all'avvio dell'applicazione
+    const detectedLanguage = i18n.language
+    const supportedLanguages = ["en", "fr", "es", "it", "pt", "de"]
+
+    if (supportedLanguages.includes(detectedLanguage)) {
+      i18n.changeLanguage(detectedLanguage)
+    } else {
+      // Se la lingua rilevata non è supportata, usa l'inglese come fallback
+      i18n.changeLanguage("en")
+    }
+  }, [i18n])
 
   return (
     <>
@@ -137,7 +234,7 @@ const LanguageSelector = ({
           title={t("Select Language")}
           placement="right"
           onClose={() => setDrawerVisible(false)}
-          visible={drawerVisible}
+          open={drawerVisible}
         >
           <Button
             onClick={() => changeLanguage("en")}
@@ -195,6 +292,7 @@ const DoughTypeSelector = ({ doughType, handleDoughTypeChange }) => {
       <Radio.Button value="focaccia">{t("Focaccia")}</Radio.Button>
       <Radio.Button value="brioche">{t("Brioche Buns")}</Radio.Button>
       <Radio.Button value="naan">{t("Naan")}</Radio.Button>
+      <Radio.Button value="pita">{t("Pita")}</Radio.Button>
     </Radio.Group>
   )
 }
@@ -560,9 +658,52 @@ const NaanForm = ({ t }) => (
   </div>
 )
 
+const PitaForm = ({ t }) => (
+  <div className="flour-box">
+    <Space direction="vertical" style={{ width: "100%" }}>
+      <Form.Item
+        name="pitaCount"
+        label={t("Number of Pitas")}
+        rules={[{ required: true, message: t("Please input number of pitas") }]}
+      >
+        <InputNumber datatype="number" min={0} style={{ width: "100%" }} />
+      </Form.Item>
+      <Form.Item
+        name="hydrationPercentage"
+        label={t("Hydration percentage")}
+        initialValue={65}
+        rules={[
+          { required: true, message: t("Please input hydration percentage") },
+        ]}
+      >
+        <InputNumber
+          datatype="number"
+          min={0}
+          max={100}
+          style={{ width: "100%" }}
+          addonAfter="%"
+        />
+      </Form.Item>
+      <Form.Item
+        name="pitaWeight"
+        label={t("Desired weight of each pita (g)")}
+        initialValue={80}
+      >
+        <InputNumber
+          datatype="number"
+          addonAfter="g"
+          min={0}
+          style={{ width: "100%" }}
+        />
+      </Form.Item>
+    </Space>
+  </div>
+)
+
 const PizzaForm = ({ form, t }) => {
   const [flourCount, setFlourCount] = useState(1)
   const flours = Form.useWatch("flours", form) || []
+  const sliderRefs = useRef([])
 
   const updateAllFlourPercentages = (newFlours) => {
     const equalPercentage = 100 / newFlours.length
@@ -572,6 +713,20 @@ const PizzaForm = ({ form, t }) => {
     }))
     form.setFieldsValue({ flours: updatedFlours })
   }
+
+  useEffect(() => {
+    // Aggiorna i riferimenti agli slider quando cambia il numero di farine
+    sliderRefs.current = sliderRefs.current.slice(0, flours.length)
+  }, [flours.length])
+
+  useEffect(() => {
+    // Aggiorna i valori degli slider quando cambiano i valori delle farine
+    flours.forEach((flour, index) => {
+      if (sliderRefs.current[index]) {
+        sliderRefs.current[index].setValue(flour.flourPercentage)
+      }
+    })
+  }, [flours])
 
   useEffect(() => {
     if (flours.length === 0) {
@@ -587,7 +742,13 @@ const PizzaForm = ({ form, t }) => {
       updateAllFlourPercentages(flours)
       setFlourCount(flours.length)
     }
-  }, [flours.length, form, flourCount])
+  }, [flours, form, flourCount])
+
+  useEffect(() => {
+    if (flours.length > 0 && flours.every((flour) => flour.flourPercentage)) {
+      form.validateFields(["flours"])
+    }
+  }, [flours, form])
 
   const updatePercentages = (index, newValue) => {
     const currentFlours = form.getFieldValue("flours") || []
@@ -949,6 +1110,53 @@ const ResultsModal = ({
                 />
               )}
             </>
+          ) : doughType === "pita" ? (
+            <>
+              <Alert
+                message={`${t("Water")}: ${results.totalWater} g`}
+                type="info"
+                showIcon
+              />
+              <Alert
+                message={`${t("Salt")}: ${results.totalSalt} g`}
+                type="info"
+                showIcon
+              />
+              <Alert
+                message={`${t("Yeast")}: ${results.totalYeast} g`}
+                type="info"
+                showIcon
+              />
+              <Alert
+                message={`${t("Oil")}: ${results.totalOil} g`}
+                type="info"
+                showIcon
+              />
+              <Alert
+                message={`${t("Proofing time")}: ${results.proofingTime}`}
+                type="info"
+                showIcon
+              />
+              <Alert
+                message={`${t("Number of pitas")} (${results.pitaWeight}g): ${
+                  results.numberOfPitas
+                }`}
+                type="info"
+                showIcon
+              />
+              <Alert
+                message={`${t("Total hydration")}: ${results.totalHydration}%`}
+                type="info"
+                showIcon
+              />
+              <Alert
+                message={`${t("Total dough weight")}: ${
+                  results.totalDoughWeight
+                } g`}
+                type="info"
+                showIcon
+              />
+            </>
           ) : (
             <>
               {doughType === "pizza" &&
@@ -1057,6 +1265,27 @@ const App = () => {
   const [selectedTemperatureUnit, setSelectedTemperatureUnit] =
     useState("celsius")
 
+  const fillExampleRecipe = () => {
+    const example = exampleRecipes[doughType]
+    if (example) {
+      if (example.flours && example.flours.length > 1) {
+        form.setFieldsValue({
+          ...example,
+          flours: example.flours.map((flour, index) => ({
+            ...flour,
+            name: index,
+          })),
+        })
+        // Forza l'aggiornamento del form dopo aver impostato i valori
+        form.validateFields()
+      } else {
+        form.setFieldsValue(example)
+      }
+    } else {
+      console.error(`No example recipe for dough type: ${doughType}`)
+    }
+  }
+
   const milkTypeMap = {
     [t("Whole Milk")]: "whole",
     [t("Skim Milk")]: "skim",
@@ -1145,6 +1374,9 @@ const App = () => {
         }
         calculateNaan(mappedValuesNaan, setResults, setModalVisible)
         break
+      case "pita":
+        calculatePita(mappedValues, setResults, setModalVisible)
+        break
       default:
         console.error("Invalid dough type")
     }
@@ -1219,17 +1451,23 @@ const App = () => {
               {doughType === "brioche" ? <BriocheForm t={t} /> : null}
               {doughType === "naan" ? <NaanForm t={t} /> : null}
               {doughType === "pizza" ? <PizzaForm form={form} t={t} /> : null}
-              {doughType !== "brioche" && doughType !== "naan" && (
-                <Form.Item name="coldProofing" valuePropName="checked">
-                  <Checkbox>{t("Second proofing in refrigerator")}</Checkbox>
-                </Form.Item>
-              )}
-              <Form.Item name="temperatureUnit" label={t("Temperature Unit")}>
+              {doughType === "pita" ? <PitaForm t={t} /> : null}
+              {doughType !== "brioche" &&
+                doughType !== "naan" &&
+                doughType !== "pita" && (
+                  <Form.Item name="coldProofing" valuePropName="checked">
+                    <Checkbox>{t("Second proofing in refrigerator")}</Checkbox>
+                  </Form.Item>
+                )}
+              <Form.Item
+                initialValue={"celsius"}
+                name="temperatureUnit"
+                label={t("Temperature Unit")}
+              >
                 <Select
                   onChange={(value) => {
                     setSelectedTemperatureUnit(value)
                   }}
-                  defaultValue="celsius"
                 >
                   <Option value="celsius">°C</Option>
                   <Option value="fahrenheit">°F</Option>
@@ -1269,6 +1507,16 @@ const App = () => {
               <Form.Item>
                 <Button type="primary" htmlType="submit">
                   {t("Calculate")}
+                </Button>
+                <Button
+                  onClick={async () => {
+                    fillExampleRecipe()
+                    await new Promise((r) => setTimeout(r, 5))
+                    fillExampleRecipe()
+                  }}
+                  style={{ marginLeft: 10 }}
+                >
+                  {t("Show Example Recipe")}
                 </Button>
               </Form.Item>
             </Form>
