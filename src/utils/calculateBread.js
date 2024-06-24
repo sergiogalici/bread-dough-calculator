@@ -1,5 +1,5 @@
 export const calculateDough = (values, setResults, setModalVisible) => {
-  const { flours, temperature } = values
+  const { flours, temperature, coldProofing } = values
   let totalSalt = 0
   let totalYeast = 0
   let totalFiber = 0
@@ -80,25 +80,27 @@ export const calculateDough = (values, setResults, setModalVisible) => {
 
   if (temperature < 10) {
     firstProofingTime = "12-18 hours"
-    secondProofingTime = "6-12 hours"
+    secondProofingTime = coldProofing ? "24-36 hours" : "6-12 hours"
   } else if (temperature < 15) {
     firstProofingTime = "8-12 hours"
-    secondProofingTime = "4-8 hours"
+    secondProofingTime = coldProofing ? "18-24 hours" : "4-8 hours"
   } else if (temperature < 20) {
     firstProofingTime = "6-8 hours"
-    secondProofingTime = "3-6 hours"
+    secondProofingTime = coldProofing ? "12-18 hours" : "3-6 hours"
   } else if (temperature < 25) {
     firstProofingTime = "4-6 hours"
-    secondProofingTime = "2-4 hours"
+    secondProofingTime = coldProofing ? "8-12 hours" : "2-4 hours"
   } else if (temperature < 30) {
     firstProofingTime = "2-4 hours"
-    secondProofingTime = "1-2 hours"
+    secondProofingTime = coldProofing ? "6-8 hours" : "1-2 hours"
   } else {
     firstProofingTime = "2-4 hours"
-    secondProofingTime = "1-2 hours"
+    secondProofingTime = coldProofing ? "4-6 hours" : "1-2 hours"
   }
 
-  const riseTime = `${firstProofingTime} (first proofing), ${secondProofingTime} (second proofing)`
+  const riseTime = `${firstProofingTime} (first proofing), ${secondProofingTime} (second proofing${
+    coldProofing ? " in refrigerator" : ""
+  })`
 
   // Calcolo dei macronutrienti e indice glicemico
   const fiberRatio = (totalFiber / totalFlourAmount) * 100
@@ -140,39 +142,39 @@ export const calculateDough = (values, setResults, setModalVisible) => {
 
   console.log("Water ratio:", waterRatio)
   console.log("Protein ratio:", proteinRatio)
+  let baseHydrationMin = 0.6
+  let baseHydrationMax = 0.75
 
+  // Aumenta l'idratazione del 2% per ogni punto percentuale di proteine sopra il 10%
+  if (proteinRatio > 10) {
+    baseHydrationMin += (proteinRatio - 10) * 0.02
+    baseHydrationMax += (proteinRatio - 10) * 0.025
+  }
+
+  // Applica un cap massimo all'idratazione
+  baseHydrationMin = Math.min(baseHydrationMin, 0.8)
+  baseHydrationMax = Math.min(baseHydrationMax, 1)
+
+  waterRangeMin = totalFlourAmount * baseHydrationMin * waterRatio
+  waterRangeMax = totalFlourAmount * baseHydrationMax * waterRatio
+
+  // Calcolo del W rating
   if (proteinRatio < 10) {
-    waterRangeMin = totalFlourAmount * 0.57 * waterRatio
-    waterRangeMax = totalFlourAmount * 0.6 * waterRatio
     wRating = "90 - 220"
-  } else if (proteinRatio >= 10 && proteinRatio < 11) {
-    waterRangeMin = totalFlourAmount * 0.61 * waterRatio
-    waterRangeMax = totalFlourAmount * 0.69 * waterRatio
+  } else if (proteinRatio < 11) {
     wRating = "160 - 240"
-  } else if (proteinRatio >= 11 && proteinRatio < 12) {
-    waterRangeMin = totalFlourAmount * 0.63 * waterRatio
-    waterRangeMax = totalFlourAmount * 0.73 * waterRatio
+  } else if (proteinRatio < 12) {
     wRating = "220 - 260"
-  } else if (proteinRatio >= 12 && proteinRatio < 13) {
-    waterRangeMin = totalFlourAmount * 0.65 * waterRatio
-    waterRangeMax = totalFlourAmount * 0.75 * waterRatio
+  } else if (proteinRatio < 13) {
     wRating = "240 - 290"
-  } else if (proteinRatio >= 13 && proteinRatio < 14) {
-    waterRangeMin = totalFlourAmount * 0.69 * waterRatio
-    waterRangeMax = totalFlourAmount * 0.79 * waterRatio
+  } else if (proteinRatio < 14) {
     wRating = "270 - 340"
-  } else if (proteinRatio >= 14 && proteinRatio < 15) {
-    waterRangeMin = totalFlourAmount * 0.72 * waterRatio
-    waterRangeMax = totalFlourAmount * 0.82 * waterRatio
+  } else if (proteinRatio < 15) {
     wRating = "320 - 430"
-  } else if (proteinRatio >= 15 && proteinRatio < 16) {
-    waterRangeMin = totalFlourAmount * 0.8 * waterRatio
-    waterRangeMax = totalFlourAmount * 1 * waterRatio
-    wRating = "360 - 400++"
-  } else if (proteinRatio >= 16) {
-    waterRangeMin = totalFlourAmount * 0.8 * waterRatio
-    waterRangeMax = totalFlourAmount * 1 * waterRatio
-    wRating = "400++"
+  } else if (proteinRatio < 16) {
+    wRating = "360 - 400+"
+  } else {
+    wRating = "400+"
   }
 
   setResults({

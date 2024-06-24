@@ -50,3 +50,15 @@
     align-items: flex-start;
   }
 }
+
+.flour-box {
+  margin-bottom: 16px;
+}
+
+.flour-box .ant-space {
+  width: 100%;
+}
+
+.flour-box .ant-form-item {
+  margin-bottom: 0;
+}
