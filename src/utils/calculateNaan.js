@@ -12,6 +12,7 @@ const reversedYogurtTypes = {
   "low-fat": "Low Fat Yogurt",
   "non-fat": "Non Fat Yogurt",
 }
+
 export const calculateNaan = (values, setResults, setModalVisible) => {
   const {
     naanCount,
@@ -21,13 +22,32 @@ export const calculateNaan = (values, setResults, setModalVisible) => {
     liquidType,
     naanWeight,
     temperature,
+    proteinContent = 10,
+    fiberContent = 2,
+    expertMode,
   } = values
 
   const flourAmount =
     (naanCount * naanWeight) / (1 + (hydrationPercentage + fatPercentage) / 100)
 
-  let totalLiquid = (flourAmount * hydrationPercentage) / 100
-  let oilToAdd = (flourAmount * fatPercentage) / 100
+  const { waterRangeMin, waterRangeMax } = calculateWaterRatio(
+    0, // totalDurumWheat
+    flourAmount, // totalSoftWheat
+    0, // totalRye
+    0, // totalSpelt
+    0, // totalCorn
+    0, // totalRice
+    flourAmount * (fiberContent / 100), // totalFiber
+    flourAmount,
+    proteinContent
+  )
+
+  const adjustedHydration = expertMode
+    ? hydrationPercentage
+    : ((waterRangeMin + waterRangeMax) / (2 * flourAmount)) * 100
+
+  let totalLiquid = (flourAmount * adjustedHydration) / 100
+  let oilToAdd = (flourAmount * (expertMode ? fatPercentage : 10)) / 100
 
   // Calcolo dello yogurt
   let yogurtAmount = 0
@@ -121,6 +141,9 @@ export const calculateNaan = (values, setResults, setModalVisible) => {
     totalHydration: hydrationPercentage,
     glycemicIndex: "Medium",
     totalDoughWeight: Math.round(totalDoughWeight),
+    adjustedHydration: Math.round(adjustedHydration),
+    proteinContent,
+    fiberContent,
   })
 
   setModalVisible(true)

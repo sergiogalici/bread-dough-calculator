@@ -20,6 +20,7 @@ const reverseFatTypeMap = {
   margarine: "Margarine",
   lard: "Lard",
 }
+
 export const calculateBrioche = (values, setResults, setModalVisible) => {
   const {
     briocheWeight,
@@ -30,13 +31,32 @@ export const calculateBrioche = (values, setResults, setModalVisible) => {
     includeEggs,
     milkType,
     temperature,
+    proteinContent = 10,
+    fiberContent = 2,
+    expertMode,
   } = values
 
   const totalDoughWeight = briocheWeight * briocheCount
   const flourAmount =
     totalDoughWeight / (1 + (hydrationPercentage + fatPercentage) / 100)
 
-  const totalFat = (flourAmount * fatPercentage) / 100
+  const { waterRangeMin, waterRangeMax } = calculateWaterRatio(
+    0, // totalDurumWheat
+    flourAmount, // totalSoftWheat
+    0, // totalRye
+    0, // totalSpelt
+    0, // totalCorn
+    0, // totalRice
+    flourAmount * (fiberContent / 100), // totalFiber
+    flourAmount,
+    proteinContent
+  )
+
+  const adjustedHydration = expertMode
+    ? hydrationPercentage
+    : ((waterRangeMin + waterRangeMax) / (2 * flourAmount)) * 100
+
+  const totalFat = (flourAmount * (expertMode ? fatPercentage : 20)) / 100
 
   const eggsCount = includeEggs ? Math.round(flourAmount / 200) : 0
   const totalEggs = eggsCount * 60
@@ -88,6 +108,9 @@ export const calculateBrioche = (values, setResults, setModalVisible) => {
     waterFromFat: Math.round(waterInFat),
     waterFromMilk: Math.round(waterInMilk),
     glycemicIndex: "High",
+    adjustedHydration: Math.round(adjustedHydration),
+    proteinContent,
+    fiberContent,
   })
 
   setModalVisible(true)

@@ -1,11 +1,33 @@
 export const calculatePita = (values, setResults, setModalVisible) => {
-  const { pitaCount, hydrationPercentage, pitaWeight, temperature } = values
+  const {
+    pitaCount,
+    hydrationPercentage,
+    pitaWeight,
+    temperature,
+    proteinContent = 10,
+    fiberContent = 2,
+    expertMode,
+  } = values
 
   const flourAmount = (pitaCount * pitaWeight) / (1 + hydrationPercentage / 100)
 
-  const totalWater = (flourAmount * hydrationPercentage) / 100
-  const totalSalt = flourAmount * 0.02
-  const totalOil = flourAmount * 0.02 // Un po' d'olio per la morbidezza
+  const { waterRangeMin, waterRangeMax } = calculateWaterRatio(
+    0, // totalDurumWheat
+    flourAmount, // totalSoftWheat
+    0, // totalRye
+    0, // totalSpelt
+    0, // totalCorn
+    0, // totalRice
+    flourAmount * (fiberContent / 100), // totalFiber
+    flourAmount,
+    proteinContent
+  )
+
+  const adjustedHydration = expertMode
+    ? hydrationPercentage
+    : ((waterRangeMin + waterRangeMax) / (2 * flourAmount)) * 100
+
+  const totalWater = (flourAmount * adjustedHydration) / 100
 
   // Calcolo del lievito in base alla temperatura
   let totalYeast
@@ -42,6 +64,9 @@ export const calculatePita = (values, setResults, setModalVisible) => {
     totalHydration: hydrationPercentage,
     glycemicIndex: "Medium",
     totalDoughWeight: Math.round(totalDoughWeight),
+    adjustedHydration: Math.round(adjustedHydration),
+    proteinContent,
+    fiberContent,
   })
 
   setModalVisible(true)

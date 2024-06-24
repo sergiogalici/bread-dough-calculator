@@ -117,6 +117,7 @@ i18n
           "Total hydration": "Total hydration",
           "Total dough weight": "Total dough weight",
           "Show Example Recipe": "Show Example Recipe",
+          "Expert Mode": "Expert Mode",
         },
       },
       fr: {
@@ -234,6 +235,7 @@ i18n
           "Total hydration": "Hydratation totale",
           "Total dough weight": "Poids total de la pâte",
           "Show Example Recipe": "Afficher un exemple de recette",
+          "Expert Mode": "Mode Expert",
         },
       },
       es: {
@@ -354,6 +356,7 @@ i18n
           "Total hydration": "Hidratación total",
           "Total dough weight": "Peso total de la masa",
           "Show Example Recipe": "Mostrar ejemplo de receta",
+          "Expert Mode": "Modo Experto",
         },
       },
       it: {
@@ -473,6 +476,7 @@ i18n
           "Total hydration": "Idratazione totale",
           "Total dough weight": "Peso totale dell'impasto",
           "Show Example Recipe": "Mostra esempio di ricetta",
+          "Expert Mode": "Modalità esperto",
         },
       },
       pt: {
@@ -589,6 +593,7 @@ i18n
           "Total hydration": "Hidratação total",
           "Total dough weight": "Peso total da massa",
           "Show Example Recipe": "Mostrar exemplo de receita",
+          "Expert Mode": "Modo Especialista",
         },
       },
       de: {
@@ -711,10 +716,11 @@ i18n
           "Total hydration": "Gesamthydratation",
           "Total dough weight": "Gesamtgewicht des Teigs",
           "Show Example Recipe": "Beispielrezept anzeigen",
+          "Expert Mode": "Expertenmodus",
         },
       },
     },
-    lng: "en",
+    supportedLngs: ["en", "fr", "es", "it", "pt", "de"],
     fallbackLng: "en",
     detection: {
       order: ["navigator", "htmlTag", "path", "subdomain"],

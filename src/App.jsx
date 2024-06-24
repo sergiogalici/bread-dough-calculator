@@ -490,215 +490,373 @@ const FocacciaForm = ({ t }) => (
   </div>
 )
 
-const BriocheForm = ({ t }) => (
-  <div className="flour-box">
-    <Space direction="vertical" style={{ width: "100%" }}>
-      <Form.Item
-        name="briocheWeight"
-        label={t("Desired weight of each bun (g)")}
-        initialValue={80}
-        rules={[
-          { required: true, message: t("Please input weight of each bun") },
-        ]}
-      >
-        <InputNumber
-          datatype="number"
-          addonAfter="g"
-          min={0}
-          style={{ width: "100%" }}
-        />
-      </Form.Item>
-      <Form.Item
-        name="bunCount"
-        label={t("Number of buns")}
-        rules={[{ required: true, message: t("Please input number of buns") }]}
-      >
-        <InputNumber datatype="number" min={0} style={{ width: "100%" }} />
-      </Form.Item>
-      <Form.Item
-        name="hydrationPercentage"
-        label={t("Hydration percentage")}
-        initialValue={65}
-        rules={[
-          { required: true, message: t("Please input hydration percentage") },
-        ]}
-      >
-        <InputNumber
-          datatype="number"
-          min={0}
-          max={100}
-          style={{ width: "100%" }}
-          addonAfter="%"
-        />
-      </Form.Item>
-      <Form.Item
-        name="fatPercentage"
-        label={t("Fat percentage")}
-        initialValue={20}
-        rules={[{ required: true, message: t("Please input fat percentage") }]}
-      >
-        <InputNumber
-          datatype="number"
-          min={0}
-          max={100}
-          style={{ width: "100%" }}
-          addonAfter="%"
-        />
-      </Form.Item>
-      <Form.Item
-        name="fatType"
-        label={t("Fat type")}
-        rules={[{ required: true, message: t("Please select fat type") }]}
-      >
-        <Select style={{ width: 200 }}>
-          <Option value={t("Butter")}>{t("Butter")}</Option>
-          <Option value={t("Oil")}>{t("Oil")}</Option>
-          <Option value={t("Margarine")}>{t("Margarine")}</Option>
-          <Option value={t("Lard")}>{t("Lard")}</Option>
-        </Select>
-      </Form.Item>
-      <Form.Item name="includeEggs" valuePropName="checked">
-        <Checkbox>{t("Include eggs")}</Checkbox>
-      </Form.Item>
-      <Form.Item
-        name="milkType"
-        label={t("Milk type")}
-        rules={[{ required: true, message: t("Please select milk type") }]}
-      >
-        <Select style={{ width: 200 }}>
-          <Option value={t("Whole Milk")}>{t("Whole Milk")}</Option>
-          <Option value={t("Skim Milk")}>{t("Skim Milk")}</Option>
-          <Option value={t("Almond Milk")}>{t("Almond Milk")}</Option>
-          <Option value={t("Soy Milk")}>{t("Soy Milk")}</Option>
-          <Option value={t("Oat Milk")}>{t("Oat Milk")}</Option>
-        </Select>
-      </Form.Item>
-    </Space>
-  </div>
-)
+const BriocheForm = ({ t, form }) => {
+  const [expertMode, setExpertMode] = useState(false)
 
-const NaanForm = ({ t }) => (
-  <div className="flour-box">
-    <Space direction="vertical" style={{ width: "100%" }}>
-      <Form.Item
-        name="naanCount"
-        label={t("Number of Naans")}
-        rules={[{ required: true, message: t("Please input number of naans") }]}
-      >
-        <InputNumber datatype="number" min={0} style={{ width: "100%" }} />
-      </Form.Item>
-      <Form.Item
-        name="hydrationPercentage"
-        label={t("Hydration percentage")}
-        initialValue={60}
-        rules={[
-          { required: true, message: t("Please input hydration percentage") },
-        ]}
-      >
-        <InputNumber
-          datatype="number"
-          min={0}
-          max={100}
-          style={{ width: "100%" }}
-          addonAfter="%"
-        />
-      </Form.Item>
-      <Form.Item
-        name="fatPercentage"
-        label={t("Fat percentage")}
-        initialValue={20}
-        rules={[{ required: true, message: t("Please input fat percentage") }]}
-      >
-        <InputNumber
-          datatype="number"
-          min={0}
-          max={100}
-          style={{ width: "100%" }}
-          addonAfter="%"
-        />
-      </Form.Item>
-      <Form.Item
-        name="yogurtType"
-        label={t("Yogurt Type")}
-        style={{ width: 200 }}
-      >
-        <Select style={{ width: 200 }}>
-          <Option value={t("No Yogurt")}>{t("No Yogurt")}</Option>
-          <Option value={t("Full Fat Yogurt")}>{t("Full Fat Yogurt")}</Option>
-          <Option value={t("Low Fat Yogurt")}>{t("Low Fat Yogurt")}</Option>
-          <Option value={t("Non Fat Yogurt")}>{t("Non Fat Yogurt")}</Option>
-        </Select>
-      </Form.Item>
-      <Form.Item
-        name="liquidType"
-        label={t("Liquid Type")}
-        style={{ width: 200 }}
-      >
-        <Select style={{ width: 200 }}>
-          <Option value={t("Water")}>{t("Water")}</Option>
-          <Option value={t("Whole Milk")}>{t("Whole Milk")}</Option>
-          <Option value={t("Skim Milk")}>{t("Skim Milk")}</Option>
-          <Option value={t("Almond Milk")}>{t("Almond Milk")}</Option>
-          <Option value={t("Soy Milk")}>{t("Soy Milk")}</Option>
-        </Select>
-      </Form.Item>
-      <Form.Item
-        name="naanWeight"
-        label={t("Desired weight of each naan (g)")}
-        initialValue={100}
-      >
-        <InputNumber
-          datatype="number"
-          addonAfter="g"
-          min={0}
-          style={{ width: "100%" }}
-        />
-      </Form.Item>
-    </Space>
-  </div>
-)
+  return (
+    <div className="flour-box">
+      <Space direction="vertical" style={{ width: "100%" }}>
+        <Form.Item name="expertMode" valuePropName="checked">
+          <Checkbox onChange={(e) => setExpertMode(e.target.checked)}>
+            {t("Expert Mode")}
+          </Checkbox>
+        </Form.Item>
 
-const PitaForm = ({ t }) => (
-  <div className="flour-box">
-    <Space direction="vertical" style={{ width: "100%" }}>
-      <Form.Item
-        name="pitaCount"
-        label={t("Number of Pitas")}
-        rules={[{ required: true, message: t("Please input number of pitas") }]}
-      >
-        <InputNumber datatype="number" min={0} style={{ width: "100%" }} />
-      </Form.Item>
-      <Form.Item
-        name="hydrationPercentage"
-        label={t("Hydration percentage")}
-        initialValue={65}
-        rules={[
-          { required: true, message: t("Please input hydration percentage") },
-        ]}
-      >
-        <InputNumber
-          datatype="number"
-          min={0}
-          max={100}
-          style={{ width: "100%" }}
-          addonAfter="%"
-        />
-      </Form.Item>
-      <Form.Item
-        name="pitaWeight"
-        label={t("Desired weight of each pita (g)")}
-        initialValue={80}
-      >
-        <InputNumber
-          datatype="number"
-          addonAfter="g"
-          min={0}
-          style={{ width: "100%" }}
-        />
-      </Form.Item>
-    </Space>
-  </div>
-)
+        <Form.Item
+          name="bunCount"
+          label={t("Number of buns")}
+          rules={[
+            { required: true, message: t("Please input number of buns") },
+          ]}
+        >
+          <InputNumber datatype="number" min={0} style={{ width: "100%" }} />
+        </Form.Item>
+        {expertMode && (
+          <>
+            <Form.Item
+              name="briocheWeight"
+              label={t("Desired weight of each bun (g)")}
+              initialValue={80}
+              rules={[
+                {
+                  required: true,
+                  message: t("Please input weight of each bun"),
+                },
+              ]}
+            >
+              <InputNumber
+                datatype="number"
+                addonAfter="g"
+                min={0}
+                style={{ width: "100%" }}
+              />
+            </Form.Item>
+            <Form.Item
+              name="proteinContent"
+              label={t("Protein Content")}
+              initialValue={10}
+              rules={[
+                { required: true, message: t("Please input protein content") },
+              ]}
+            >
+              <InputNumber
+                datatype="number"
+                min={0}
+                max={100}
+                addonAfter="%"
+                style={{ width: "100%" }}
+              />
+            </Form.Item>
+            <Form.Item
+              name="fiberContent"
+              label={t("Fiber Content")}
+              initialValue={2}
+              rules={[
+                { required: true, message: t("Please input fiber content") },
+              ]}
+            >
+              <InputNumber
+                datatype="number"
+                min={0}
+                max={100}
+                addonAfter="%"
+                style={{ width: "100%" }}
+              />
+            </Form.Item>
+            <Form.Item
+              name="hydrationPercentage"
+              label={t("Hydration percentage")}
+              initialValue={65}
+              rules={[
+                {
+                  required: true,
+                  message: t("Please input hydration percentage"),
+                },
+              ]}
+            >
+              <InputNumber
+                datatype="number"
+                min={0}
+                max={100}
+                style={{ width: "100%" }}
+                addonAfter="%"
+              />
+            </Form.Item>
+            <Form.Item
+              name="fatPercentage"
+              label={t("Fat percentage")}
+              initialValue={20}
+              rules={[
+                { required: true, message: t("Please input fat percentage") },
+              ]}
+            >
+              <InputNumber
+                datatype="number"
+                min={0}
+                max={100}
+                style={{ width: "100%" }}
+                addonAfter="%"
+              />
+            </Form.Item>
+          </>
+        )}
+        <Form.Item
+          name="fatType"
+          label={t("Fat type")}
+          rules={[{ required: true, message: t("Please select fat type") }]}
+        >
+          <Select style={{ width: 200 }}>
+            <Option value={t("Butter")}>{t("Butter")}</Option>
+            <Option value={t("Oil")}>{t("Oil")}</Option>
+            <Option value={t("Margarine")}>{t("Margarine")}</Option>
+            <Option value={t("Lard")}>{t("Lard")}</Option>
+          </Select>
+        </Form.Item>
+        <Form.Item name="includeEggs" valuePropName="checked">
+          <Checkbox>{t("Include eggs")}</Checkbox>
+        </Form.Item>
+        <Form.Item
+          name="milkType"
+          label={t("Milk type")}
+          rules={[{ required: true, message: t("Please select milk type") }]}
+        >
+          <Select style={{ width: 200 }}>
+            <Option value={t("Whole Milk")}>{t("Whole Milk")}</Option>
+            <Option value={t("Skim Milk")}>{t("Skim Milk")}</Option>
+            <Option value={t("Almond Milk")}>{t("Almond Milk")}</Option>
+            <Option value={t("Soy Milk")}>{t("Soy Milk")}</Option>
+            <Option value={t("Oat Milk")}>{t("Oat Milk")}</Option>
+          </Select>
+        </Form.Item>
+      </Space>
+    </div>
+  )
+}
+
+const NaanForm = ({ t, form }) => {
+  const [expertMode, setExpertMode] = useState(false)
+
+  return (
+    <div className="flour-box">
+      <Space direction="vertical" style={{ width: "100%" }}>
+        <Form.Item name="expertMode" valuePropName="checked">
+          <Checkbox onChange={(e) => setExpertMode(e.target.checked)}>
+            {t("Expert Mode")}
+          </Checkbox>
+        </Form.Item>
+        <Form.Item
+          name="naanCount"
+          label={t("Number of Naans")}
+          rules={[
+            { required: true, message: t("Please input number of naans") },
+          ]}
+        >
+          <InputNumber datatype="number" min={0} style={{ width: "100%" }} />
+        </Form.Item>
+        {expertMode && (
+          <>
+            <Form.Item
+              name="naanWeight"
+              label={t("Desired weight of each naan (g)")}
+              initialValue={100}
+            >
+              <InputNumber
+                datatype="number"
+                addonAfter="g"
+                min={0}
+                style={{ width: "100%" }}
+              />
+            </Form.Item>
+            <Form.Item
+              name="proteinContent"
+              label={t("Protein Content")}
+              initialValue={10}
+              rules={[
+                { required: true, message: t("Please input protein content") },
+              ]}
+            >
+              <InputNumber
+                datatype="number"
+                min={0}
+                max={100}
+                addonAfter="%"
+                style={{ width: "100%" }}
+              />
+            </Form.Item>
+            <Form.Item
+              name="fiberContent"
+              label={t("Fiber Content")}
+              initialValue={2}
+              rules={[
+                { required: true, message: t("Please input fiber content") },
+              ]}
+            >
+              <InputNumber
+                datatype="number"
+                min={0}
+                max={100}
+                addonAfter="%"
+                style={{ width: "100%" }}
+              />
+            </Form.Item>
+            <Form.Item
+              name="hydrationPercentage"
+              label={t("Hydration percentage")}
+              initialValue={60}
+              rules={[
+                {
+                  required: true,
+                  message: t("Please input hydration percentage"),
+                },
+              ]}
+            >
+              <InputNumber
+                datatype="number"
+                min={0}
+                max={100}
+                style={{ width: "100%" }}
+                addonAfter="%"
+              />
+            </Form.Item>
+            <Form.Item
+              name="fatPercentage"
+              label={t("Fat percentage")}
+              initialValue={10}
+              rules={[
+                { required: true, message: t("Please input fat percentage") },
+              ]}
+            >
+              <InputNumber
+                datatype="number"
+                min={0}
+                max={100}
+                style={{ width: "100%" }}
+                addonAfter="%"
+              />
+            </Form.Item>
+          </>
+        )}
+        <Form.Item
+          name="yogurtType"
+          label={t("Yogurt Type")}
+          style={{ width: 200 }}
+        >
+          <Select style={{ width: 200 }}>
+            <Option value={t("No Yogurt")}>{t("No Yogurt")}</Option>
+            <Option value={t("Full Fat Yogurt")}>{t("Full Fat Yogurt")}</Option>
+            <Option value={t("Low Fat Yogurt")}>{t("Low Fat Yogurt")}</Option>
+            <Option value={t("Non Fat Yogurt")}>{t("Non Fat Yogurt")}</Option>
+          </Select>
+        </Form.Item>
+        <Form.Item
+          name="liquidType"
+          label={t("Liquid Type")}
+          style={{ width: 200 }}
+        >
+          <Select style={{ width: 200 }}>
+            <Option value={t("Water")}>{t("Water")}</Option>
+            <Option value={t("Whole Milk")}>{t("Whole Milk")}</Option>
+            <Option value={t("Skim Milk")}>{t("Skim Milk")}</Option>
+            <Option value={t("Almond Milk")}>{t("Almond Milk")}</Option>
+            <Option value={t("Soy Milk")}>{t("Soy Milk")}</Option>
+          </Select>
+        </Form.Item>
+      </Space>
+    </div>
+  )
+}
+
+const PitaForm = ({ t, form }) => {
+  const [expertMode, setExpertMode] = useState(false)
+
+  return (
+    <div className="flour-box">
+      <Space direction="vertical" style={{ width: "100%" }}>
+        <Form.Item name="expertMode" valuePropName="checked">
+          <Checkbox onChange={(e) => setExpertMode(e.target.checked)}>
+            {t("Expert Mode")}
+          </Checkbox>
+        </Form.Item>
+        <Form.Item
+          name="pitaCount"
+          label={t("Number of Pitas")}
+          rules={[
+            { required: true, message: t("Please input number of pitas") },
+          ]}
+        >
+          <InputNumber datatype="number" min={0} style={{ width: "100%" }} />
+        </Form.Item>
+        {expertMode && (
+          <>
+            <Form.Item
+              name="pitaWeight"
+              label={t("Desired weight of each pita (g)")}
+              initialValue={80}
+            >
+              <InputNumber
+                datatype="number"
+                addonAfter="g"
+                min={0}
+                style={{ width: "100%" }}
+              />
+            </Form.Item>
+            <Form.Item
+              name="proteinContent"
+              label={t("Protein Content")}
+              initialValue={10}
+              rules={[
+                { required: true, message: t("Please input protein content") },
+              ]}
+            >
+              <InputNumber
+                datatype="number"
+                min={0}
+                max={100}
+                addonAfter="%"
+                style={{ width: "100%" }}
+              />
+            </Form.Item>
+            <Form.Item
+              name="fiberContent"
+              label={t("Fiber Content")}
+              initialValue={2}
+              rules={[
+                { required: true, message: t("Please input fiber content") },
+              ]}
+            >
+              <InputNumber
+                datatype="number"
+                min={0}
+                max={100}
+                addonAfter="%"
+                style={{ width: "100%" }}
+              />
+            </Form.Item>
+            <Form.Item
+              name="hydrationPercentage"
+              label={t("Hydration percentage")}
+              initialValue={65}
+              rules={[
+                {
+                  required: true,
+                  message: t("Please input hydration percentage"),
+                },
+              ]}
+            >
+              <InputNumber
+                datatype="number"
+                min={0}
+                max={100}
+                style={{ width: "100%" }}
+                addonAfter="%"
+              />
+            </Form.Item>
+          </>
+        )}
+      </Space>
+    </div>
+  )
+}
 
 const PizzaForm = ({ form, t }) => {
   const [flourCount, setFlourCount] = useState(1)
@@ -1063,6 +1221,23 @@ const ResultsModal = ({
                   showIcon
                 />
               )}
+              <Alert
+                message={`${t("Adjusted Hydration")}: ${
+                  results.adjustedHydration
+                }%`}
+                type="info"
+                showIcon
+              />
+              <Alert
+                message={`${t("Protein Content")}: ${results.proteinContent}%`}
+                type="info"
+                showIcon
+              />
+              <Alert
+                message={`${t("Fiber Content")}: ${results.fiberContent}%`}
+                type="info"
+                showIcon
+              />
             </>
           ) : doughType === "naan" ? (
             <>
@@ -1109,6 +1284,23 @@ const ResultsModal = ({
                   showIcon
                 />
               )}
+              <Alert
+                message={`${t("Adjusted Hydration")}: ${
+                  results.adjustedHydration
+                }%`}
+                type="info"
+                showIcon
+              />
+              <Alert
+                message={`${t("Protein Content")}: ${results.proteinContent}%`}
+                type="info"
+                showIcon
+              />
+              <Alert
+                message={`${t("Fiber Content")}: ${results.fiberContent}%`}
+                type="info"
+                showIcon
+              />
             </>
           ) : doughType === "pita" ? (
             <>
@@ -1145,7 +1337,19 @@ const ResultsModal = ({
                 showIcon
               />
               <Alert
-                message={`${t("Total hydration")}: ${results.totalHydration}%`}
+                message={`${t("Adjusted Hydration")}: ${
+                  results.adjustedHydration
+                }%`}
+                type="info"
+                showIcon
+              />
+              <Alert
+                message={`${t("Protein Content")}: ${results.proteinContent}%`}
+                type="info"
+                showIcon
+              />
+              <Alert
+                message={`${t("Fiber Content")}: ${results.fiberContent}%`}
                 type="info"
                 showIcon
               />
