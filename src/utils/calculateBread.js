@@ -127,6 +127,13 @@ export const calculateDough = (values, setResults, setModalVisible) => {
       ? "360 - 400+"
       : "400+"
 
+  const hydrationPercentage = `${(
+    (Math.min(totalFlourAmount, waterRangeMin) / totalFlourAmount) *
+    100
+  ).toFixed(0)}% - ${(
+    (Math.min(totalFlourAmount, waterRangeMax) / totalFlourAmount) *
+    100
+  ).toFixed(0)}`
   const flourComposition = [
     { name: "Durum Wheat", amount: totalDurumWheat.toFixed(0) },
     { name: "Soft Wheat", amount: totalSoftWheat.toFixed(0) },
@@ -149,6 +156,7 @@ export const calculateDough = (values, setResults, setModalVisible) => {
     glycemicIndex,
     wRating,
     flourComposition,
+    hydrationPercentage,
   })
 
   setModalVisible(true)
