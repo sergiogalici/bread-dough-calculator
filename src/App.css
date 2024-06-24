@@ -87,7 +87,7 @@ body,
   }
 }
 
-@media (min-width: 928px) {
+@media (min-width: 998px) {
   .desktop-lang-buttons {
     display: block;
   }
@@ -96,7 +96,7 @@ body,
   }
 }
 
-@media (max-width: 927px) {
+@media (max-width: 997px) {
   .desktop-lang-buttons {
     display: none;
   }
@@ -104,7 +104,7 @@ body,
     display: block;
     position: absolute;
     top: 15px; /* Distanza dal fondo dell'header */
-    right: -25px; /* Distanza dal lato destro dell'header */
+    right: -10px; /* Distanza dal lato destro dell'header */
   }
 
   .radio-group {
