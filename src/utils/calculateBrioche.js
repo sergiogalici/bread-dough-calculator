@@ -20,10 +20,13 @@ export const calculateBrioche = (values, setResults, setModalVisible) => {
 
   // Calcolo delle uova (assumiamo 1 uovo ogni 200g di farina)
   const eggsCount = includeEggs ? Math.round(flourAmount / 200) : 0
-  const totalEggs = eggsCount * 50 // Assumiamo 50g per uovo
+  const totalEggs = eggsCount * 60 // Assumiamo 60g per uovo
 
-  // Calcolo dell'acqua nelle uova e nel grasso
+  // Calcolo dell'acqua e grassi nelle uova
   const waterInEggs = totalEggs * 0.75
+  const fatInEggs = totalEggs * 0.1 // Assumiamo che il 10% del peso delle uova sia grasso
+
+  // Calcolo dell'acqua nel grasso
   const waterInFat =
     fatType === "butter" || fatType === "margarine" ? totalFat * 0.2 : 0
 
@@ -57,11 +60,14 @@ export const calculateBrioche = (values, setResults, setModalVisible) => {
     proofingTime = "2-2.5 hours"
   }
 
+  // Aggiornare il grasso totale per includere il grasso dalle uova
+  const totalFatIncludingEggs = totalFat - fatInEggs
+
   setResults({
     totalFlourAmount: Math.round(flourAmount),
     totalMilk: Math.round(totalMilk),
     totalSalt: Math.round(totalSalt),
-    totalFat: Math.round(totalFat),
+    totalFat: Math.round(totalFatIncludingEggs),
     totalEggs: totalEggs,
     eggsCount: eggsCount,
     totalYeast: Math.round(totalYeast),
