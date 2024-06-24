@@ -48,14 +48,14 @@ export const calculatePizza = (values, setResults, setModalVisible) => {
   let secondProofingTime
 
   if (temperature < 20) {
-    firstProofingTime = "8-10 hours"
-    secondProofingTime = coldProofing ? "24-36 hours" : "1-2 hours"
+    firstProofingTime = "8-10 h"
+    secondProofingTime = coldProofing ? "24-36 h" : "1-2 h"
   } else if (temperature < 25) {
-    firstProofingTime = "6-8 hours"
-    secondProofingTime = coldProofing ? "18-24 hours" : "45 minutes - 1 hour"
+    firstProofingTime = "6-8 h"
+    secondProofingTime = coldProofing ? "18-24 h" : "45 minutes - 1 hour"
   } else {
-    firstProofingTime = "5-6 hours"
-    secondProofingTime = coldProofing ? "12-18 hours" : "30-45 minutes"
+    firstProofingTime = "5-6 h"
+    secondProofingTime = coldProofing ? "12-18 h" : "30-45 minutes"
   }
 
   const riseTime = `${firstProofingTime} (bulk fermentation), ${secondProofingTime} (after shaping${

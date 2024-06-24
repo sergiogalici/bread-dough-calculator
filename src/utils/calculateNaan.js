@@ -1,3 +1,18 @@
+const reversedLiquidTypes = {
+  "whole-milk": "Whole Milk",
+  "skim-milk": "Skim Milk",
+  "almond-milk": "Almond Milk",
+  "soy-milk": "Soy Milk",
+  water: "Water",
+}
+
+const reversedYogurtTypes = {
+  "no-yogurt": "No Yogurt",
+  "full-fat": "Full Fat Yogurt",
+  "low-fat": "Low Fat Yogurt",
+  "non-fat": "Non Fat Yogurt",
+}
+
 export const calculateNaan = (values, setResults, setModalVisible) => {
   const {
     naanCount,
@@ -8,6 +23,8 @@ export const calculateNaan = (values, setResults, setModalVisible) => {
     naanWeight,
     temperature,
   } = values
+
+  console.log("yogurt type = ", yogurtType)
 
   const flourAmount =
     (naanCount * naanWeight) / (1 + (hydrationPercentage + fatPercentage) / 100)
@@ -70,11 +87,11 @@ export const calculateNaan = (values, setResults, setModalVisible) => {
 
   let proofingTime
   if (temperature < 20) {
-    proofingTime = "2-2.5 hours"
+    proofingTime = "2-2.5 h"
   } else if (temperature < 25) {
-    proofingTime = "1.5-2 hours"
+    proofingTime = "1.5-2 h"
   } else {
-    proofingTime = "1-1.5 hours"
+    proofingTime = "1-1.5 h"
   }
 
   const totalDoughWeight =
@@ -93,8 +110,8 @@ export const calculateNaan = (values, setResults, setModalVisible) => {
     proofingTime: proofingTime,
     numberOfNaan: numberOfNaan,
     naanWeight: naanWeight,
-    liquidType: liquidType,
-    yogurtType: yogurtType,
+    liquidType: reversedLiquidTypes[liquidType],
+    yogurtType: reversedYogurtTypes[yogurtType],
     totalHydration: hydrationPercentage,
     glycemicIndex: "Medium",
   })

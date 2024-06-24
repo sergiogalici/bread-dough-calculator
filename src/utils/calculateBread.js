@@ -79,23 +79,23 @@ export const calculateDough = (values, setResults, setModalVisible) => {
   let secondProofingTime
 
   if (temperature < 10) {
-    firstProofingTime = "12-18 hours"
-    secondProofingTime = coldProofing ? "24-36 hours" : "6-12 hours"
+    firstProofingTime = "12-18 h"
+    secondProofingTime = coldProofing ? "24-36 h" : "6-12 h"
   } else if (temperature < 15) {
-    firstProofingTime = "8-12 hours"
-    secondProofingTime = coldProofing ? "18-24 hours" : "4-8 hours"
+    firstProofingTime = "8-12 h"
+    secondProofingTime = coldProofing ? "18-24 h" : "4-8 h"
   } else if (temperature < 20) {
-    firstProofingTime = "6-8 hours"
-    secondProofingTime = coldProofing ? "12-18 hours" : "3-6 hours"
+    firstProofingTime = "6-8 h"
+    secondProofingTime = coldProofing ? "12-18 h" : "3-6 h"
   } else if (temperature < 25) {
-    firstProofingTime = "4-6 hours"
-    secondProofingTime = coldProofing ? "8-12 hours" : "2-4 hours"
+    firstProofingTime = "4-6 h"
+    secondProofingTime = coldProofing ? "8-12 h" : "2-4 h"
   } else if (temperature < 30) {
-    firstProofingTime = "2-4 hours"
-    secondProofingTime = coldProofing ? "6-8 hours" : "1-2 hours"
+    firstProofingTime = "2-4 h"
+    secondProofingTime = coldProofing ? "6-8 h" : "1-2 h"
   } else {
-    firstProofingTime = "2-4 hours"
-    secondProofingTime = coldProofing ? "4-6 hours" : "1-2 hours"
+    firstProofingTime = "2-4 h"
+    secondProofingTime = coldProofing ? "4-6 h" : "1-2 h"
   }
 
   const riseTime = `${firstProofingTime} (first proofing), ${secondProofingTime} (second proofing${

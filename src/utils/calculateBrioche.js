@@ -1,7 +1,31 @@
+const milkProperties = {
+  whole: { waterContent: 0.87, fatContent: 0.035 },
+  skim: { waterContent: 0.91, fatContent: 0.002 },
+  almond: { waterContent: 0.97, fatContent: 0.013 },
+  soy: { waterContent: 0.94, fatContent: 0.02 },
+  oat: { waterContent: 0.9, fatContent: 0.015 },
+}
+
+const reverseMilkTypeMap = {
+  whole: "Whole Milk",
+  skim: "Skim Milk",
+  almond: "Almond Milk",
+  soy: "Soy Milk",
+  oat: "Oat Milk",
+}
+
+const reverseFatTypeMap = {
+  butter: "Butter",
+  oil: "Oil",
+  margarine: "Margarine",
+  lard: "Lard",
+}
+
 export const calculateBrioche = (values, setResults, setModalVisible) => {
+  console.log("Values in func = ", values)
   const {
     briocheWeight,
-    briocheCount,
+    bunCount: briocheCount,
     hydrationPercentage,
     fatPercentage,
     fatType,
@@ -10,36 +34,34 @@ export const calculateBrioche = (values, setResults, setModalVisible) => {
     temperature,
   } = values
 
-  // Calcolo della quantità di farina
   const totalDoughWeight = briocheWeight * briocheCount
   const flourAmount =
     totalDoughWeight / (1 + (hydrationPercentage + fatPercentage) / 100)
 
-  // Calcolo del grasso
   const totalFat = (flourAmount * fatPercentage) / 100
 
-  // Calcolo delle uova (assumiamo 1 uovo ogni 200g di farina)
   const eggsCount = includeEggs ? Math.round(flourAmount / 200) : 0
-  const totalEggs = eggsCount * 60 // Assumiamo 60g per uovo
+  const totalEggs = eggsCount * 60
 
-  // Calcolo dell'acqua e grassi nelle uova
   const waterInEggs = totalEggs * 0.75
-  const fatInEggs = totalEggs * 0.1 // Assumiamo che il 10% del peso delle uova sia grasso
+  const fatInEggs = totalEggs * 0.1
 
-  // Calcolo dell'acqua nel grasso
   const waterInFat =
     fatType === "butter" || fatType === "margarine" ? totalFat * 0.2 : 0
 
-  // Calcolo dell'idratazione totale desiderata
   const totalDesiredWater = (flourAmount * hydrationPercentage) / 100
 
-  // Calcolo del latte necessario
+  const milkProps = milkProperties[milkType] || {
+    waterContent: 0,
+    fatContent: 0,
+  }
   const totalMilk = Math.max(0, totalDesiredWater - waterInEggs - waterInFat)
+  const waterInMilk = totalMilk * milkProps.waterContent
+  const fatInMilk = totalMilk * milkProps.fatContent
 
-  const totalSalt = flourAmount * 0.02 // 2% del peso della farina
-  const totalSugar = flourAmount * 0.1 // 10% del peso della farina
+  const totalSalt = flourAmount * 0.02
+  const totalSugar = flourAmount * 0.1
 
-  // Calcolo del lievito
   let yeastPercentage
   if (temperature < 20) {
     yeastPercentage = 0.015
@@ -50,36 +72,35 @@ export const calculateBrioche = (values, setResults, setModalVisible) => {
   }
   const totalYeast = flourAmount * yeastPercentage
 
-  // Tempo di lievitazione
   let proofingTime
   if (temperature < 20) {
-    proofingTime = "3-4 hours"
+    proofingTime = "3-4 h"
   } else if (temperature < 25) {
-    proofingTime = "2.5-3 hours"
+    proofingTime = "2.5-3 h"
   } else {
-    proofingTime = "2-2.5 hours"
+    proofingTime = "2-2.5 h"
   }
 
-  // Aggiornare il grasso totale per includere il grasso dalle uova
-  const totalFatIncludingEggs = totalFat - fatInEggs
+  const totalFatIncludingEggsAndMilk = totalFat - fatInEggs - fatInMilk
 
   setResults({
     totalFlourAmount: Math.round(flourAmount),
     totalMilk: Math.round(totalMilk),
     totalSalt: Math.round(totalSalt),
-    totalFat: Math.round(totalFatIncludingEggs),
+    totalFat: Math.round(totalFatIncludingEggsAndMilk),
     totalEggs: totalEggs,
     eggsCount: eggsCount,
     totalYeast: Math.round(totalYeast),
     totalSugar: Math.round(totalSugar),
-    fatType: fatType,
-    milkType: milkType,
+    fatType: reverseFatTypeMap[fatType],
+    milkType: reverseMilkTypeMap[milkType],
     proofingTime: proofingTime,
     numberOfBrioche: briocheCount,
     briocheWeight: briocheWeight,
     totalHydration: hydrationPercentage,
     waterFromEggs: Math.round(waterInEggs),
     waterFromFat: Math.round(waterInFat),
+    waterFromMilk: Math.round(waterInMilk),
     glycemicIndex: "High",
   })
 

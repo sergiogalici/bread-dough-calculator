@@ -16,11 +16,11 @@ export const calculateFocaccia = (values, setResults, setModalVisible) => {
   let proofingTime
 
   if (temperature < 20) {
-    proofingTime = coldProofing ? "24-36 hours" : "8-10 hours"
+    proofingTime = coldProofing ? "24-36 h" : "8-10 h"
   } else if (temperature < 25) {
-    proofingTime = coldProofing ? "18-24 hours" : "6-8 hours"
+    proofingTime = coldProofing ? "18-24 h" : "6-8 h"
   } else {
-    proofingTime = coldProofing ? "12-18 hours" : "5-6 hours"
+    proofingTime = coldProofing ? "12-18 h" : "5-6 h"
   }
 
   const riseTime = `${proofingTime} (total proofing time${
