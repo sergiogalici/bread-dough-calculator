@@ -127,6 +127,15 @@ export const calculateDough = (values, setResults, setModalVisible) => {
       ? "360 - 400+"
       : "400+"
 
+  const flourComposition = [
+    { name: "Durum Wheat", amount: totalDurumWheat.toFixed(0) },
+    { name: "Soft Wheat", amount: totalSoftWheat.toFixed(0) },
+    { name: "Rye", amount: totalRye.toFixed(0) },
+    { name: "Spelt", amount: totalSpelt.toFixed(0) },
+    { name: "Cornmeal", amount: totalCorn.toFixed(0) },
+    { name: "Rice Flour", amount: totalRice.toFixed(0) },
+  ].filter((flour) => parseFloat(flour.amount) > 0)
+
   setResults({
     totalFlourAmount: totalFlourAmount.toFixed(0),
     totalWater: `${Math.min(totalFlourAmount, waterRangeMin).toFixed(
@@ -139,6 +148,7 @@ export const calculateDough = (values, setResults, setModalVisible) => {
     fiberRatio: fiberRatio.toFixed(1),
     glycemicIndex,
     wRating,
+    flourComposition,
   })
 
   setModalVisible(true)
