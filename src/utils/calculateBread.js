@@ -143,7 +143,7 @@ export const calculateDough = (values, setResults, setModalVisible) => {
   console.log("Water ratio:", waterRatio)
   console.log("Protein ratio:", proteinRatio)
   let baseHydrationMin = 0.6
-  let baseHydrationMax = 0.75
+  let baseHydrationMax = 0.7
 
   // Aumenta l'idratazione del 2% per ogni punto percentuale di proteine sopra il 10%
   if (proteinRatio > 10) {
