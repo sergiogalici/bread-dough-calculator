@@ -73,7 +73,6 @@ const prepareChartData = (results, doughType) => {
       { name: "Eggs", amount: parseAmount(results.totalEggs) }
     )
   } else {
-    // Per gli altri tipi di impasto (pane, pizza, focaccia)
     data.push({ name: "Water", amount: parseAmount(results.totalWater) })
   }
 
@@ -188,7 +187,7 @@ const DoughTypeSelector = ({ doughType, handleDoughTypeChange }) => {
     <Radio.Group
       onChange={(e) => handleDoughTypeChange(e.target.value)}
       value={doughType}
-      className="radio-group" // Aggiungi questa linea
+      className="radio-group"
       style={{ marginBottom: 20, marginTop: 20 }}
     >
       <Radio.Button value="sourdough">{t("Sourdough Bread")}</Radio.Button>
@@ -575,7 +574,6 @@ const PizzaForm = ({ form, t }) => {
   }
 
   useEffect(() => {
-    // Imposta il valore iniziale per la prima farina se non è già impostato
     if (flours.length === 0) {
       form.setFieldsValue({
         flours: [
@@ -601,7 +599,6 @@ const PizzaForm = ({ form, t }) => {
       0
     )
 
-    // Se il totale degli altri è 0, distribuisci equamente il rimanente
     if (totalOthers === 0) {
       const remainingPercentage = 100 - newValue
       const otherFlourCount = currentFlours.length - 1
@@ -635,6 +632,7 @@ const PizzaForm = ({ form, t }) => {
       form.setFieldsValue({ flours: updatedFlours })
     }
   }
+
   const isGlutenFree = (flourKind) =>
     flourKind === "farina di mais" || flourKind === "farina di riso"
 
@@ -815,24 +813,6 @@ const PizzaForm = ({ form, t }) => {
           </>
         )}
       </Form.List>
-      <Form.Item name="coldProofing" valuePropName="checked">
-        <Checkbox>{t("Second proofing in refrigerator")}</Checkbox>
-      </Form.Item>
-      <Form.Item
-        name="temperature"
-        label={t("Room temperature (°C)")}
-        rules={[{ required: true, message: t("Insert your room temperature") }]}
-        initialValue={25}
-      >
-        <InputNumber
-          datatype="number"
-          min={-10}
-          max={50}
-          placeholder={t("Insert your room temperature")}
-          style={{ width: 200 }}
-          addonAfter="°C"
-        />
-      </Form.Item>
     </>
   )
 }
@@ -878,14 +858,14 @@ const ResultsModal = ({
           {doughType === "brioche" ? (
             <>
               <Alert
-                message={`${t("Milk")} (${t(`${results.milkType}`)}): ${
+                message={`${t("Milk")} (${t(results.milkType)}): ${
                   results.totalMilk
                 } g`}
                 type="info"
                 showIcon
               />
               <Alert
-                message={`${t("Fat")} (${t(`${results.fatType}`)}): ${
+                message={`${t("Fat")} (${t(results.fatType)}): ${
                   results.totalFat
                 } g`}
                 type="info"
@@ -936,14 +916,14 @@ const ResultsModal = ({
                 showIcon
               />
               <Alert
-                message={`${t("Yogurt")} (${t(`${results.yogurtType}`)}): ${
+                message={`${t("Yogurt")} (${t(results.yogurtType)}): ${
                   results.yogurtAmount
                 } g`}
                 type="info"
                 showIcon
               />
               <Alert
-                message={`${t("Liquid")} (${t(`${results.liquidType}`)}): ${
+                message={`${t("Liquid")} (${t(results.liquidType)}): ${
                   results.totalLiquid
                 } g`}
                 type="info"
@@ -971,6 +951,15 @@ const ResultsModal = ({
             </>
           ) : (
             <>
+              {doughType === "pizza" &&
+                results.flourComposition.map((flour, index) => (
+                  <Alert
+                    key={index}
+                    message={`${t(flour.name)}: ${flour.amount} g`}
+                    type="info"
+                    showIcon
+                  />
+                ))}
               <Alert
                 message={`${t("W rating")}: ${results.wRating}`}
                 type="info"
@@ -978,6 +967,13 @@ const ResultsModal = ({
               />
               <Alert
                 message={`${t("Water")}: ${results.totalWater} g`}
+                type="info"
+                showIcon
+              />
+              <Alert
+                message={`${t("Hydration percentage")}: ${
+                  results.hydrationPercentage
+                }%`}
                 type="info"
                 showIcon
               />
@@ -1007,11 +1003,6 @@ const ResultsModal = ({
               />
             </>
           )}
-          <Alert
-            message={`${t("Glycemic index")}: ${results.glycemicIndex}`}
-            type="info"
-            showIcon
-          />
         </div>
       ) : (
         <Alert message={t("Invalid Input")} type="error" />
@@ -1067,33 +1058,33 @@ const App = () => {
     useState("celsius")
 
   const milkTypeMap = {
-    [`${t("Whole Milk")}`]: "whole",
-    [`${t("Skim Milk")}`]: "skim",
-    [`${t("Almond Milk")}`]: "almond",
-    [`${t("Soy Milk")}`]: "soy",
-    [`${t("Oat Milk")}`]: "oat",
+    [t("Whole Milk")]: "whole",
+    [t("Skim Milk")]: "skim",
+    [t("Almond Milk")]: "almond",
+    [t("Soy Milk")]: "soy",
+    [t("Oat Milk")]: "oat",
   }
 
   const fatTypeMap = {
-    [`${t("Butter")}`]: "butter",
-    [`${t("Oil")}`]: "oil",
-    [`${t("Margarine")}`]: "margarine",
-    [`${t("Lard")}`]: "lard",
+    [t("Butter")]: "butter",
+    [t("Oil")]: "oil",
+    [t("Margarine")]: "margarine",
+    [t("Lard")]: "lard",
   }
 
   const liquidTypeMap = {
-    [`${t("Water")}`]: "water",
-    [`${t("Whole Milk")}`]: "whole-milk",
-    [`${t("Skim Milk")}`]: "skim-milk",
-    [`${t("Almond Milk")}`]: "almond-milk",
-    [`${t("Soy Milk")}`]: "soy-milk",
+    [t("Water")]: "water",
+    [t("Whole Milk")]: "whole-milk",
+    [t("Skim Milk")]: "skim-milk",
+    [t("Almond Milk")]: "almond-milk",
+    [t("Soy Milk")]: "soy-milk",
   }
 
   const yogurtTypeMap = {
-    [`${t("No Yogurt")}`]: "no-yogurt",
-    [`${t("Full Fat Yogurt")}`]: "full-fat",
-    [`${t("Low Fat Yogurt")}`]: "low-fat",
-    [`${t("Non Fat Yogurt")}`]: "non-fat",
+    [t("No Yogurt")]: "no-yogurt",
+    [t("Full Fat Yogurt")]: "full-fat",
+    [t("Low Fat Yogurt")]: "low-fat",
+    [t("Non Fat Yogurt")]: "non-fat",
   }
 
   const handleModalOk = () => {

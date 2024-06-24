@@ -105,6 +105,7 @@ i18n.use(initReactI18next).init({
         "Choose flour type": "Choose flour type",
         "Input flour percentage": "Input flour percentage",
         "Flour percentage": "Flour percentage",
+        Hydration: "Hydration",
       },
     },
     fr: {
@@ -212,6 +213,7 @@ i18n.use(initReactI18next).init({
         "Choose flour type": "Choisissez le type de farine",
         "Input flour percentage": "Saisissez le pourcentage de farine",
         "Flour percentage": "Pourcentage de farine",
+        Hydration: "Hydratation",
       },
     },
     es: {
@@ -309,18 +311,20 @@ i18n.use(initReactI18next).init({
         Oil: "Aceite",
         Margarine: "Margarina",
         Lard: "Manteca de cerdo",
+        "Number of pizzas": "Número de pizzas",
+        "Weight per pizza (g)": "Peso por pizza (g)",
+        "Please input number of pizzas":
+          "Por favor, ingrese el número de pizzas",
+        "Please input weight per pizza": "Por favor, ingrese el peso por pizza",
+        "At least one type of flour is required":
+          "Se requiere al menos un tipo de harina",
+        "Total flour percentage must be 100%":
+          "El porcentaje total de harina debe ser 100%",
+        "Choose flour type": "Elija el tipo de harina",
+        "Input flour percentage": "Ingrese el porcentaje de harina",
+        "Flour percentage": "Porcentaje de harina",
+        Hydration: "Hidratación",
       },
-      "Number of pizzas": "Número de pizzas",
-      "Weight per pizza (g)": "Peso por pizza (g)",
-      "Please input number of pizzas": "Por favor, ingrese el número de pizzas",
-      "Please input weight per pizza": "Por favor, ingrese el peso por pizza",
-      "At least one type of flour is required":
-        "Se requiere al menos un tipo de harina",
-      "Total flour percentage must be 100%":
-        "El porcentaje total de harina debe ser 100%",
-      "Choose flour type": "Elija el tipo de harina",
-      "Input flour percentage": "Ingrese el porcentaje de harina",
-      "Flour percentage": "Porcentaje de harina",
     },
     it: {
       translation: {
@@ -429,6 +433,7 @@ i18n.use(initReactI18next).init({
         "Choose flour type": "Scegli il tipo di farina",
         "Input flour percentage": "Inserisci la percentuale di farina",
         "Flour percentage": "Percentuale di farina",
+        Hydration: "Idratazione",
       },
     },
     pt: {
@@ -535,6 +540,7 @@ i18n.use(initReactI18next).init({
         "Choose flour type": "Escolha o tipo de farinha",
         "Input flour percentage": "Insira a percentagem de farinha",
         "Flour percentage": "Percentagem de farinha",
+        Hydration: "Hidratação",
       },
     },
     de: {
@@ -645,6 +651,7 @@ i18n.use(initReactI18next).init({
         "Choose flour type": "Wählen Sie die Mehlsorte",
         "Input flour percentage": "Geben Sie den Mehlprozentsatz ein",
         "Flour percentage": "Mehlprozentsatz",
+        Hydration: "Hydratation",
       },
     },
   },
