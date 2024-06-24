@@ -20,9 +20,7 @@ const reverseFatTypeMap = {
   margarine: "Margarine",
   lard: "Lard",
 }
-
 export const calculateBrioche = (values, setResults, setModalVisible) => {
-  console.log("Values in func = ", values)
   const {
     briocheWeight,
     bunCount: briocheCount,
@@ -62,24 +60,12 @@ export const calculateBrioche = (values, setResults, setModalVisible) => {
   const totalSalt = flourAmount * 0.02
   const totalSugar = flourAmount * 0.1
 
-  let yeastPercentage
-  if (temperature < 20) {
-    yeastPercentage = 0.015
-  } else if (temperature < 25) {
-    yeastPercentage = 0.025
-  } else {
-    yeastPercentage = 0.035
-  }
+  const yeastPercentage =
+    temperature < 20 ? 0.015 : temperature < 25 ? 0.025 : 0.035
   const totalYeast = flourAmount * yeastPercentage
 
-  let proofingTime
-  if (temperature < 20) {
-    proofingTime = "3-4 h"
-  } else if (temperature < 25) {
-    proofingTime = "2.5-3 h"
-  } else {
-    proofingTime = "2-2.5 h"
-  }
+  const proofingTime =
+    temperature < 20 ? "3-4 h" : temperature < 25 ? "2.5-3 h" : "2-2.5 h"
 
   const totalFatIncludingEggsAndMilk = totalFat - fatInEggs - fatInMilk
 

@@ -1,111 +1,74 @@
 export const calculatePizza = (values, setResults, setModalVisible) => {
   const { flours, temperature, coldProofing } = values
-  let totalSalt = 0
-  let totalYeast = 0
-  let totalFiber = 0
-  let totalProtein = 0
+
   let totalFlourAmount = 0
-  let totalSoftWheat = 0
-  let totalDurumWheat = 0
-  let totalCornmeal = 0
-  let totalRiceFlour = 0
-  let totalGlutenFlour = 0
+  let totalProtein = 0
+  let totalFiber = 0
+  let flourComposition = {}
+
+  const proteinFactor = {
+    "grano tenero": 1,
+    "grano duro": 0.85,
+    "farina di mais": 0,
+    "farina di riso": 0,
+  }
 
   flours.forEach((flour) => {
     const { flourAmount, proteinContent, fiberContent, flourKind } = flour
     totalFlourAmount += flourAmount
     totalFiber += flourAmount * (fiberContent / 100)
-    totalSalt += flourAmount * 0.02 // 2% di sale in base alla quantità di farina
-
-    switch (flourKind) {
-      case "grano tenero":
-        totalSoftWheat += flourAmount
-        totalProtein += flourAmount * (proteinContent / 100)
-        totalGlutenFlour += flourAmount
-        break
-      case "grano duro":
-        totalDurumWheat += flourAmount
-        totalProtein += flourAmount * (proteinContent / 100)
-        totalGlutenFlour += flourAmount
-        break
-      case "farina di mais":
-        totalCornmeal += flourAmount
-        break
-      case "farina di riso":
-        totalRiceFlour += flourAmount
-        break
-      default:
-        console.error("Unknown flour type")
-    }
+    totalProtein +=
+      flourAmount * (proteinContent / 100) * (proteinFactor[flourKind] || 1)
+    flourComposition[flourKind] =
+      (flourComposition[flourKind] || 0) + flourAmount
   })
 
-  // Calcolo del lievito di birra per una lievitazione lunga (5-6 ore minimo)
-  const yeastPercentage = 0.2 // 0.2% di lievito di birra secco
-  totalYeast = totalFlourAmount * (yeastPercentage / 100)
+  const totalSalt = totalFlourAmount * 0.02 // 2% di sale
+  const totalYeast = totalFlourAmount * 0.002 // 0.2% di lievito per lievitazione lunga
 
-  // Calcolo del tempo di lievitazione in base alla temperatura
-  let firstProofingTime
-  let secondProofingTime
+  // Calcolo dell'idratazione per la pizza (leggermente più bassa del pane)
+  const baseHydration = 0.6 // 60% come base per la pizza
+  const proteinAdjustment = Math.max(
+    0,
+    (totalProtein / totalFlourAmount - 0.1) * 0.015
+  )
+  const fiberAdjustment = (totalFiber / totalFlourAmount) * 0.002
+  const totalWater =
+    totalFlourAmount * (baseHydration + proteinAdjustment + fiberAdjustment)
 
-  if (temperature < 20) {
-    firstProofingTime = "8-10 h"
-    secondProofingTime = coldProofing ? "24-36 h" : "1-2 h"
-  } else if (temperature < 25) {
-    firstProofingTime = "6-8 h"
-    secondProofingTime = coldProofing ? "18-24 h" : "45 minutes - 1 hour"
-  } else {
-    firstProofingTime = "5-6 h"
-    secondProofingTime = coldProofing ? "12-18 h" : "30-45 minutes"
+  const getProofingTime = (temp, isCold) => {
+    if (isCold) return temp < 20 ? "24-36 h" : temp < 25 ? "18-24 h" : "12-18 h"
+    return temp < 20 ? "8-10 h" : temp < 25 ? "6-8 h" : "5-6 h"
   }
-
-  const riseTime = `${firstProofingTime} (bulk fermentation), ${secondProofingTime} (after shaping${
+  const bulkFermentation = getProofingTime(temperature, false)
+  const finalProofing = getProofingTime(temperature, coldProofing)
+  const riseTime = `${bulkFermentation} (bulk fermentation), ${finalProofing} (after shaping${
     coldProofing ? ", in refrigerator" : ""
   })`
 
-  // Calcolo dell'idratazione e del W
-  const proteinRatio = (totalProtein / totalGlutenFlour) * 100
+  const proteinRatio = (totalProtein / totalFlourAmount) * 100
+  const wRating =
+    proteinRatio < 11
+      ? "180 - 220"
+      : proteinRatio < 12
+      ? "220 - 240"
+      : proteinRatio < 13
+      ? "240 - 280"
+      : proteinRatio < 14
+      ? "280 - 320"
+      : "320+"
+
   const fiberRatio = (totalFiber / totalFlourAmount) * 100
-
-  // Calcolo dell'idratazione base in funzione dei tipi di farina e del contenuto proteico
-  let baseHydration = 0.65 // 65% di idratazione di base per la pizza
-  baseHydration += (proteinRatio - 10) * 0.02 // Aumenta l'idratazione del 2% per ogni punto percentuale di proteine sopra il 10%
-  if (totalDurumWheat > 0) baseHydration += 0.05 // Grano duro assorbe più acqua
-  if (totalCornmeal > 0) baseHydration += 0.09 // Farina di mais assorbe più acqua
-  if (totalRiceFlour > 0) baseHydration -= 0.05 // Farina di riso assorbe meno acqua
-
-  let waterRatio = baseHydration + fiberRatio * 0.003 // Aggiustamento finale per il contenuto di fibre
-
-  // Determiniamo se la farina è integrale basandoci sul contenuto di fibre
+  const glycemicIndex =
+    fiberRatio > 10 ? "Low" : fiberRatio > 5 ? "Medium" : "High"
   const isWholeMeal = fiberRatio > 7
-
-  // Calcolo del W rating
-  let wRating = ""
-  if (proteinRatio < 11) {
-    wRating = "180 - 220"
-  } else if (proteinRatio < 12) {
-    wRating = "220 - 240"
-  } else if (proteinRatio < 13) {
-    wRating = "240 - 280"
-  } else if (proteinRatio < 14) {
-    wRating = "280 - 320"
-  } else {
-    wRating = "320+"
-  }
-
-  // Calcolo dell'indice glicemico
-  let glycemicIndex
-  if (fiberRatio > 10) {
-    glycemicIndex = "Low"
-  } else if (fiberRatio > 5) {
-    glycemicIndex = "Medium"
-  } else {
-    glycemicIndex = "High"
-  }
 
   setResults({
     totalFlourAmount: totalFlourAmount.toFixed(0),
-    flourComposition: `Soft Wheat: ${totalSoftWheat}g, Durum Wheat: ${totalDurumWheat}g, Cornmeal: ${totalCornmeal}g, Rice Flour: ${totalRiceFlour}g`,
-    totalWater: (totalFlourAmount * waterRatio).toFixed(0),
+    flourComposition: Object.entries(flourComposition)
+      .map(([key, value]) => `${key}: ${value.toFixed(0)}g`)
+      .join(", "),
+    totalWater: totalWater.toFixed(0),
     totalSalt: totalSalt.toFixed(0),
     totalYeast: totalYeast.toFixed(1),
     riseTime,

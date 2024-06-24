@@ -6,57 +6,38 @@ export const calculateFocaccia = (values, setResults, setModalVisible) => {
     temperature,
     coldProofing,
   } = values
-  const totalSalt = flourAmount * 0.02 // 2% di sale in base alla quantità di farina
 
-  // Calcolo del lievito di birra per una lievitazione lunga (5-6 ore minimo)
-  const yeastPercentage = 0.3 // 0.3% di lievito di birra secco
-  const totalYeast = flourAmount * (yeastPercentage / 100)
+  const totalSalt = flourAmount * 0.02 // 2% di sale
+  const totalYeast = flourAmount * 0.003 // 0.3% di lievito
 
-  // Calcolo del tempo di lievitazione in base alla temperatura
-  let proofingTime
+  const baseHydration = 0.75 // 75% di idratazione di base per la focaccia
+  const proteinAdjustment = Math.max(0, (proteinContent - 10) * 0.01)
+  const fiberAdjustment = fiberContent * 0.003
+  const totalWater =
+    flourAmount * (baseHydration + proteinAdjustment + fiberAdjustment)
 
-  if (temperature < 20) {
-    proofingTime = coldProofing ? "24-36 h" : "8-10 h"
-  } else if (temperature < 25) {
-    proofingTime = coldProofing ? "18-24 h" : "6-8 h"
-  } else {
-    proofingTime = coldProofing ? "12-18 h" : "5-6 h"
+  const getProofingTime = (temp, isCold) => {
+    if (isCold) return temp < 20 ? "24-36 h" : temp < 25 ? "18-24 h" : "12-18 h"
+    return temp < 20 ? "8-10 h" : temp < 25 ? "6-8 h" : "5-6 h"
   }
+  const riseTime = `${getProofingTime(
+    temperature,
+    coldProofing
+  )} (total proofing time${coldProofing ? ", in refrigerator" : ""})`
 
-  const riseTime = `${proofingTime} (total proofing time${
-    coldProofing ? ", in refrigerator" : ""
-  })`
+  const wRating =
+    proteinContent < 11
+      ? "180 - 220"
+      : proteinContent < 12
+      ? "220 - 240"
+      : proteinContent < 13
+      ? "240 - 280"
+      : proteinContent < 14
+      ? "280 - 320"
+      : "320+"
 
-  // Calcolo dell'idratazione e del W
-  const proteinRatio = proteinContent
-  const fiberRatio = fiberContent
-  let waterRatio = 0.75 // 75% di idratazione di base per la focaccia
-  waterRatio += fiberRatio * 0.003 // Aggiustamento per il contenuto di fibre
-
-  let wRating = ""
-  if (proteinRatio < 11) {
-    wRating = "180 - 220"
-  } else if (proteinRatio < 12) {
-    wRating = "220 - 240"
-  } else if (proteinRatio < 13) {
-    wRating = "240 - 280"
-  } else if (proteinRatio < 14) {
-    wRating = "280 - 320"
-  } else {
-    wRating = "320+"
-  }
-
-  const totalWater = flourAmount * waterRatio
-
-  // Calcolo dell'indice glicemico
-  let glycemicIndex
-  if (fiberRatio > 10) {
-    glycemicIndex = "Low"
-  } else if (fiberRatio > 5) {
-    glycemicIndex = "Medium"
-  } else {
-    glycemicIndex = "High"
-  }
+  const glycemicIndex =
+    fiberContent > 10 ? "Low" : fiberContent > 5 ? "Medium" : "High"
 
   setResults({
     totalFlourAmount: flourAmount.toFixed(0),
@@ -64,8 +45,8 @@ export const calculateFocaccia = (values, setResults, setModalVisible) => {
     totalSalt: totalSalt.toFixed(0),
     totalYeast: totalYeast.toFixed(1),
     riseTime,
-    proteinRatio: proteinRatio.toFixed(1),
-    fiberRatio: fiberRatio.toFixed(1),
+    proteinRatio: proteinContent.toFixed(1),
+    fiberRatio: fiberContent.toFixed(1),
     glycemicIndex,
     wRating,
   })

@@ -12,7 +12,6 @@ const reversedYogurtTypes = {
   "low-fat": "Low Fat Yogurt",
   "non-fat": "Non Fat Yogurt",
 }
-
 export const calculateNaan = (values, setResults, setModalVisible) => {
   const {
     naanCount,
@@ -24,18 +23,17 @@ export const calculateNaan = (values, setResults, setModalVisible) => {
     temperature,
   } = values
 
-  console.log("yogurt type = ", yogurtType)
-
   const flourAmount =
     (naanCount * naanWeight) / (1 + (hydrationPercentage + fatPercentage) / 100)
 
   let totalLiquid = (flourAmount * hydrationPercentage) / 100
-  let totalFat = (flourAmount * fatPercentage) / 100
+  let oilToAdd = (flourAmount * fatPercentage) / 100
 
+  // Calcolo dello yogurt
   let yogurtAmount = 0
   let waterFromYogurt = 0
   let fatFromYogurt = 0
-  if (yogurtType !== "none") {
+  if (yogurtType !== "no-yogurt") {
     yogurtAmount = flourAmount * 0.4
     switch (yogurtType) {
       case "full-fat":
@@ -52,9 +50,10 @@ export const calculateNaan = (values, setResults, setModalVisible) => {
         break
     }
     totalLiquid -= waterFromYogurt
-    totalFat += fatFromYogurt
+    oilToAdd -= fatFromYogurt
   }
 
+  // Calcolo del liquido aggiuntivo
   let fatFromMilk = 0
   let waterFromMilk = totalLiquid
   switch (liquidType) {
@@ -62,21 +61,22 @@ export const calculateNaan = (values, setResults, setModalVisible) => {
       fatFromMilk = totalLiquid * 0.035
       break
     case "skim-milk":
-      waterFromMilk = 0
+      fatFromMilk = totalLiquid * 0.001
       break
     case "almond-milk":
     case "soy-milk":
       fatFromMilk = totalLiquid * 0.025
       break
     case "water":
-      waterFromMilk = 0
+      fatFromMilk = 0
       break
   }
-  totalFat += fatFromMilk
+  oilToAdd -= fatFromMilk
 
   const totalSalt = flourAmount * 0.02
-  let totalYeast
 
+  // Calcolo del lievito in base alla temperatura
+  let totalYeast
   if (temperature < 20) {
     totalYeast = flourAmount * 0.015
   } else if (temperature < 25) {
@@ -85,6 +85,7 @@ export const calculateNaan = (values, setResults, setModalVisible) => {
     totalYeast = flourAmount * 0.035
   }
 
+  // Calcolo del tempo di lievitazione
   let proofingTime
   if (temperature < 20) {
     proofingTime = "2-2.5 h"
@@ -95,25 +96,31 @@ export const calculateNaan = (values, setResults, setModalVisible) => {
   }
 
   const totalDoughWeight =
-    flourAmount + totalLiquid + totalFat + yogurtAmount + totalSalt + totalYeast
-  const numberOfNaan = naanCount
+    flourAmount +
+    totalLiquid +
+    oilToAdd +
+    (yogurtType !== "no-yogurt" ? yogurtAmount : 0) +
+    totalSalt +
+    totalYeast
 
   setResults({
     totalFlourAmount: Math.round(flourAmount),
     totalLiquid: Math.round(totalLiquid),
-    totalFat: Math.round(totalFat),
+    oilToAdd: Math.round(oilToAdd),
     totalSalt: Math.round(totalSalt),
     totalYeast: Math.round(totalYeast),
-    yogurtAmount: Math.round(yogurtAmount),
-    waterFromYogurt: Math.round(waterFromYogurt),
+    yogurtAmount: yogurtType !== "no-yogurt" ? Math.round(yogurtAmount) : 0,
+    waterFromYogurt:
+      yogurtType !== "no-yogurt" ? Math.round(waterFromYogurt) : 0,
     waterFromMilk: Math.round(waterFromMilk),
     proofingTime: proofingTime,
-    numberOfNaan: numberOfNaan,
+    numberOfNaan: naanCount,
     naanWeight: naanWeight,
     liquidType: reversedLiquidTypes[liquidType],
     yogurtType: reversedYogurtTypes[yogurtType],
     totalHydration: hydrationPercentage,
     glycemicIndex: "Medium",
+    totalDoughWeight: Math.round(totalDoughWeight),
   })
 
   setModalVisible(true)

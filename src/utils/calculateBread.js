@@ -1,189 +1,93 @@
 export const calculateDough = (values, setResults, setModalVisible) => {
   const { flours, temperature, coldProofing } = values
-  let totalSalt = 0
-  let totalYeast = 0
-  let totalFiber = 0
-  let totalProtein = 0
-  let totalDurumWheat = 0
-  let totalSoftWheat = 0
-  let totalRye = 0
-  let totalSpelt = 0
-  let totalCorn = 0
-  let totalRice = 0
 
+  // Inizializzazione delle variabili
+  let totalFlourAmount = 0
+  let totalProtein = 0
+  let totalFiber = 0
+  let flourComposition = {}
+
+  // Fattori di correzione per le proteine in base al tipo di farina
+  const proteinFactor = {
+    "grano duro": 0.85,
+    "grano tenero": 0.95,
+    "farina di segale": 0.05,
+    "farina di farro": 0.15,
+    "farina di mais": 0,
+    "farina di riso": 0,
+  }
+
+  // Calcolo dei totali
   flours.forEach((flour) => {
     const { flourAmount, proteinContent, fiberContent, flourKind } = flour
-
-    console.log("type = ", flourKind)
-    console.log("protein = ", proteinContent)
-
-    if (flourKind === "farina di mais" || flourKind === "farina di riso") {
-      totalProtein += 0
-    } else if (flourKind === "farina di farro") {
-      totalProtein += flourAmount * ((proteinContent * 0.15) / 100)
-    } else if (flourKind === "farina di segale") {
-      totalProtein += flourAmount * ((proteinContent * 0.05) / 100)
-    } else if (flourKind === "grano duro") {
-      totalProtein += flourAmount * ((proteinContent * 0.85) / 100)
-    } else {
-      totalProtein += flourAmount * ((proteinContent * 0.95) / 100)
-    }
-
+    totalFlourAmount += flourAmount
     totalFiber += flourAmount * (fiberContent / 100)
-    totalSalt += flourAmount * 0.02 // Assumo 2% di sale in base alla quantità di farina
-
-    if (flourKind === "grano duro") {
-      totalDurumWheat += flourAmount
-    } else if (flourKind === "grano tenero") {
-      totalSoftWheat += flourAmount
-    } else if (flourKind === "farina di segale") {
-      totalRye += flourAmount
-    } else if (flourKind === "farina di farro") {
-      totalSpelt += flourAmount
-    } else if (flourKind === "farina di mais") {
-      totalCorn += flourAmount
-    } else if (flourKind === "farina di riso") {
-      totalRice += flourAmount
-    } else {
-      console.error("Tipo di farina non riconosciuto")
-    }
+    totalProtein +=
+      flourAmount * (proteinContent / 100) * (proteinFactor[flourKind] || 1)
+    flourComposition[flourKind] =
+      (flourComposition[flourKind] || 0) + flourAmount
   })
 
-  console.log("Total protein:", totalProtein)
-  console.log("Total fiber:", totalFiber)
-  console.log("Total durum wheat:", totalDurumWheat)
-  console.log("Total soft wheat:", totalSoftWheat)
+  // Calcolo del sale (2% del peso della farina)
+  const totalSalt = totalFlourAmount * 0.02
 
-  const totalFlourAmount =
-    totalDurumWheat + totalSoftWheat + totalRye + totalSpelt + totalCorn
+  // Calcolo del lievito in base alla temperatura
+  const yeastFactor = temperature < 20 ? 0.02 : temperature < 25 ? 0.015 : 0.01
+  const totalYeast = totalFlourAmount * yeastFactor
 
-  // Calcolo della quantità di lievito in base alla temperatura
-  if (temperature < 10) {
-    totalYeast = totalFlourAmount * 0.2
-  } else if (temperature >= 10 && temperature < 20) {
-    totalYeast = totalFlourAmount * (0.2 - (temperature - 10) * 0.01)
-  } else if (temperature >= 20 && temperature < 30) {
-    totalYeast = totalFlourAmount * (0.1 + (30 - temperature) * 0.01)
-  } else {
-    totalYeast = totalFlourAmount * 0.1
-  }
-
-  // Assicurati che la quantità di lievito sia tra il 10% e il 20% della quantità di farina
-  totalYeast = Math.max(
-    totalFlourAmount * 0.1,
-    Math.min(totalYeast, totalFlourAmount * 0.2)
+  // Calcolo dell'idratazione
+  const baseHydration = 0.65 // 65% come base
+  const proteinAdjustment = Math.max(
+    0,
+    (totalProtein / totalFlourAmount - 0.1) * 0.02
   )
+  const fiberAdjustment = (totalFiber / totalFlourAmount) * 0.003
+  const totalWater =
+    totalFlourAmount * (baseHydration + proteinAdjustment + fiberAdjustment)
 
-  // Calcolo del tempo di lievitazione in base alla temperatura
-  let firstProofingTime
-  let secondProofingTime
-
-  if (temperature < 10) {
-    firstProofingTime = "12-18 h"
-    secondProofingTime = coldProofing ? "24-36 h" : "6-12 h"
-  } else if (temperature < 15) {
-    firstProofingTime = "8-12 h"
-    secondProofingTime = coldProofing ? "18-24 h" : "4-8 h"
-  } else if (temperature < 20) {
-    firstProofingTime = "6-8 h"
-    secondProofingTime = coldProofing ? "12-18 h" : "3-6 h"
-  } else if (temperature < 25) {
-    firstProofingTime = "4-6 h"
-    secondProofingTime = coldProofing ? "8-12 h" : "2-4 h"
-  } else if (temperature < 30) {
-    firstProofingTime = "2-4 h"
-    secondProofingTime = coldProofing ? "6-8 h" : "1-2 h"
-  } else {
-    firstProofingTime = "2-4 h"
-    secondProofingTime = coldProofing ? "4-6 h" : "1-2 h"
+  // Calcolo dei tempi di lievitazione
+  const getProofingTime = (temp, isCold) => {
+    if (isCold) return temp < 20 ? "24-36 h" : temp < 25 ? "18-24 h" : "12-18 h"
+    return temp < 20 ? "8-10 h" : temp < 25 ? "6-8 h" : "5-6 h"
   }
-
-  const riseTime = `${firstProofingTime} (first proofing), ${secondProofingTime} (second proofing${
-    coldProofing ? " in refrigerator" : ""
+  const firstProofing = getProofingTime(temperature, false)
+  const secondProofing = getProofingTime(temperature, coldProofing)
+  const riseTime = `${firstProofing} (first proofing), ${secondProofing} (second proofing${
+    coldProofing ? ", in refrigerator" : ""
   })`
 
-  // Calcolo dei macronutrienti e indice glicemico
-  const fiberRatio = (totalFiber / totalFlourAmount) * 100
-
-  let glycemicIndex
-  if (fiberRatio > 10) {
-    glycemicIndex = "Low"
-  } else if (fiberRatio > 5) {
-    glycemicIndex = "Average"
-  } else {
-    glycemicIndex = "High"
-  }
-
-  const proteinRatio = (totalProtein / totalFlourAmount) * 100
-
-  let wRating = ""
-  let waterRangeMin, waterRangeMax
-  let waterRatio = 1 + fiberRatio / 100
-
-  // Definisci i fattori di assorbimento acqua per ogni tipo di farina
-  const durumWheatWaterRatio = 1.05
-  const softWheatWaterRatio = 1
-  const ryeWaterRatio = 1.2
-  const speltWaterRatio = 0.85
-  const cornWaterRatio = 1.8
-  const riceWaterRatio = 0.8
-
-  // Calcola il water ratio totale come media ponderata
-  waterRatio =
-    (totalDurumWheat * durumWheatWaterRatio +
-      totalSoftWheat * softWheatWaterRatio +
-      totalRye * ryeWaterRatio +
-      totalSpelt * speltWaterRatio +
-      totalCorn * cornWaterRatio +
-      totalRice * riceWaterRatio) /
-    totalFlourAmount
-
-  waterRatio += totalFiber * 0.003
-
-  console.log("Water ratio:", waterRatio)
-  console.log("Protein ratio:", proteinRatio)
-  let baseHydrationMin = 0.6
-  let baseHydrationMax = 0.7
-
-  // Aumenta l'idratazione del 2% per ogni punto percentuale di proteine sopra il 10%
-  if (proteinRatio > 10) {
-    baseHydrationMin += (proteinRatio - 10) * 0.02
-    baseHydrationMax += (proteinRatio - 10) * 0.025
-  }
-
-  // Applica un cap massimo all'idratazione
-  baseHydrationMin = Math.min(baseHydrationMin, 0.8)
-  baseHydrationMax = Math.min(baseHydrationMax, 1)
-
-  waterRangeMin = totalFlourAmount * baseHydrationMin * waterRatio
-  waterRangeMax = totalFlourAmount * baseHydrationMax * waterRatio
-
   // Calcolo del W rating
-  if (proteinRatio < 10) {
-    wRating = "90 - 220"
-  } else if (proteinRatio < 11) {
-    wRating = "160 - 240"
-  } else if (proteinRatio < 12) {
-    wRating = "220 - 260"
-  } else if (proteinRatio < 13) {
-    wRating = "240 - 290"
-  } else if (proteinRatio < 14) {
-    wRating = "270 - 340"
-  } else if (proteinRatio < 15) {
-    wRating = "320 - 430"
-  } else if (proteinRatio < 16) {
-    wRating = "360 - 400+"
-  } else {
-    wRating = "400+"
-  }
+  const proteinRatio = (totalProtein / totalFlourAmount) * 100
+  const wRating =
+    proteinRatio < 10
+      ? "90 - 220"
+      : proteinRatio < 11
+      ? "160 - 240"
+      : proteinRatio < 12
+      ? "220 - 260"
+      : proteinRatio < 13
+      ? "240 - 290"
+      : proteinRatio < 14
+      ? "270 - 340"
+      : proteinRatio < 15
+      ? "320 - 430"
+      : proteinRatio < 16
+      ? "360 - 400+"
+      : "400+"
+
+  // Calcolo dell'indice glicemico
+  const fiberRatio = (totalFiber / totalFlourAmount) * 100
+  const glycemicIndex =
+    fiberRatio > 10 ? "Low" : fiberRatio > 5 ? "Medium" : "High"
 
   setResults({
     totalFlourAmount: totalFlourAmount.toFixed(0),
-    totalWater: `${Math.min(totalFlourAmount, waterRangeMin).toFixed(
-      0
-    )} - ${Math.min(totalFlourAmount, waterRangeMax).toFixed(0)}`,
+    flourComposition: Object.entries(flourComposition)
+      .map(([key, value]) => `${key}: ${value.toFixed(0)}g`)
+      .join(", "),
+    totalWater: totalWater.toFixed(0),
     totalSalt: totalSalt.toFixed(0),
-    totalYeast: totalYeast.toFixed(0),
+    totalYeast: totalYeast.toFixed(1),
     riseTime,
     proteinRatio: proteinRatio.toFixed(1),
     fiberRatio: fiberRatio.toFixed(1),

@@ -22,10 +22,62 @@ import { calculatePizza } from "./utils/calculatePizza"
 import { calculateFocaccia } from "./utils/calculateFocaccia"
 import { calculateNaan } from "./utils/calculateNaan"
 import { calculateBrioche } from "./utils/calculateBrioche"
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts"
 
 const { Header, Content, Footer } = Layout
 const { Title } = Typography
 const { Option } = Select
+
+const celsiusToFahrenheit = (celsius) => {
+  return (celsius * 9) / 5 + 32
+}
+
+const fahrenheitToCelsius = (fahrenheit) => {
+  return ((fahrenheit - 32) * 5) / 9
+}
+
+const prepareChartData = (results, doughType) => {
+  const parseAmount = (value) => {
+    if (typeof value === "string" && value.includes("-")) {
+      return parseFloat(value.split("-")[1].trim())
+    }
+    return parseFloat(value)
+  }
+
+  const data = [
+    { name: "Flour", amount: parseAmount(results.totalFlourAmount) },
+    { name: "Salt", amount: parseAmount(results.totalSalt) },
+    { name: "Yeast", amount: parseAmount(results.totalYeast) },
+  ]
+
+  if (doughType === "naan") {
+    data.push(
+      { name: "Liquid", amount: parseAmount(results.totalLiquid) },
+      { name: "Oil", amount: parseAmount(results.oilToAdd) },
+      { name: "Yogurt", amount: parseAmount(results.yogurtAmount) }
+    )
+  } else if (doughType === "brioche") {
+    data.push(
+      { name: "Milk", amount: parseAmount(results.totalMilk) },
+      { name: "Fat", amount: parseAmount(results.totalFat) },
+      { name: "Sugar", amount: parseAmount(results.totalSugar) },
+      { name: "Eggs", amount: parseAmount(results.totalEggs) }
+    )
+  } else {
+    // Per gli altri tipi di impasto (pane, pizza, focaccia)
+    data.push({ name: "Water", amount: parseAmount(results.totalWater) })
+  }
+
+  return data.filter((item) => !isNaN(item.amount) && item.amount > 0)
+}
 
 const LanguageSelector = ({
   changeLanguage,
@@ -495,159 +547,181 @@ const ResultsModal = ({
   results,
   doughType,
   t,
-}) => (
-  <Modal
-    title={t("Results")}
-    open={modalVisible}
-    onOk={handleModalOk}
-    onCancel={handleModalCancel}
-    style={{ gap: 20 }}
-    okText={t("New mix")}
-    cancelText={t("Back to your mix")}
-  >
-    {results && results.totalFlourAmount > 0 ? (
-      <div className="results-box">
-        <Alert
-          message={`${t("Total flour")}: ${results.totalFlourAmount} g`}
-          type="info"
-          showIcon
-        />
-        {doughType === "brioche" ? (
-          <>
-            <Alert
-              message={`${t("Milk")} (${t(`${results.milkType}`)}): ${
-                results.totalMilk
-              } g`}
-              type="info"
-              showIcon
-            />
-            <Alert
-              message={`${t("Fat")} (${t(`${results.fatType}`)}): ${
-                results.totalFat
-              } g`}
-              type="info"
-              showIcon
-            />
-            <Alert
-              message={`${t("Sugar")}: ${results.totalSugar} g`}
-              type="info"
-              showIcon
-            />
-            <Alert
-              message={`${t("Yeast")}: ${results.totalYeast} g`}
-              type="info"
-              showIcon
-            />
-            <Alert
-              message={`${t("Proofing time")}: ${results.proofingTime}`}
-              type="info"
-              showIcon
-            />
-            <Alert
-              message={`${t("Eggs")}: ${results.eggsCount} (${
-                results.totalEggs
-              }g)`}
-              type="info"
-              showIcon
-            />
-            {results.numberOfBrioche && (
+}) => {
+  const chartData = results ? prepareChartData(results, doughType) : []
+
+  return (
+    <Modal
+      title={t("Results")}
+      open={modalVisible}
+      onOk={handleModalOk}
+      onCancel={handleModalCancel}
+      style={{ gap: 20 }}
+      okText={t("New mix")}
+      cancelText={t("Back to your mix")}
+    >
+      {results && results.totalFlourAmount > 0 ? (
+        <div className="results-box">
+          <div style={{ width: "100%", height: 300 }}>
+            <ResponsiveContainer>
+              <BarChart data={chartData}>
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="amount" fill="#8884d8" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          <Alert
+            message={`${t("Total flour")}: ${results.totalFlourAmount} g`}
+            type="info"
+            showIcon
+          />
+          {doughType === "brioche" ? (
+            <>
               <Alert
-                message={`${t("Number of brioches")} (${
-                  results.briocheWeight
-                }g): ${results.numberOfBrioche}`}
+                message={`${t("Milk")} (${t(`${results.milkType}`)}): ${
+                  results.totalMilk
+                } g`}
                 type="info"
                 showIcon
               />
-            )}
-          </>
-        ) : doughType === "naan" ? (
-          <>
-            <Alert
-              message={`${t("Salt")}: ${results.totalSalt} g`}
-              type="info"
-              showIcon
-            />
-            <Alert
-              message={`${t("Yeast")}: ${results.totalYeast} g`}
-              type="info"
-              showIcon
-            />
-            <Alert
-              message={`${t("Yogurt")} (${t(`${results.yogurtType}`)}): ${
-                results.yogurtAmount
-              } g`}
-              type="info"
-              showIcon
-            />
-            <Alert
-              message={`${t("Liquid")} (${t(`${results.liquidType}`)}): ${
-                results.totalLiquid
-              } g`}
-              type="info"
-              showIcon
-            />
-            <Alert
-              message={`${t("Proofing time")}: ${results.proofingTime}`}
-              type="info"
-              showIcon
-            />
-            {results.numberOfNaan && (
               <Alert
-                message={`${t("Number of naans")} (${results.naanWeight}g): ${
-                  results.numberOfNaan
-                }`}
+                message={`${t("Fat")} (${t(`${results.fatType}`)}): ${
+                  results.totalFat
+                } g`}
                 type="info"
                 showIcon
               />
-            )}
-          </>
-        ) : (
-          <>
-            <Alert
-              message={`${t("W rating")}: ${results.wRating}`}
-              type="info"
-              showIcon
-            />
-            <Alert
-              message={`${t("Water")}: ${results.totalWater} g`}
-              type="info"
-              showIcon
-            />
-            <Alert
-              message={`${t("Salt")}: ${results.totalSalt} g`}
-              type="info"
-              showIcon
-            />
-            <Alert
-              message={`${
-                doughType === "sourdough" ? t("Sourdough starter") : t("Yeast")
-              }: ${results.totalYeast} g`}
-              type="info"
-              showIcon
-            />
-            <Alert
-              message={`${t("Proofing time")}: ${results.riseTime}`}
-              type="info"
-              showIcon
-            />
-            <Alert
-              message={`${t("Fiber content")}: ${results.fiberRatio} %`}
-              type="info"
-              showIcon
-            />
-          </>
-        )}
-        <Alert
-          message={`${t("Glycemic index")}: ${results.glycemicIndex}`}
-          type="info"
-          showIcon
-        />
-      </div>
-    ) : (
-      <Alert message={t("Invalid Input")} type="error" />
-    )}
-  </Modal>
-)
+              <Alert
+                message={`${t("Sugar")}: ${results.totalSugar} g`}
+                type="info"
+                showIcon
+              />
+              <Alert
+                message={`${t("Yeast")}: ${results.totalYeast} g`}
+                type="info"
+                showIcon
+              />
+              <Alert
+                message={`${t("Proofing time")}: ${results.proofingTime}`}
+                type="info"
+                showIcon
+              />
+              <Alert
+                message={`${t("Eggs")}: ${results.eggsCount} (${
+                  results.totalEggs
+                }g)`}
+                type="info"
+                showIcon
+              />
+              {results.numberOfBrioche && (
+                <Alert
+                  message={`${t("Number of brioches")} (${
+                    results.briocheWeight
+                  }g): ${results.numberOfBrioche}`}
+                  type="info"
+                  showIcon
+                />
+              )}
+            </>
+          ) : doughType === "naan" ? (
+            <>
+              <Alert
+                message={`${t("Salt")}: ${results.totalSalt} g`}
+                type="info"
+                showIcon
+              />
+              <Alert
+                message={`${t("Yeast")}: ${results.totalYeast} g`}
+                type="info"
+                showIcon
+              />
+              <Alert
+                message={`${t("Yogurt")} (${t(`${results.yogurtType}`)}): ${
+                  results.yogurtAmount
+                } g`}
+                type="info"
+                showIcon
+              />
+              <Alert
+                message={`${t("Liquid")} (${t(`${results.liquidType}`)}): ${
+                  results.totalLiquid
+                } g`}
+                type="info"
+                showIcon
+              />
+              <Alert
+                message={`${t("Oil")}: ${results.oilToAdd} g`}
+                type="info"
+                showIcon
+              />
+              <Alert
+                message={`${t("Proofing time")}: ${results.proofingTime}`}
+                type="info"
+                showIcon
+              />
+              {results.numberOfNaan && (
+                <Alert
+                  message={`${t("Number of naans")} (${results.naanWeight}g): ${
+                    results.numberOfNaan
+                  }`}
+                  type="info"
+                  showIcon
+                />
+              )}
+            </>
+          ) : (
+            <>
+              <Alert
+                message={`${t("W rating")}: ${results.wRating}`}
+                type="info"
+                showIcon
+              />
+              <Alert
+                message={`${t("Water")}: ${results.totalWater} g`}
+                type="info"
+                showIcon
+              />
+              <Alert
+                message={`${t("Salt")}: ${results.totalSalt} g`}
+                type="info"
+                showIcon
+              />
+              <Alert
+                message={`${
+                  doughType === "sourdough"
+                    ? t("Sourdough starter")
+                    : t("Yeast")
+                }: ${results.totalYeast} g`}
+                type="info"
+                showIcon
+              />
+              <Alert
+                message={`${t("Proofing time")}: ${results.riseTime}`}
+                type="info"
+                showIcon
+              />
+              <Alert
+                message={`${t("Fiber content")}: ${results.fiberRatio} %`}
+                type="info"
+                showIcon
+              />
+            </>
+          )}
+          <Alert
+            message={`${t("Glycemic index")}: ${results.glycemicIndex}`}
+            type="info"
+            showIcon
+          />
+        </div>
+      ) : (
+        <Alert message={t("Invalid Input")} type="error" />
+      )}
+    </Modal>
+  )
+}
 
 const ScaleRecipe = ({ form, t, doughType }) => {
   const scaleRecipe = () => {
@@ -681,21 +755,7 @@ const ScaleRecipe = ({ form, t, doughType }) => {
     }
   }
 
-  return (
-    <Form.Item label={t("Scale Recipe")}>
-      <Space>
-        <Form.Item name="targetFlourWeight" noStyle>
-          <InputNumber
-            min={1}
-            placeholder={t("Enter target flour weight")}
-            style={{ width: 200 }}
-            addonAfter="g"
-          />
-        </Form.Item>
-        <Button onClick={scaleRecipe}>{t("Scale Recipe")}</Button>
-      </Space>
-    </Form.Item>
-  )
+  return <></>
 }
 
 const App = () => {
@@ -706,6 +766,8 @@ const App = () => {
   const [modalVisible, setModalVisible] = useState(false)
   const [doughType, setDoughType] = useState("sourdough")
   const [drawerVisible, setDrawerVisible] = useState(false)
+  const [selectedTemperatureUnit, setSelectedTemperatureUnit] =
+    useState("celsius")
 
   const milkTypeMap = {
     [`${t("Whole Milk")}`]: "whole",
@@ -759,29 +821,39 @@ const App = () => {
 
   const onFinish = (values) => {
     console.log("Values = ", values)
+
+    let temperature = values.temperature
+    if (values.temperatureUnit === "fahrenheit") {
+      temperature = fahrenheitToCelsius(temperature)
+    }
+
+    const mappedValues = {
+      ...values,
+      temperature,
+    }
     switch (doughType) {
       case "sourdough":
-        calculateDough(values, setResults, setModalVisible)
+        calculateDough(mappedValues, setResults, setModalVisible)
         break
       case "pizza":
-        calculatePizza(values, setResults, setModalVisible)
+        calculatePizza(mappedValues, setResults, setModalVisible)
         break
       case "focaccia":
-        calculateFocaccia(values, setResults, setModalVisible)
+        calculateFocaccia(mappedValues, setResults, setModalVisible)
         break
       case "brioche":
         const mappedValuesBrioche = {
-          ...values,
-          milkType: milkTypeMap[values.milkType],
-          fatType: fatTypeMap[values.fatType],
+          ...mappedValues,
+          milkType: milkTypeMap[mappedValues.milkType],
+          fatType: fatTypeMap[mappedValues.fatType],
         }
         calculateBrioche(mappedValuesBrioche, setResults, setModalVisible)
         break
       case "naan":
         const mappedValuesNaan = {
-          ...values,
-          liquidType: liquidTypeMap[values.liquidType],
-          yogurtType: yogurtTypeMap[values.yogurtType],
+          ...mappedValues,
+          liquidType: liquidTypeMap[mappedValues.liquidType],
+          yogurtType: yogurtTypeMap[mappedValues.yogurtType],
         }
         calculateNaan(mappedValuesNaan, setResults, setModalVisible)
         break
@@ -863,24 +935,44 @@ const App = () => {
                   <Checkbox>{t("Second proofing in refrigerator")}</Checkbox>
                 </Form.Item>
               )}
+              <Form.Item name="temperatureUnit" label={t("Temperature Unit")}>
+                <Select
+                  onChange={(value) => {
+                    setSelectedTemperatureUnit(value)
+                  }}
+                  defaultValue="celsius"
+                >
+                  <Option value="celsius">°C</Option>
+                  <Option value="fahrenheit">°F</Option>
+                </Select>
+              </Form.Item>
               <Form.Item
                 name="temperature"
-                label={t("Room temperature (°C)")}
+                label={t("Room temperature")}
                 rules={[
                   {
                     required: true,
                     message: t("Insert your room temperature"),
                   },
                 ]}
-                initialValue={25}
+                initialValue={selectedTemperatureUnit === "celsius" ? 20 : 68}
               >
                 <InputNumber
-                  min={-10}
-                  max={50}
+                  min={
+                    form.getFieldValue("temperatureUnit") === "celsius"
+                      ? -10
+                      : 14
+                  }
+                  max={
+                    form.getFieldValue("temperatureUnit") === "celsius"
+                      ? 50
+                      : 122
+                  }
                   placeholder={t("Insert your room temperature")}
                   style={{ width: 200 }}
-                  defaultValue={25}
-                  addonAfter="°C"
+                  addonAfter={
+                    selectedTemperatureUnit === "celsius" ? "°C" : "°F"
+                  }
                 />
               </Form.Item>
               <ScaleRecipe form={form} t={t} doughType={doughType} />
