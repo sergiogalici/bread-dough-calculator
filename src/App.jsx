@@ -382,6 +382,7 @@ const FlourForm = ({ form, t }) => (
                 ]}
               >
                 <InputNumber
+                  inputMode="numeric"
                   keyboard
                   datatype="number"
                   min={0}
@@ -411,6 +412,7 @@ const FlourForm = ({ form, t }) => (
                 ]}
               >
                 <InputNumber
+                  inputMode="numeric"
                   keyboard
                   datatype="number"
                   min={0}
@@ -434,6 +436,7 @@ const FlourForm = ({ form, t }) => (
                 ]}
               >
                 <InputNumber
+                  inputMode="numeric"
                   keyboard
                   datatype="number"
                   min={0}
@@ -478,6 +481,7 @@ const FocacciaForm = ({ t }) => (
         ]}
       >
         <InputNumber
+          inputMode="numeric"
           keyboard
           datatype="number"
           min={0}
@@ -496,6 +500,7 @@ const FocacciaForm = ({ t }) => (
         ]}
       >
         <InputNumber
+          inputMode="numeric"
           keyboard
           datatype="number"
           min={0}
@@ -514,6 +519,7 @@ const FocacciaForm = ({ t }) => (
         ]}
       >
         <InputNumber
+          inputMode="numeric"
           keyboard
           datatype="number"
           min={0}
@@ -546,6 +552,7 @@ const BriocheForm = ({ t, form }) => {
           ]}
         >
           <InputNumber
+            inputMode="numeric"
             keyboard
             datatype="number"
             min={0}
@@ -566,6 +573,7 @@ const BriocheForm = ({ t, form }) => {
               ]}
             >
               <InputNumber
+                inputMode="numeric"
                 keyboard
                 datatype="number"
                 addonAfter="g"
@@ -582,6 +590,7 @@ const BriocheForm = ({ t, form }) => {
               ]}
             >
               <InputNumber
+                inputMode="numeric"
                 keyboard
                 datatype="number"
                 min={0}
@@ -599,6 +608,7 @@ const BriocheForm = ({ t, form }) => {
               ]}
             >
               <InputNumber
+                inputMode="numeric"
                 keyboard
                 datatype="number"
                 min={0}
@@ -619,6 +629,7 @@ const BriocheForm = ({ t, form }) => {
               ]}
             >
               <InputNumber
+                inputMode="numeric"
                 keyboard
                 datatype="number"
                 min={0}
@@ -636,6 +647,7 @@ const BriocheForm = ({ t, form }) => {
               ]}
             >
               <InputNumber
+                inputMode="numeric"
                 keyboard
                 datatype="number"
                 min={0}
@@ -698,6 +710,7 @@ const NaanForm = ({ t, form }) => {
           ]}
         >
           <InputNumber
+            inputMode="numeric"
             keyboard
             datatype="number"
             min={0}
@@ -712,6 +725,7 @@ const NaanForm = ({ t, form }) => {
               initialValue={100}
             >
               <InputNumber
+                inputMode="numeric"
                 keyboard
                 datatype="number"
                 addonAfter="g"
@@ -728,6 +742,7 @@ const NaanForm = ({ t, form }) => {
               ]}
             >
               <InputNumber
+                inputMode="numeric"
                 keyboard
                 datatype="number"
                 min={0}
@@ -745,6 +760,7 @@ const NaanForm = ({ t, form }) => {
               ]}
             >
               <InputNumber
+                inputMode="numeric"
                 keyboard
                 datatype="number"
                 min={0}
@@ -765,6 +781,7 @@ const NaanForm = ({ t, form }) => {
               ]}
             >
               <InputNumber
+                inputMode="numeric"
                 keyboard
                 datatype="number"
                 min={0}
@@ -782,6 +799,7 @@ const NaanForm = ({ t, form }) => {
               ]}
             >
               <InputNumber
+                inputMode="numeric"
                 keyboard
                 datatype="number"
                 min={0}
@@ -841,6 +859,7 @@ const PitaForm = ({ t, form }) => {
           ]}
         >
           <InputNumber
+            inputMode="numeric"
             keyboard
             datatype="number"
             min={0}
@@ -855,6 +874,7 @@ const PitaForm = ({ t, form }) => {
               initialValue={80}
             >
               <InputNumber
+                inputMode="numeric"
                 keyboard
                 datatype="number"
                 addonAfter="g"
@@ -871,6 +891,7 @@ const PitaForm = ({ t, form }) => {
               ]}
             >
               <InputNumber
+                inputMode="numeric"
                 keyboard
                 datatype="number"
                 min={0}
@@ -888,6 +909,7 @@ const PitaForm = ({ t, form }) => {
               ]}
             >
               <InputNumber
+                inputMode="numeric"
                 keyboard
                 datatype="number"
                 min={0}
@@ -908,6 +930,7 @@ const PitaForm = ({ t, form }) => {
               ]}
             >
               <InputNumber
+                inputMode="numeric"
                 keyboard
                 datatype="number"
                 min={0}
@@ -1030,6 +1053,7 @@ const PizzaForm = ({ form, t }) => {
         ]}
       >
         <InputNumber
+          inputMode="numeric"
           keyboard
           datatype="number"
           min={1}
@@ -1045,6 +1069,7 @@ const PizzaForm = ({ form, t }) => {
         ]}
       >
         <InputNumber
+          inputMode="numeric"
           keyboard
           datatype="number"
           min={100}
@@ -1140,6 +1165,7 @@ const PizzaForm = ({ form, t }) => {
                     ]}
                   >
                     <InputNumber
+                      inputMode="numeric"
                       keyboard
                       datatype="number"
                       min={0}
@@ -1165,6 +1191,7 @@ const PizzaForm = ({ form, t }) => {
                     ]}
                   >
                     <InputNumber
+                      inputMode="numeric"
                       keyboard
                       datatype="number"
                       min={0}
@@ -1867,6 +1894,7 @@ const App = () => {
                 initialValue={selectedTemperatureUnit === "celsius" ? 20 : 68}
               >
                 <InputNumber
+                  inputMode="numeric"
                   keyboard
                   datatype="number"
                   min={
