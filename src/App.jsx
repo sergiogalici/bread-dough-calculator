@@ -15,6 +15,8 @@ import {
   Checkbox,
   Drawer,
   Slider,
+  List,
+  Input,
 } from "antd"
 import { PlusOutlined, DeleteOutlined, MenuOutlined } from "@ant-design/icons"
 import "./App.css"
@@ -37,6 +39,16 @@ import { calculatePita } from "./utils/calculatePita"
 const { Header, Content, Footer } = Layout
 const { Title } = Typography
 const { Option } = Select
+
+const saveRecipe = (recipe, name) => {
+  let savedRecipes = JSON.parse(localStorage.getItem("savedRecipes")) || []
+  savedRecipes.push({ name, recipe })
+  localStorage.setItem("savedRecipes", JSON.stringify(savedRecipes))
+}
+
+const loadSavedRecipes = () => {
+  return JSON.parse(localStorage.getItem("savedRecipes")) || []
+}
 
 const exampleRecipes = {
   sourdough: {
@@ -1458,6 +1470,69 @@ const ScaleRecipe = ({ form, t, doughType }) => {
   return <></>
 }
 
+const SavedRecipesModal = ({ visible, onClose, onLoadRecipe, t }) => {
+  const [savedRecipes, setSavedRecipes] = useState([])
+
+  useEffect(() => {
+    if (visible) {
+      setSavedRecipes(loadSavedRecipes())
+    }
+  }, [visible])
+
+  return (
+    <Modal
+      title={t("My Recipes")}
+      visible={visible}
+      onCancel={onClose}
+      footer={null}
+    >
+      <List
+        dataSource={savedRecipes}
+        renderItem={(item) => (
+          <List.Item
+            actions={[
+              <Button onClick={() => onLoadRecipe(item.recipe)}>
+                {t("Load")}
+              </Button>,
+            ]}
+          >
+            {item.name}
+          </List.Item>
+        )}
+      />
+    </Modal>
+  )
+}
+
+const SaveRecipeModal = ({ visible, onClose, onSave, t }) => {
+  const [recipeName, setRecipeName] = useState("")
+
+  const handleSave = () => {
+    if (recipeName.trim()) {
+      onSave(recipeName)
+      setRecipeName("")
+      onClose()
+    }
+  }
+
+  return (
+    <Modal
+      title={t("Save Recipe")}
+      visible={visible}
+      onCancel={onClose}
+      onOk={handleSave}
+      okText={t("Save")}
+      cancelText={t("Cancel")}
+    >
+      <Input
+        placeholder={t("Enter recipe name")}
+        value={recipeName}
+        onChange={(e) => setRecipeName(e.target.value)}
+      />
+    </Modal>
+  )
+}
+
 const App = () => {
   const { t } = useTranslation()
 
@@ -1468,6 +1543,14 @@ const App = () => {
   const [drawerVisible, setDrawerVisible] = useState(false)
   const [selectedTemperatureUnit, setSelectedTemperatureUnit] =
     useState("celsius")
+  const [savedRecipesModalVisible, setSavedRecipesModalVisible] =
+    useState(false)
+  const [saveRecipeModalVisible, setSaveRecipeModalVisible] = useState(false)
+
+  const handleSaveRecipe = (name) => {
+    const currentValues = form.getFieldsValue()
+    saveRecipe(currentValues, name)
+  }
 
   const fillExampleRecipe = () => {
     const example = exampleRecipes[doughType]
@@ -1631,6 +1714,9 @@ const App = () => {
           doughType={doughType}
           handleDoughTypeChange={handleDoughTypeChange}
         />
+        <Button onClick={() => setSavedRecipesModalVisible(true)}>
+          {t("My Recipes")}
+        </Button>
         <div className="container">
           <div className="form-box">
             <Form
@@ -1722,6 +1808,12 @@ const App = () => {
                 >
                   {t("Show Example Recipe")}
                 </Button>
+                <Button
+                  onClick={() => setSaveRecipeModalVisible(true)}
+                  style={{ marginLeft: 10 }}
+                >
+                  {t("Save Recipe")}
+                </Button>
               </Form.Item>
             </Form>
           </div>
@@ -1736,6 +1828,21 @@ const App = () => {
         handleModalCancel={handleModalCancel}
         results={results}
         doughType={doughType}
+        t={t}
+      />
+      <SavedRecipesModal
+        visible={savedRecipesModalVisible}
+        onClose={() => setSavedRecipesModalVisible(false)}
+        onLoadRecipe={(recipe) => {
+          form.setFieldsValue(recipe)
+          setSavedRecipesModalVisible(false)
+        }}
+        t={t}
+      />
+      <SaveRecipeModal
+        visible={saveRecipeModalVisible}
+        onClose={() => setSaveRecipeModalVisible(false)}
+        onSave={handleSaveRecipe}
         t={t}
       />
     </Layout>
