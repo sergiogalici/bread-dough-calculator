@@ -957,63 +957,22 @@ const PitaForm = ({ isExpertMode, t, form }) => {
 }
 
 const PizzaForm = ({ form, t }) => {
-  const [flourCount, setFlourCount] = useState(1)
+  const [sliderValues, setSliderValues] = useState([])
   const flours = Form.useWatch("flours", form) || []
-  const sliderRefs = useRef([])
-
-  const updateAllFlourPercentages = (newFlours) => {
-    const equalPercentage = 100 / newFlours.length
-    const updatedFlours = newFlours.map((flour) => ({
-      ...flour,
-      flourPercentage: equalPercentage,
-    }))
-    form.setFieldsValue({ flours: updatedFlours })
-  }
 
   useEffect(() => {
-    const currentFlours = form.getFieldValue("flours") || []
-    currentFlours.forEach((flour, index) => {
-      if (sliderRefs.current[index] && flour.flourPercentage !== undefined) {
-        sliderRefs.current[index].setValue(flour.flourPercentage)
-      }
-    })
-  }, [form])
-
-  useEffect(() => {
-    // Aggiorna i riferimenti agli slider quando cambia il numero di farine
-    sliderRefs.current = sliderRefs.current.slice(0, flours.length)
-  }, [flours.length])
-
-  useEffect(() => {
-    // Aggiorna i valori degli slider quando cambiano i valori delle farine
-    flours.forEach((flour, index) => {
-      if (sliderRefs.current[index]) {
-        sliderRefs.current[index].setValue(flour.flourPercentage)
-      }
-    })
+    if (flours.length !== sliderValues.length) {
+      setSliderValues(flours.map((flour) => flour.flourPercentage || 0))
+    } else {
+      setSliderValues(
+        flours.map((flour, index) => {
+          return typeof sliderValues[index] === "undefined"
+            ? 0
+            : sliderValues[index]
+        })
+      )
+    }
   }, [flours])
-
-  useEffect(() => {
-    if (flours.length === 0) {
-      form.setFieldsValue({
-        flours: [
-          {
-            flourPercentage: 100,
-          },
-        ],
-      })
-      setFlourCount(1)
-    } else if (flours.length !== flourCount) {
-      updateAllFlourPercentages(flours)
-      setFlourCount(flours.length)
-    }
-  }, [flours, form, flourCount])
-
-  useEffect(() => {
-    if (flours.length > 0 && flours.every((flour) => flour.flourPercentage)) {
-      form.validateFields(["flours"])
-    }
-  }, [flours, form])
 
   const updatePercentages = (index, newValue) => {
     const currentFlours = form.getFieldValue("flours") || []
@@ -1057,6 +1016,13 @@ const PizzaForm = ({ form, t }) => {
 
       form.setFieldsValue({ flours: updatedFlours })
     }
+  }
+
+  const handleSliderChange = (index, newValue) => {
+    const newSliderValues = [...sliderValues]
+    newSliderValues[index] = newValue
+    setSliderValues(newSliderValues)
+    updatePercentages(index, newValue)
   }
 
   const isGlutenFree = (flourKind) =>
@@ -1165,7 +1131,8 @@ const PizzaForm = ({ form, t }) => {
                     <Slider
                       min={0}
                       max={100}
-                      onChange={(value) => updatePercentages(index, value)}
+                      value={sliderValues[index]}
+                      onChange={(value) => handleSliderChange(index, value)}
                       style={{ width: 200 }}
                     />
                   </Form.Item>
@@ -1227,7 +1194,12 @@ const PizzaForm = ({ form, t }) => {
                         const newFlours = form
                           .getFieldValue("flours")
                           .filter((_, i) => i !== index)
-                        updateAllFlourPercentages(newFlours)
+                        const equalPercentage = 100 / newFlours.length
+                        const updatedFlours = newFlours.map((flour) => ({
+                          ...flour,
+                          flourPercentage: equalPercentage,
+                        }))
+                        form.setFieldsValue({ flours: updatedFlours })
                       }}
                     />
                   )}
@@ -1240,7 +1212,12 @@ const PizzaForm = ({ form, t }) => {
                 onClick={() => {
                   add()
                   const newFlours = [...form.getFieldValue("flours")]
-                  updateAllFlourPercentages(newFlours)
+                  const equalPercentage = 100 / newFlours.length
+                  const updatedFlours = newFlours.map((flour) => ({
+                    ...flour,
+                    flourPercentage: equalPercentage,
+                  }))
+                  form.setFieldsValue({ flours: updatedFlours })
                 }}
                 block
                 icon={<PlusOutlined />}
@@ -1485,7 +1462,7 @@ const ResultsModal = ({
               {doughType === "pizza" &&
                 results.flourComposition.map((flour, index) => (
                   <Alert
-                    key={index}
+                    key={index + "a"}
                     message={`${t(flour.name)}: ${flour.amount} g`}
                     type="info"
                     showIcon
@@ -1685,7 +1662,6 @@ const App = () => {
     useState(false)
   const [saveRecipeModalVisible, setSaveRecipeModalVisible] = useState(false)
   const [isExpertMode, setIsExpertMode] = useState(false)
-  
 
   const handleSaveRecipe = (name) => {
     const currentValues = form.getFieldsValue()
@@ -1696,19 +1672,8 @@ const App = () => {
   const fillExampleRecipe = () => {
     const example = exampleRecipes[doughType]
     if (example) {
-      if (example.flours && example.flours.length > 1) {
-        form.setFieldsValue({
-          ...example,
-          flours: example.flours.map((flour, index) => ({
-            ...flour,
-            name: index,
-          })),
-        })
-        // Forza l'aggiornamento del form dopo aver impostato i valori
-        form.validateFields()
-      } else {
-        form.setFieldsValue(example)
-      }
+      form.setFieldsValue(example)
+      form.validateFields()
     } else {
       console.error(`No example recipe for dough type: ${doughType}`)
     }
@@ -1765,7 +1730,6 @@ const App = () => {
   }
 
   const onFinish = (values) => {
-    console.log("Values in App = ", values)
     let temperature = values.temperature
     if (values.temperatureUnit === "fahrenheit") {
       temperature = fahrenheitToCelsius(temperature)
@@ -1799,7 +1763,6 @@ const App = () => {
           liquidType: liquidTypeMap[mappedValues.liquidType],
           yogurtType: yogurtTypeMap[mappedValues.yogurtType],
         }
-        console.log("mappedValuesNaan = ", mappedValuesNaan)
         calculateNaan(mappedValuesNaan, setResults, setModalVisible)
         break
       case "pita":
@@ -1983,10 +1946,9 @@ const App = () => {
         visible={savedRecipesModalVisible}
         onClose={() => setSavedRecipesModalVisible(false)}
         onLoadRecipe={(item) => {
-          console.log("item = ", item)
           setIsExpertMode(item.isExpertMode)
           setDoughType(item.doughType)
-          console.log("item = ", item)
+          form.resetFields()
           form.setFieldsValue(item.recipe)
           setSavedRecipesModalVisible(false)
         }}
