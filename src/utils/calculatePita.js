@@ -1,8 +1,10 @@
+import { calculateWaterRatio } from "./calculateWater"
+
 export const calculatePita = (values, setResults, setModalVisible) => {
   const {
     pitaCount,
-    hydrationPercentage,
-    pitaWeight,
+    hydrationPercentage = 65,
+    pitaWeight = 80,
     temperature,
     proteinContent = 10,
     fiberContent = 2,
@@ -28,6 +30,8 @@ export const calculatePita = (values, setResults, setModalVisible) => {
     : ((waterRangeMin + waterRangeMax) / (2 * flourAmount)) * 100
 
   const totalWater = (flourAmount * adjustedHydration) / 100
+  const totalSalt = flourAmount * 0.02
+  const totalOil = flourAmount * 0.05 // Un po' d'olio per la morbidezza
 
   // Calcolo del lievito in base alla temperatura
   let totalYeast

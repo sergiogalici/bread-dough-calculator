@@ -1,3 +1,5 @@
+import { calculateWaterRatio } from "./calculateWater"
+
 const reversedLiquidTypes = {
   "whole-milk": "Whole Milk",
   "skim-milk": "Skim Milk",
@@ -16,16 +18,20 @@ const reversedYogurtTypes = {
 export const calculateNaan = (values, setResults, setModalVisible) => {
   const {
     naanCount,
-    hydrationPercentage,
-    fatPercentage,
+    hydrationPercentage = 60,
+    fatPercentage = 20,
     yogurtType,
     liquidType,
-    naanWeight,
+    naanWeight = 100,
     temperature,
     proteinContent = 10,
     fiberContent = 2,
     expertMode,
   } = values
+
+  console.log("Values in Naan = ", values)
+
+  console.log("here")
 
   const flourAmount =
     (naanCount * naanWeight) / (1 + (hydrationPercentage + fatPercentage) / 100)
@@ -123,7 +129,7 @@ export const calculateNaan = (values, setResults, setModalVisible) => {
     totalSalt +
     totalYeast
 
-  setResults({
+  const resultsTest = {
     totalFlourAmount: Math.round(flourAmount),
     totalLiquid: Math.round(totalLiquid),
     oilToAdd: Math.round(oilToAdd),
@@ -144,7 +150,11 @@ export const calculateNaan = (values, setResults, setModalVisible) => {
     adjustedHydration: Math.round(adjustedHydration),
     proteinContent,
     fiberContent,
-  })
+  }
+
+  console.log("results = ", resultsTest)
+
+  setResults(resultsTest)
 
   setModalVisible(true)
 }

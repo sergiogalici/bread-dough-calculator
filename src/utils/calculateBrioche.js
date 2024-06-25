@@ -1,3 +1,5 @@
+import { calculateWaterRatio } from "./calculateWater"
+
 const milkProperties = {
   whole: { waterContent: 0.87, fatContent: 0.035 },
   skim: { waterContent: 0.91, fatContent: 0.002 },
@@ -23,10 +25,10 @@ const reverseFatTypeMap = {
 
 export const calculateBrioche = (values, setResults, setModalVisible) => {
   const {
-    briocheWeight,
+    briocheWeight = 80,
     bunCount: briocheCount,
-    hydrationPercentage,
-    fatPercentage,
+    hydrationPercentage = 65,
+    fatPercentage = 20,
     fatType,
     includeEggs,
     milkType,

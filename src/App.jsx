@@ -1541,8 +1541,7 @@ const App = () => {
   }
 
   const onFinish = (values) => {
-    console.log("Values = ", values)
-
+    console.log("Values in App = ", values)
     let temperature = values.temperature
     if (values.temperatureUnit === "fahrenheit") {
       temperature = fahrenheitToCelsius(temperature)
@@ -1576,6 +1575,7 @@ const App = () => {
           liquidType: liquidTypeMap[mappedValues.liquidType],
           yogurtType: yogurtTypeMap[mappedValues.yogurtType],
         }
+        console.log("mappedValuesNaan = ", mappedValuesNaan)
         calculateNaan(mappedValuesNaan, setResults, setModalVisible)
         break
       case "pita":
