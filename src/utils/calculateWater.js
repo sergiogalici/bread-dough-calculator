@@ -9,7 +9,7 @@ export const calculateWaterRatio = (
   totalFlourAmount,
   proteinRatio
 ) => {
-  const durumWheatWaterRatio = 1.05
+  const durumWheatWaterRatio = 1.025
   const softWheatWaterRatio = 1
   const ryeWaterRatio = 1.2
   const speltWaterRatio = 0.85
@@ -27,8 +27,8 @@ export const calculateWaterRatio = (
 
   waterRatio += totalFiber * 0.003
 
-  let baseHydrationMin = 0.65
-  let baseHydrationMax = 0.73
+  let baseHydrationMin = 0.6
+  let baseHydrationMax = 0.68
 
   if (proteinRatio > 10) {
     baseHydrationMin += (proteinRatio - 10) * 0.02
