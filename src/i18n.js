@@ -129,6 +129,8 @@ i18n
           "Are you sure you want to delete this recipe?":
             "Are you sure you want to delete this recipe?",
           Delete: "Delete",
+          "My Recipes": "My Recipes",
+          Load: "Load",
         },
       },
       fr: {
@@ -258,6 +260,8 @@ i18n
           "Are you sure you want to delete this recipe?":
             "Êtes-vous sûr de vouloir supprimer cette recette?",
           Delete: "Supprimer",
+          "My Recipes": "Mes Recettes",
+          Load: "Charger",
         },
       },
       es: {
@@ -390,6 +394,8 @@ i18n
           "Are you sure you want to delete this recipe?":
             "¿Estás seguro de que quieres eliminar esta receta?",
           Delete: "Eliminar",
+          "My Recipes": "Mis Recetas",
+          Load: "Cargar",
         },
       },
       it: {
@@ -521,6 +527,8 @@ i18n
           "Are you sure you want to delete this recipe?":
             "Sei sicuro di voler eliminare questa ricetta?",
           Delete: "Elimina",
+          "My Recipes": "Le mie ricette",
+          Load: "Carica",
         },
       },
       pt: {
@@ -649,6 +657,8 @@ i18n
           "Are you sure you want to delete this recipe? ":
             "Tem certeza de que deseja excluir esta receita?",
           Delete: "Excluir",
+          "My Recipes": "Minhas Receitas",
+          Load: "Carregar",
         },
       },
       de: {
@@ -783,6 +793,8 @@ i18n
           "Are you sure you want to delete this recipe?":
             "Möchten Sie dieses Rezept wirklich löschen?",
           Delete: "Löschen",
+          "My Recipes": "Meine Rezepte",
+          Load: "Laden",
         },
       },
     },
