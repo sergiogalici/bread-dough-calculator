@@ -1,5 +1,43 @@
 import { calculateWaterRatio } from "./calculateWater"
 
+interface Flour {
+  flourPercentage?: number
+  proteinContent?: number
+  fiberContent?: number
+  flourKind: keyof typeof floursMap
+}
+
+interface Values {
+  numberOfPizzas: number
+  weightPerPizza: number
+  flours: Flour[]
+  temperature: number
+  coldProofing: boolean
+}
+
+interface FlourComposition {
+  name: string
+  amount: string
+}
+
+interface Results {
+  numberOfPizzas: number
+  weightPerPizza: number
+  totalDoughWeight: string
+  totalFlourAmount: string
+  flourComposition: FlourComposition[]
+  totalWater: string
+  totalSalt: string
+  totalYeast: string
+  riseTime: string
+  proteinRatio: string
+  fiberRatio: string
+  glycemicIndex: string
+  wRating: string
+  isWholeMeal: string
+  hydrationPercentage: string
+}
+
 const floursMap = {
   "grano tenero": "Soft Wheat",
   "grano duro": "Durum Wheat",
@@ -7,7 +45,12 @@ const floursMap = {
   "farina di riso": "Rice Flour",
   "farina di farro": "Spelt Flour",
 }
-export const calculatePizza = (values, setResults, setModalVisible) => {
+
+export const calculatePizza = (
+  values: Values,
+  setResults: (results: Results) => void,
+  setModalVisible: (visible: boolean) => void
+): void => {
   const { numberOfPizzas, weightPerPizza, flours, temperature, coldProofing } =
     values
 
@@ -24,7 +67,7 @@ export const calculatePizza = (values, setResults, setModalVisible) => {
 
   const estimatedTotalFlour = totalDoughWeight * 0.62
 
-  const flourComposition = []
+  const flourComposition: FlourComposition[] = []
 
   flours.forEach((flour) => {
     const {
@@ -85,11 +128,12 @@ export const calculatePizza = (values, setResults, setModalVisible) => {
       2) *
     0.95
 
-  const getProofingTime = (temp, isCold) => {
+  const getProofingTime = (temp: number, isCold: boolean): string => {
     if (temp < 20) return isCold ? "24-36 h" : "8-10 h"
     if (temp < 25) return isCold ? "18-24 h" : "6-8 h"
     return isCold ? "12-18 h" : "5-6 h"
   }
+
   const bulkFermentation = getProofingTime(temperature, false)
   const proofing = getProofingTime(temperature, coldProofing)
   const riseTime = `${bulkFermentation} (bulk fermentation), ${proofing} (after shaping${

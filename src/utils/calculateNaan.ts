@@ -1,5 +1,40 @@
 import { calculateWaterRatio } from "./calculateWater"
 
+interface Values {
+  naanCount: number
+  hydrationPercentage?: number
+  fatPercentage?: number
+  yogurtType: keyof typeof reversedYogurtTypes
+  liquidType: keyof typeof reversedLiquidTypes
+  naanWeight?: number
+  temperature: number
+  proteinContent?: number
+  fiberContent?: number
+  expertMode: boolean
+}
+
+interface Results {
+  totalFlourAmount: number
+  totalLiquid: number
+  oilToAdd: number
+  totalSalt: number
+  totalYeast: number
+  yogurtAmount: number
+  waterFromYogurt: number
+  waterFromMilk: number
+  proofingTime: string
+  numberOfNaan: number
+  naanWeight: number
+  liquidType: string
+  yogurtType: string
+  totalHydration: number
+  glycemicIndex: string
+  totalDoughWeight: number
+  adjustedHydration: number
+  proteinContent: number
+  fiberContent: number
+}
+
 const reversedLiquidTypes = {
   "whole-milk": "Whole Milk",
   "skim-milk": "Skim Milk",
@@ -15,7 +50,11 @@ const reversedYogurtTypes = {
   "non-fat": "Non Fat Yogurt",
 }
 
-export const calculateNaan = (values, setResults, setModalVisible) => {
+export const calculateNaan = (
+  values: Values,
+  setResults: (results: Results) => void,
+  setModalVisible: (visible: boolean) => void
+): void => {
   const {
     naanCount,
     hydrationPercentage = 60,
@@ -30,8 +69,6 @@ export const calculateNaan = (values, setResults, setModalVisible) => {
   } = values
 
   console.log("Values in Naan = ", values)
-
-  console.log("here")
 
   const flourAmount =
     (naanCount * naanWeight) / (1 + (hydrationPercentage + fatPercentage) / 100)
@@ -55,7 +92,7 @@ export const calculateNaan = (values, setResults, setModalVisible) => {
   let totalLiquid = (flourAmount * adjustedHydration) / 100
   let oilToAdd = (flourAmount * (expertMode ? fatPercentage : 10)) / 100
 
-  // Calcolo dello yogurt
+  // Calculate yogurt
   let yogurtAmount = 0
   let waterFromYogurt = 0
   let fatFromYogurt = 0
@@ -79,7 +116,7 @@ export const calculateNaan = (values, setResults, setModalVisible) => {
     oilToAdd -= fatFromYogurt
   }
 
-  // Calcolo del liquido aggiuntivo
+  // Calculate additional liquid
   let fatFromMilk = 0
   let waterFromMilk = totalLiquid
   switch (liquidType) {
@@ -101,7 +138,7 @@ export const calculateNaan = (values, setResults, setModalVisible) => {
 
   const totalSalt = flourAmount * 0.02
 
-  // Calcolo del lievito in base alla temperatura
+  // Calculate yeast based on temperature
   let totalYeast
   if (temperature < 20) {
     totalYeast = flourAmount * 0.015
@@ -111,7 +148,7 @@ export const calculateNaan = (values, setResults, setModalVisible) => {
     totalYeast = flourAmount * 0.035
   }
 
-  // Calcolo del tempo di lievitazione
+  // Calculate proofing time
   let proofingTime
   if (temperature < 20) {
     proofingTime = "2-2.5 h"
@@ -129,7 +166,7 @@ export const calculateNaan = (values, setResults, setModalVisible) => {
     totalSalt +
     totalYeast
 
-  const resultsTest = {
+  const results: Results = {
     totalFlourAmount: Math.round(flourAmount),
     totalLiquid: Math.round(totalLiquid),
     oilToAdd: Math.round(oilToAdd),
@@ -152,9 +189,9 @@ export const calculateNaan = (values, setResults, setModalVisible) => {
     fiberContent,
   }
 
-  console.log("results = ", resultsTest)
+  console.log("results = ", results)
 
-  setResults(resultsTest)
+  setResults(results)
 
   setModalVisible(true)
 }

@@ -1,5 +1,43 @@
 import { calculateWaterRatio } from "./calculateWater"
 
+interface Values {
+  briocheWeight?: number
+  bunCount: number
+  hydrationPercentage?: number
+  fatPercentage?: number
+  fatType: keyof typeof reverseFatTypeMap
+  includeEggs: boolean
+  milkType: keyof typeof reverseMilkTypeMap
+  temperature: number
+  proteinContent?: number
+  fiberContent?: number
+  expertMode: boolean
+}
+
+interface Results {
+  totalFlourAmount: number
+  totalMilk: number
+  totalSalt: number
+  totalFat: number
+  totalEggs: number
+  eggsCount: number
+  totalYeast: number
+  totalSugar: number
+  fatType: string
+  milkType: string
+  proofingTime: string
+  numberOfBrioche: number
+  briocheWeight: number
+  totalHydration: number
+  waterFromEggs: number
+  waterFromFat: number
+  waterFromMilk: number
+  glycemicIndex: string
+  adjustedHydration: number
+  proteinContent: number
+  fiberContent: number
+}
+
 const milkProperties = {
   whole: { waterContent: 0.87, fatContent: 0.035 },
   skim: { waterContent: 0.91, fatContent: 0.002 },
@@ -23,7 +61,11 @@ const reverseFatTypeMap = {
   lard: "Lard",
 }
 
-export const calculateBrioche = (values, setResults, setModalVisible) => {
+export const calculateBrioche = (
+  values: Values,
+  setResults: (results: Results) => void,
+  setModalVisible: (visible: boolean) => void
+): void => {
   const {
     briocheWeight = 80,
     bunCount: briocheCount,

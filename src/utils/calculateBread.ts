@@ -1,6 +1,37 @@
 import { calculateWaterRatio } from "./calculateWater"
 
-export const calculateDough = (values, setResults, setModalVisible) => {
+interface Flour {
+  flourAmount: number
+  proteinContent: number
+  fiberContent: number
+  flourKind: string
+}
+
+interface Values {
+  flours: Flour[]
+  temperature: number
+  coldProofing: boolean
+}
+
+interface Results {
+  totalFlourAmount: string
+  totalWater: string
+  totalSalt: string
+  totalYeast: string
+  riseTime: string
+  proteinRatio: string
+  fiberRatio: string
+  glycemicIndex: string
+  wRating: string
+  flourComposition: { name: string; amount: string }[]
+  hydrationPercentage: string
+}
+
+export const calculateDough = (
+  values: Values,
+  setResults: (results: Results) => void,
+  setModalVisible: (visible: boolean) => void
+): void => {
   const { flours, temperature, coldProofing } = values
   let totalSalt = 0
   let totalYeast = 0
@@ -64,8 +95,8 @@ export const calculateDough = (values, setResults, setModalVisible) => {
     Math.min(totalYeast, totalFlourAmount * 0.2)
   )
 
-  let firstProofingTime
-  let secondProofingTime
+  let firstProofingTime: string
+  let secondProofingTime: string
 
   if (temperature < 10) {
     firstProofingTime = "12-18 h"
@@ -134,7 +165,7 @@ export const calculateDough = (values, setResults, setModalVisible) => {
     (Math.min(totalFlourAmount, waterRangeMax) / totalFlourAmount) *
     100
   ).toFixed(0)}`
-  
+
   const flourComposition = [
     { name: "Durum Wheat", amount: totalDurumWheat.toFixed(0) },
     { name: "Soft Wheat", amount: totalSoftWheat.toFixed(0) },

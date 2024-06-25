@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect } from "react"
 import { useTranslation } from "react-i18next"
 import i18n from "./i18n"
 import {
@@ -40,23 +40,68 @@ const { Header, Content, Footer } = Layout
 const { Title } = Typography
 const { Option } = Select
 
-const saveRecipe = (recipe, name, doughType, isExpertMode) => {
-  let savedRecipes = JSON.parse(localStorage.getItem("savedRecipes")) || []
+interface Recipe {
+  name: string
+  recipe: any
+  doughType: string
+  isExpertMode: boolean
+}
+
+interface ExampleRecipe {
+  flours?: Array<{
+    flourKind: string
+    proteinContent?: number
+    fiberContent: number
+    flourAmount: number
+    flourPercentage?: number
+  }>
+  coldProofing?: boolean
+  temperature: number
+  temperatureUnit: string
+  numberOfPizzas?: number
+  weightPerPizza?: number
+  flourAmount?: number
+  proteinContent?: number
+  fiberContent?: number
+  hydrationPercentage?: number
+  fatPercentage?: number
+  fatType?: string
+  includeEggs?: boolean
+  milkType?: string
+  briocheWeight?: number
+  bunCount?: number
+  naanCount?: number
+  yogurtType?: string
+  liquidType?: string
+  naanWeight?: number
+  pitaCount?: number
+  pitaWeight?: number
+}
+
+const saveRecipe = (
+  recipe: any,
+  name: string,
+  doughType: string,
+  isExpertMode: boolean
+) => {
+  let savedRecipes = JSON.parse(localStorage.getItem("savedRecipes") || "[]")
   savedRecipes.push({ name, recipe, doughType, isExpertMode })
   localStorage.setItem("savedRecipes", JSON.stringify(savedRecipes))
 }
 
-const loadSavedRecipes = () => {
-  return JSON.parse(localStorage.getItem("savedRecipes")) || []
+const loadSavedRecipes = (): Recipe[] => {
+  return JSON.parse(localStorage.getItem("savedRecipes") || "[]")
 }
 
-const deleteRecipe = (recipeName) => {
-  let savedRecipes = JSON.parse(localStorage.getItem("savedRecipes")) || []
-  savedRecipes = savedRecipes.filter((recipe) => recipe.name !== recipeName)
+const deleteRecipe = (recipeName: string) => {
+  let savedRecipes = JSON.parse(localStorage.getItem("savedRecipes") || "[]")
+  savedRecipes = savedRecipes.filter(
+    (recipe: Recipe) => recipe.name !== recipeName
+  )
   localStorage.setItem("savedRecipes", JSON.stringify(savedRecipes))
 }
 
-const exampleRecipes = {
+const exampleRecipes: { [key: string]: ExampleRecipe } = {
   sourdough: {
     flours: [
       {
@@ -85,12 +130,14 @@ const exampleRecipes = {
         proteinContent: 13,
         fiberContent: 2,
         flourPercentage: 80,
+        flourAmount: 400,
       },
       {
         flourKind: "grano duro",
         proteinContent: 12,
         fiberContent: 3,
         flourPercentage: 20,
+        flourAmount: 100,
       },
     ],
     temperature: 20,
@@ -134,16 +181,16 @@ const exampleRecipes = {
   },
 }
 
-const celsiusToFahrenheit = (celsius) => {
+const celsiusToFahrenheit = (celsius: number) => {
   return (celsius * 9) / 5 + 32
 }
 
-const fahrenheitToCelsius = (fahrenheit) => {
+const fahrenheitToCelsius = (fahrenheit: number) => {
   return ((fahrenheit - 32) * 5) / 9
 }
 
-const prepareChartData = (results, doughType) => {
-  const parseAmount = (value) => {
+const prepareChartData = (results: any, doughType: string) => {
+  const parseAmount = (value: any) => {
     if (typeof value === "string" && value.includes("-")) {
       return parseFloat(value.split("-")[1].trim())
     }
@@ -181,7 +228,13 @@ const prepareChartData = (results, doughType) => {
   return data.filter((item) => !isNaN(item.amount) && item.amount > 0)
 }
 
-const LanguageSelector = ({
+interface LanguageSelectorProps {
+  changeLanguage: (lng: string) => void
+  setDrawerVisible: (visible: boolean) => void
+  drawerVisible: boolean
+}
+
+const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   changeLanguage,
   setDrawerVisible,
   drawerVisible,
@@ -189,14 +242,12 @@ const LanguageSelector = ({
   const { t, i18n } = useTranslation()
 
   useEffect(() => {
-    // Questo effetto verrà eseguito una volta all'avvio dell'applicazione
     const detectedLanguage = i18n.language
     const supportedLanguages = ["en", "fr", "es", "it", "pt", "de"]
 
     if (supportedLanguages.includes(detectedLanguage)) {
       i18n.changeLanguage(detectedLanguage)
     } else {
-      // Se la lingua rilevata non è supportata, usa l'inglese come fallback
       i18n.changeLanguage("en")
     }
   }, [i18n])
@@ -296,7 +347,15 @@ const LanguageSelector = ({
   )
 }
 
-const DoughTypeSelector = ({ doughType, handleDoughTypeChange }) => {
+interface DoughTypeSelectorProps {
+  doughType: string
+  handleDoughTypeChange: (type: string) => void
+}
+
+const DoughTypeSelector: React.FC<DoughTypeSelectorProps> = ({
+  doughType,
+  handleDoughTypeChange,
+}) => {
   const { t } = useTranslation()
   return (
     <Radio.Group
@@ -327,7 +386,12 @@ const DoughTypeSelector = ({ doughType, handleDoughTypeChange }) => {
   )
 }
 
-const FlourForm = ({ form, t }) => (
+interface FlourFormProps {
+  form: any
+  t: any
+}
+
+const FlourForm: React.FC<FlourFormProps> = ({ form, t }) => (
   <Form.List name="flours">
     {(fields, { add, remove }) => (
       <>
@@ -340,7 +404,6 @@ const FlourForm = ({ form, t }) => (
               <Form.Item
                 {...field}
                 name={[field.name, "flourKind"]}
-                fieldKey={[field.fieldKey, "flourKind"]}
                 label={t("Type of flour")}
                 rules={[
                   { required: true, message: t("Choose your flour type") },
@@ -367,7 +430,6 @@ const FlourForm = ({ form, t }) => (
               <Form.Item
                 {...field}
                 name={[field.name, "proteinContent"]}
-                fieldKey={[field.fieldKey, "proteinContent"]}
                 label={t("Protein Content")}
                 style={{ width: 200 }}
                 rules={[
@@ -401,7 +463,6 @@ const FlourForm = ({ form, t }) => (
               <Form.Item
                 {...field}
                 name={[field.name, "fiberContent"]}
-                fieldKey={[field.fieldKey, "fiberContent"]}
                 label={t("Fiber Content")}
                 style={{ width: 200 }}
                 rules={[
@@ -425,7 +486,6 @@ const FlourForm = ({ form, t }) => (
               <Form.Item
                 {...field}
                 name={[field.name, "flourAmount"]}
-                fieldKey={[field.fieldKey, "flourAmount"]}
                 label={t("Flour amount")}
                 style={{ width: 200 }}
                 rules={[
@@ -466,7 +526,11 @@ const FlourForm = ({ form, t }) => (
   </Form.List>
 )
 
-const FocacciaForm = ({ t }) => (
+interface FocacciaFormProps {
+  t: any
+}
+
+const FocacciaForm: React.FC<FocacciaFormProps> = ({ t }) => (
   <div className="flour-box">
     <Space
       align="baseline"
@@ -532,18 +596,14 @@ const FocacciaForm = ({ t }) => (
   </div>
 )
 
-const BriocheForm = ({ isExpertMode, t, form }) => {
-  const [expertMode, setExpertMode] = useState(false)
-  const [flag, setFlag] = useState(false)
+interface BriocheFormProps {
+  isExpertMode: boolean
+  t: any
+  form: any
+}
 
-  console.log("is expert mode ? ", isExpertMode)
-
-  useEffect(() => {
-    if (!flag) {
-      setExpertMode(isExpertMode)
-      setFlag(true)
-    }
-  }, [expertMode, flag])
+const BriocheForm: React.FC<BriocheFormProps> = ({ isExpertMode, t }) => {
+  const [expertMode, setExpertMode] = useState(isExpertMode)
 
   return (
     <div className="flour-box">
@@ -701,7 +761,13 @@ const BriocheForm = ({ isExpertMode, t, form }) => {
   )
 }
 
-const NaanForm = ({ isExpertMode, t, form }) => {
+interface NaanFormProps {
+  isExpertMode: boolean
+  t: any
+  form: any
+}
+
+const NaanForm: React.FC<NaanFormProps> = ({ isExpertMode, t }) => {
   const [expertMode, setExpertMode] = useState(isExpertMode)
 
   return (
@@ -850,7 +916,13 @@ const NaanForm = ({ isExpertMode, t, form }) => {
   )
 }
 
-const PitaForm = ({ isExpertMode, t, form }) => {
+interface PitaFormProps {
+  isExpertMode: boolean
+  t: any
+  form: any
+}
+
+const PitaForm: React.FC<PitaFormProps> = ({ isExpertMode, t }) => {
   const [expertMode, setExpertMode] = useState(isExpertMode)
 
   return (
@@ -956,16 +1028,21 @@ const PitaForm = ({ isExpertMode, t, form }) => {
   )
 }
 
-const PizzaForm = ({ form, t }) => {
-  const [sliderValues, setSliderValues] = useState([])
+interface PizzaFormProps {
+  form: any
+  t: any
+}
+
+const PizzaForm: React.FC<PizzaFormProps> = ({ form, t }) => {
+  const [sliderValues, setSliderValues] = useState<number[]>([])
   const flours = Form.useWatch("flours", form) || []
 
   useEffect(() => {
     if (flours.length !== sliderValues.length) {
-      setSliderValues(flours.map((flour) => flour.flourPercentage || 0))
+      setSliderValues(flours.map((flour: any) => flour.flourPercentage || 0))
     } else {
       setSliderValues(
-        flours.map((flour, index) => {
+        flours.map((flour: any, index: number) => {
           return typeof sliderValues[index] === "undefined"
             ? 0
             : sliderValues[index]
@@ -974,12 +1051,12 @@ const PizzaForm = ({ form, t }) => {
     }
   }, [flours])
 
-  const updatePercentages = (index, newValue) => {
+  const updatePercentages = (index: number, newValue: number) => {
     const currentFlours = form.getFieldValue("flours") || []
     if (currentFlours.length === 0) return
 
     let totalOthers = currentFlours.reduce(
-      (sum, flour, i) =>
+      (sum: number, flour: any, i: number) =>
         i !== index ? sum + (flour?.flourPercentage || 0) : sum,
       0
     )
@@ -989,7 +1066,7 @@ const PizzaForm = ({ form, t }) => {
       const otherFlourCount = currentFlours.length - 1
       const equalShare = remainingPercentage / otherFlourCount
 
-      const updatedFlours = currentFlours.map((flour, i) => {
+      const updatedFlours = currentFlours.map((flour: any, i: number) => {
         if (i === index) {
           return { ...flour, flourPercentage: newValue }
         } else {
@@ -1002,7 +1079,7 @@ const PizzaForm = ({ form, t }) => {
       const remaining = 100 - newValue
       const factor = remaining / totalOthers
 
-      const updatedFlours = currentFlours.map((flour, i) => {
+      const updatedFlours = currentFlours.map((flour: any, i: number) => {
         if (i === index) {
           return { ...flour, flourPercentage: newValue }
         } else {
@@ -1018,14 +1095,14 @@ const PizzaForm = ({ form, t }) => {
     }
   }
 
-  const handleSliderChange = (index, newValue) => {
+  const handleSliderChange = (index: number, newValue: number) => {
     const newSliderValues = [...sliderValues]
     newSliderValues[index] = newValue
     setSliderValues(newSliderValues)
     updatePercentages(index, newValue)
   }
 
-  const isGlutenFree = (flourKind) =>
+  const isGlutenFree = (flourKind: string) =>
     flourKind === "farina di mais" || flourKind === "farina di riso"
 
   return (
@@ -1067,14 +1144,15 @@ const PizzaForm = ({ form, t }) => {
         name="flours"
         rules={[
           {
-            validator: async (_, flours) => {
+            validator: async (_: any, flours: any) => {
               if (!flours || flours.length < 1) {
                 return Promise.reject(
                   new Error(t("At least one type of flour is required"))
                 )
               }
               const totalPercentage = flours.reduce(
-                (sum, flour) => sum + (flour?.flourPercentage || 0),
+                (sum: number, flour: any) =>
+                  sum + (flour?.flourPercentage || 0),
                 0
               )
               if (Math.abs(totalPercentage - 100) > 0.1) {
@@ -1097,7 +1175,6 @@ const PizzaForm = ({ form, t }) => {
                   <Form.Item
                     {...field}
                     name={[field.name, "flourKind"]}
-                    fieldKey={[field.fieldKey, "flourKind"]}
                     label={t("Type of flour")}
                     rules={[
                       { required: true, message: t("Choose your flour type") },
@@ -1125,7 +1202,6 @@ const PizzaForm = ({ form, t }) => {
                   <Form.Item
                     {...field}
                     name={[field.name, "flourPercentage"]}
-                    fieldKey={[field.fieldKey, "flourPercentage"]}
                     label={t("Flour percentage")}
                   >
                     <Slider
@@ -1139,7 +1215,6 @@ const PizzaForm = ({ form, t }) => {
                   <Form.Item
                     {...field}
                     name={[field.name, "proteinContent"]}
-                    fieldKey={[field.fieldKey, "proteinContent"]}
                     label={t("Protein Content")}
                     rules={[
                       {
@@ -1167,7 +1242,6 @@ const PizzaForm = ({ form, t }) => {
                   <Form.Item
                     {...field}
                     name={[field.name, "fiberContent"]}
-                    fieldKey={[field.fieldKey, "fiberContent"]}
                     label={t("Fiber Content")}
                     rules={[
                       {
@@ -1193,9 +1267,9 @@ const PizzaForm = ({ form, t }) => {
                         remove(field.name)
                         const newFlours = form
                           .getFieldValue("flours")
-                          .filter((_, i) => i !== index)
+                          .filter((_: any, i: number) => i !== index)
                         const equalPercentage = 100 / newFlours.length
-                        const updatedFlours = newFlours.map((flour) => ({
+                        const updatedFlours = newFlours.map((flour: any) => ({
                           ...flour,
                           flourPercentage: equalPercentage,
                         }))
@@ -1213,7 +1287,7 @@ const PizzaForm = ({ form, t }) => {
                   add()
                   const newFlours = [...form.getFieldValue("flours")]
                   const equalPercentage = 100 / newFlours.length
-                  const updatedFlours = newFlours.map((flour) => ({
+                  const updatedFlours = newFlours.map((flour: any) => ({
                     ...flour,
                     flourPercentage: equalPercentage,
                   }))
@@ -1232,7 +1306,16 @@ const PizzaForm = ({ form, t }) => {
   )
 }
 
-const ResultsModal = ({
+interface ResultsModalProps {
+  modalVisible: boolean
+  handleModalOk: () => void
+  handleModalCancel: () => void
+  results: any
+  doughType: string
+  t: any
+}
+
+const ResultsModal: React.FC<ResultsModalProps> = ({
   modalVisible,
   handleModalOk,
   handleModalCancel,
@@ -1460,7 +1543,7 @@ const ResultsModal = ({
           ) : (
             <>
               {doughType === "pizza" &&
-                results.flourComposition.map((flour, index) => (
+                results.flourComposition.map((flour: any, index: number) => (
                   <Alert
                     key={index + "a"}
                     message={`${t(flour.name)}: ${flour.amount} g`}
@@ -1519,7 +1602,13 @@ const ResultsModal = ({
   )
 }
 
-const ScaleRecipe = ({ form, t, doughType }) => {
+interface ScaleRecipeProps {
+  form: any
+  t: any
+  doughType: string
+}
+
+const ScaleRecipe: React.FC<ScaleRecipeProps> = ({ form, t, doughType }) => {
   const scaleRecipe = () => {
     const targetFlourWeight = form.getFieldValue("targetFlourWeight")
     if (!targetFlourWeight) return
@@ -1531,7 +1620,7 @@ const ScaleRecipe = ({ form, t, doughType }) => {
       currentTotalFlour = currentValues.flourAmount
     } else {
       currentTotalFlour = currentValues.flours.reduce(
-        (sum, flour) => sum + flour.flourAmount,
+        (sum: number, flour: any) => sum + flour.flourAmount,
         0
       )
     }
@@ -1543,7 +1632,7 @@ const ScaleRecipe = ({ form, t, doughType }) => {
         flourAmount: Math.round(currentValues.flourAmount * scaleFactor),
       })
     } else {
-      const scaledFlours = currentValues.flours.map((flour) => ({
+      const scaledFlours = currentValues.flours.map((flour: any) => ({
         ...flour,
         flourAmount: Math.round(flour.flourAmount * scaleFactor),
       }))
@@ -1554,10 +1643,22 @@ const ScaleRecipe = ({ form, t, doughType }) => {
   return <></>
 }
 
-const SavedRecipesModal = ({ visible, onClose, onLoadRecipe, t }) => {
-  const [savedRecipes, setSavedRecipes] = useState([])
+interface SavedRecipesModalProps {
+  visible: boolean
+  onClose: () => void
+  onLoadRecipe: (item: Recipe) => void
+  t: any
+}
+
+const SavedRecipesModal: React.FC<SavedRecipesModalProps> = ({
+  visible,
+  onClose,
+  onLoadRecipe,
+  t,
+}) => {
+  const [savedRecipes, setSavedRecipes] = useState<Recipe[]>([])
   const [deleteModalVisible, setDeleteModalVisible] = useState(false)
-  const [recipeToDelete, setRecipeToDelete] = useState(null)
+  const [recipeToDelete, setRecipeToDelete] = useState<Recipe | null>(null)
 
   useEffect(() => {
     if (visible) {
@@ -1565,7 +1666,7 @@ const SavedRecipesModal = ({ visible, onClose, onLoadRecipe, t }) => {
     }
   }, [visible])
 
-  const handleDeleteClick = (recipe) => {
+  const handleDeleteClick = (recipe: Recipe) => {
     setRecipeToDelete(recipe)
     setDeleteModalVisible(true)
   }
@@ -1619,7 +1720,19 @@ const SavedRecipesModal = ({ visible, onClose, onLoadRecipe, t }) => {
   )
 }
 
-const SaveRecipeModal = ({ visible, onClose, onSave, t }) => {
+interface SaveRecipeModalProps {
+  visible: boolean
+  onClose: () => void
+  onSave: (name: string) => void
+  t: any
+}
+
+const SaveRecipeModal: React.FC<SaveRecipeModalProps> = ({
+  visible,
+  onClose,
+  onSave,
+  t,
+}) => {
   const [recipeName, setRecipeName] = useState("")
 
   const handleSave = () => {
@@ -1648,10 +1761,10 @@ const SaveRecipeModal = ({ visible, onClose, onSave, t }) => {
   )
 }
 
-const App = () => {
+const App: React.FC = () => {
   const { t } = useTranslation()
 
-  const [results, setResults] = useState(null)
+  const [results, setResults] = useState<any>(null)
   const [form] = Form.useForm()
   const [modalVisible, setModalVisible] = useState(false)
   const [doughType, setDoughType] = useState("sourdough")
@@ -1673,7 +1786,7 @@ const App = () => {
     }
   }
 
-  const handleSaveRecipe = (name) => {
+  const handleSaveRecipe = (name: string) => {
     const currentValues = form.getFieldsValue()
     const isExpertMode = currentValues.expertMode
     saveRecipe(currentValues, name, doughType, isExpertMode)
@@ -1739,17 +1852,17 @@ const App = () => {
     setModalVisible(false)
   }
 
-  const handleDoughTypeChange = (type) => {
+  const handleDoughTypeChange = (type: string) => {
     setDoughType(type)
     form.resetFields()
   }
 
-  const changeLanguage = (lng) => {
+  const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng)
     setDrawerVisible(false)
   }
 
-  const onFinish = (values) => {
+  const onFinish = (values: any) => {
     let temperature = values.temperature
     if (values.temperatureUnit === "fahrenheit") {
       temperature = fahrenheitToCelsius(temperature)
@@ -1863,14 +1976,14 @@ const App = () => {
               ) : null}
               {doughType === "focaccia" ? <FocacciaForm t={t} /> : null}
               {doughType === "brioche" ? (
-                <BriocheForm isExpertMode={isExpertMode} t={t} />
+                <BriocheForm isExpertMode={isExpertMode} t={t} form={form} />
               ) : null}
               {doughType === "naan" ? (
-                <NaanForm isExpertMode={isExpertMode} t={t} />
+                <NaanForm isExpertMode={isExpertMode} t={t} form={form} />
               ) : null}
               {doughType === "pizza" ? <PizzaForm form={form} t={t} /> : null}
               {doughType === "pita" ? (
-                <PitaForm isExpertMode={isExpertMode} t={t} />
+                <PitaForm isExpertMode={isExpertMode} t={t} form={form} />
               ) : null}
               {doughType !== "brioche" &&
                 doughType !== "naan" &&

@@ -1,4 +1,28 @@
-export const calculateFocaccia = (values, setResults, setModalVisible) => {
+interface Values {
+  flourAmount: number
+  proteinContent: number
+  fiberContent: number
+  temperature: number
+  coldProofing: boolean
+}
+
+interface Results {
+  totalFlourAmount: string
+  totalWater: string
+  totalSalt: string
+  totalYeast: string
+  riseTime: string
+  proteinRatio: string
+  fiberRatio: string
+  glycemicIndex: string
+  wRating: string
+}
+
+export const calculateFocaccia = (
+  values: Values,
+  setResults: (results: Results) => void,
+  setModalVisible: (visible: boolean) => void
+): void => {
   const {
     flourAmount,
     proteinContent,
@@ -7,16 +31,16 @@ export const calculateFocaccia = (values, setResults, setModalVisible) => {
     coldProofing,
   } = values
 
-  const totalSalt = flourAmount * 0.02 // 2% di sale
-  const totalYeast = flourAmount * 0.003 // 0.3% di lievito
+  const totalSalt = flourAmount * 0.02 // 2% salt
+  const totalYeast = flourAmount * 0.003 // 0.3% yeast
 
-  const baseHydration = 0.75 // 75% di idratazione di base per la focaccia
+  const baseHydration = 0.75 // 75% base hydration for focaccia
   const proteinAdjustment = Math.max(0, (proteinContent - 10) * 0.01)
   const fiberAdjustment = fiberContent * 0.003
   const totalWater =
     flourAmount * (baseHydration + proteinAdjustment + fiberAdjustment)
 
-  const getProofingTime = (temp, isCold) => {
+  const getProofingTime = (temp: number, isCold: boolean): string => {
     if (isCold) return temp < 20 ? "24-36 h" : temp < 25 ? "18-24 h" : "12-18 h"
     return temp < 20 ? "8-10 h" : temp < 25 ? "6-8 h" : "5-6 h"
   }

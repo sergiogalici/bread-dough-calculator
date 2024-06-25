@@ -1,6 +1,37 @@
 import { calculateWaterRatio } from "./calculateWater"
 
-export const calculatePita = (values, setResults, setModalVisible) => {
+interface Values {
+  pitaCount: number
+  hydrationPercentage?: number
+  pitaWeight?: number
+  temperature: number
+  proteinContent?: number
+  fiberContent?: number
+  expertMode: boolean
+}
+
+interface Results {
+  totalFlourAmount: number
+  totalWater: number
+  totalSalt: number
+  totalYeast: number
+  totalOil: number
+  proofingTime: string
+  numberOfPitas: number
+  pitaWeight: number
+  totalHydration: number
+  glycemicIndex: string
+  totalDoughWeight: number
+  adjustedHydration: number
+  proteinContent: number
+  fiberContent: number
+}
+
+export const calculatePita = (
+  values: Values,
+  setResults: (results: Results) => void,
+  setModalVisible: (visible: boolean) => void
+): void => {
   const {
     pitaCount,
     hydrationPercentage = 65,
@@ -31,9 +62,9 @@ export const calculatePita = (values, setResults, setModalVisible) => {
 
   const totalWater = (flourAmount * adjustedHydration) / 100
   const totalSalt = flourAmount * 0.02
-  const totalOil = flourAmount * 0.05 // Un po' d'olio per la morbidezza
+  const totalOil = flourAmount * 0.05 // Some oil for softness
 
-  // Calcolo del lievito in base alla temperatura
+  // Calculate yeast based on temperature
   let totalYeast
   if (temperature < 20) {
     totalYeast = flourAmount * 0.015
@@ -43,7 +74,7 @@ export const calculatePita = (values, setResults, setModalVisible) => {
     totalYeast = flourAmount * 0.025
   }
 
-  // Calcolo del tempo di lievitazione
+  // Calculate proofing time
   let proofingTime
   if (temperature < 20) {
     proofingTime = "2-2.5 h"

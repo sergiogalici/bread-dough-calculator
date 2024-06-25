@@ -1,14 +1,19 @@
+interface WaterRatio {
+  waterRangeMin: number
+  waterRangeMax: number
+}
+
 export const calculateWaterRatio = (
-  totalDurumWheat,
-  totalSoftWheat,
-  totalRye,
-  totalSpelt,
-  totalCorn,
-  totalRice,
-  totalFiber,
-  totalFlourAmount,
-  proteinRatio
-) => {
+  totalDurumWheat: number,
+  totalSoftWheat: number,
+  totalRye: number,
+  totalSpelt: number,
+  totalCorn: number,
+  totalRice: number,
+  totalFiber: number,
+  totalFlourAmount: number,
+  proteinRatio: number
+): WaterRatio => {
   const durumWheatWaterRatio = 1.025
   const softWheatWaterRatio = 1
   const ryeWaterRatio = 1.2
