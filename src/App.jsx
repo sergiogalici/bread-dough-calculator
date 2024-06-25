@@ -381,8 +381,8 @@ const FlourForm = ({ form, t }) => (
                   },
                 ]}
               >
-                keyboard
                 <InputNumber
+                  keyboard
                   datatype="number"
                   min={0}
                   max={100}
@@ -410,8 +410,8 @@ const FlourForm = ({ form, t }) => (
                   },
                 ]}
               >
-                keyboard
                 <InputNumber
+                  keyboard
                   datatype="number"
                   min={0}
                   max={100}
@@ -433,8 +433,8 @@ const FlourForm = ({ form, t }) => (
                   },
                 ]}
               >
-                keyboard
                 <InputNumber
+                  keyboard
                   datatype="number"
                   min={0}
                   placeholder={t("Insert flour amount in grams")}
@@ -477,8 +477,8 @@ const FocacciaForm = ({ t }) => (
           { required: true, message: t("Insert your flour's protein content") },
         ]}
       >
-        keyboard
         <InputNumber
+          keyboard
           datatype="number"
           min={0}
           max={100}
@@ -495,8 +495,8 @@ const FocacciaForm = ({ t }) => (
           { required: true, message: t("Insert your flour fiber content") },
         ]}
       >
-        keyboard
         <InputNumber
+          keyboard
           datatype="number"
           min={0}
           max={100}
@@ -513,8 +513,8 @@ const FocacciaForm = ({ t }) => (
           { required: true, message: t("Insert your flour amount in grams") },
         ]}
       >
-        keyboard
         <InputNumber
+          keyboard
           datatype="number"
           min={0}
           placeholder={t("Insert flour amount in grams")}
@@ -545,8 +545,12 @@ const BriocheForm = ({ t, form }) => {
             { required: true, message: t("Please input number of buns") },
           ]}
         >
-          keyboard
-          <InputNumber datatype="number" min={0} style={{ width: "100%" }} />
+          <InputNumber
+            keyboard
+            datatype="number"
+            min={0}
+            style={{ width: "100%" }}
+          />
         </Form.Item>
         {expertMode && (
           <>
@@ -561,8 +565,8 @@ const BriocheForm = ({ t, form }) => {
                 },
               ]}
             >
-              keyboard
               <InputNumber
+                keyboard
                 datatype="number"
                 addonAfter="g"
                 min={0}
@@ -577,8 +581,8 @@ const BriocheForm = ({ t, form }) => {
                 { required: true, message: t("Please input protein content") },
               ]}
             >
-              keyboard
               <InputNumber
+                keyboard
                 datatype="number"
                 min={0}
                 max={100}
@@ -594,8 +598,8 @@ const BriocheForm = ({ t, form }) => {
                 { required: true, message: t("Please input fiber content") },
               ]}
             >
-              keyboard
               <InputNumber
+                keyboard
                 datatype="number"
                 min={0}
                 max={100}
@@ -614,8 +618,8 @@ const BriocheForm = ({ t, form }) => {
                 },
               ]}
             >
-              keyboard
               <InputNumber
+                keyboard
                 datatype="number"
                 min={0}
                 max={100}
@@ -631,8 +635,8 @@ const BriocheForm = ({ t, form }) => {
                 { required: true, message: t("Please input fat percentage") },
               ]}
             >
-              keyboard
               <InputNumber
+                keyboard
                 datatype="number"
                 min={0}
                 max={100}
@@ -693,8 +697,12 @@ const NaanForm = ({ t, form }) => {
             { required: true, message: t("Please input number of naans") },
           ]}
         >
-          keyboard
-          <InputNumber datatype="number" min={0} style={{ width: "100%" }} />
+          <InputNumber
+            keyboard
+            datatype="number"
+            min={0}
+            style={{ width: "100%" }}
+          />
         </Form.Item>
         {expertMode && (
           <>
@@ -703,8 +711,8 @@ const NaanForm = ({ t, form }) => {
               label={t("Desired weight of each naan (g)")}
               initialValue={100}
             >
-              keyboard
               <InputNumber
+                keyboard
                 datatype="number"
                 addonAfter="g"
                 min={0}
@@ -719,8 +727,8 @@ const NaanForm = ({ t, form }) => {
                 { required: true, message: t("Please input protein content") },
               ]}
             >
-              keyboard
               <InputNumber
+                keyboard
                 datatype="number"
                 min={0}
                 max={100}
@@ -736,8 +744,8 @@ const NaanForm = ({ t, form }) => {
                 { required: true, message: t("Please input fiber content") },
               ]}
             >
-              keyboard
               <InputNumber
+                keyboard
                 datatype="number"
                 min={0}
                 max={100}
@@ -756,8 +764,8 @@ const NaanForm = ({ t, form }) => {
                 },
               ]}
             >
-              keyboard
               <InputNumber
+                keyboard
                 datatype="number"
                 min={0}
                 max={100}
@@ -773,8 +781,8 @@ const NaanForm = ({ t, form }) => {
                 { required: true, message: t("Please input fat percentage") },
               ]}
             >
-              keyboard
               <InputNumber
+                keyboard
                 datatype="number"
                 min={0}
                 max={100}
@@ -832,8 +840,12 @@ const PitaForm = ({ t, form }) => {
             { required: true, message: t("Please input number of pitas") },
           ]}
         >
-          keyboard
-          <InputNumber datatype="number" min={0} style={{ width: "100%" }} />
+          <InputNumber
+            keyboard
+            datatype="number"
+            min={0}
+            style={{ width: "100%" }}
+          />
         </Form.Item>
         {expertMode && (
           <>
@@ -842,8 +854,8 @@ const PitaForm = ({ t, form }) => {
               label={t("Desired weight of each pita (g)")}
               initialValue={80}
             >
-              keyboard
               <InputNumber
+                keyboard
                 datatype="number"
                 addonAfter="g"
                 min={0}
@@ -858,8 +870,8 @@ const PitaForm = ({ t, form }) => {
                 { required: true, message: t("Please input protein content") },
               ]}
             >
-              keyboard
               <InputNumber
+                keyboard
                 datatype="number"
                 min={0}
                 max={100}
@@ -875,8 +887,8 @@ const PitaForm = ({ t, form }) => {
                 { required: true, message: t("Please input fiber content") },
               ]}
             >
-              keyboard
               <InputNumber
+                keyboard
                 datatype="number"
                 min={0}
                 max={100}
@@ -895,8 +907,8 @@ const PitaForm = ({ t, form }) => {
                 },
               ]}
             >
-              keyboard
               <InputNumber
+                keyboard
                 datatype="number"
                 min={0}
                 max={100}
@@ -1017,8 +1029,12 @@ const PizzaForm = ({ form, t }) => {
           { required: true, message: t("Please input number of pizzas") },
         ]}
       >
-        keyboard
-        <InputNumber datatype="number" min={1} style={{ width: "100%" }} />
+        <InputNumber
+          keyboard
+          datatype="number"
+          min={1}
+          style={{ width: "100%" }}
+        />
       </Form.Item>
       <Form.Item
         name="weightPerPizza"
@@ -1028,8 +1044,8 @@ const PizzaForm = ({ form, t }) => {
           { required: true, message: t("Please input weight per pizza") },
         ]}
       >
-        keyboard
         <InputNumber
+          keyboard
           datatype="number"
           min={100}
           max={500}
@@ -1123,7 +1139,6 @@ const PizzaForm = ({ form, t }) => {
                       },
                     ]}
                   >
-                    keyboard
                     <InputNumber
                       keyboard
                       datatype="number"
@@ -1149,8 +1164,8 @@ const PizzaForm = ({ form, t }) => {
                       },
                     ]}
                   >
-                    keyboard
                     <InputNumber
+                      keyboard
                       datatype="number"
                       min={0}
                       max={100}
@@ -1851,8 +1866,8 @@ const App = () => {
                 ]}
                 initialValue={selectedTemperatureUnit === "celsius" ? 20 : 68}
               >
-                keyboard
                 <InputNumber
+                  keyboard
                   datatype="number"
                   min={
                     form.getFieldValue("temperatureUnit") === "celsius"
