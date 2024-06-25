@@ -1662,11 +1662,31 @@ const App = () => {
     useState(false)
   const [saveRecipeModalVisible, setSaveRecipeModalVisible] = useState(false)
   const [isExpertMode, setIsExpertMode] = useState(false)
+  const [validationModalVisible, setValidationModalVisible] = useState(false)
+
+  const validateFormBeforeSave = async () => {
+    try {
+      await form.validateFields()
+      return true
+    } catch (error) {
+      return false
+    }
+  }
 
   const handleSaveRecipe = (name) => {
     const currentValues = form.getFieldsValue()
     const isExpertMode = currentValues.expertMode
     saveRecipe(currentValues, name, doughType, isExpertMode)
+    setSaveRecipeModalVisible(false)
+  }
+
+  const handleSaveRecipeClick = async () => {
+    const isFormValid = await validateFormBeforeSave()
+    if (isFormValid) {
+      setSaveRecipeModalVisible(true)
+    } else {
+      setValidationModalVisible(true)
+    }
   }
 
   const fillExampleRecipe = () => {
@@ -1921,7 +1941,7 @@ const App = () => {
                   {t("Show Example Recipe")}
                 </Button>
                 <Button
-                  onClick={() => setSaveRecipeModalVisible(true)}
+                  onClick={handleSaveRecipeClick}
                   style={{ marginLeft: 10 }}
                 >
                   {t("Save Recipe")}
@@ -1960,6 +1980,15 @@ const App = () => {
         onSave={handleSaveRecipe}
         t={t}
       />
+      <Modal
+        title={t("Validation Error")}
+        open={validationModalVisible}
+        onOk={() => setValidationModalVisible(false)}
+        onCancel={() => setValidationModalVisible(false)}
+        okText={t("OK")}
+      >
+        <p>{t("You must fill all fields before saving a recipe!")}</p>
+      </Modal>
     </Layout>
   )
 }

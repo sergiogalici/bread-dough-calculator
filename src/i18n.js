@@ -131,6 +131,9 @@ i18n
           Delete: "Delete",
           "My Recipes": "My Recipes",
           Load: "Load",
+          "Validation Error": "Validation Error",
+          "You must fill all fields before saving a recipe!":
+            "You must fill all fields before saving a recipe!",
         },
       },
       fr: {
@@ -262,6 +265,9 @@ i18n
           Delete: "Supprimer",
           "My Recipes": "Mes Recettes",
           Load: "Charger",
+          "Validation Error": "Erreur de validation",
+          "You must fill all fields before saving a recipe!":
+            "Vous devez remplir tous les champs avant d'enregistrer une recette !",
         },
       },
       es: {
@@ -396,6 +402,9 @@ i18n
           Delete: "Eliminar",
           "My Recipes": "Mis Recetas",
           Load: "Cargar",
+          "Validation Error": "Error de validación",
+          "You must fill all fields before saving a recipe!":
+            "¡Debes completar todos los campos antes de guardar una receta!",
         },
       },
       it: {
@@ -529,6 +538,9 @@ i18n
           Delete: "Elimina",
           "My Recipes": "Le mie ricette",
           Load: "Carica",
+          "Validation Error": "Errore di convalida",
+          "You must fill all fields before saving a recipe!":
+            "Devi compilare tutti i campi prima di salvare una ricetta!",
         },
       },
       pt: {
@@ -659,6 +671,9 @@ i18n
           Delete: "Excluir",
           "My Recipes": "Minhas Receitas",
           Load: "Carregar",
+          "Validation Error": "Erro de validação",
+          "You must fill all fields before saving a recipe!":
+            "Você deve preencher todos os campos antes de salvar uma receita!",
         },
       },
       de: {
@@ -795,6 +810,9 @@ i18n
           Delete: "Löschen",
           "My Recipes": "Meine Rezepte",
           Load: "Laden",
+          "Validation Error": "Validierungsfehler",
+          "You must fill all fields before saving a recipe!":
+            "Sie müssen alle Felder ausfüllen, bevor Sie ein Rezept speichern!",
         },
       },
     },
