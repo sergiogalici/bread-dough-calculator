@@ -40,9 +40,9 @@ const { Header, Content, Footer } = Layout
 const { Title } = Typography
 const { Option } = Select
 
-const saveRecipe = (recipe, name, doughType) => {
+const saveRecipe = (recipe, name, doughType, isExpertMode) => {
   let savedRecipes = JSON.parse(localStorage.getItem("savedRecipes")) || []
-  savedRecipes.push({ name, recipe, doughType })
+  savedRecipes.push({ name, recipe, doughType, isExpertMode })
   localStorage.setItem("savedRecipes", JSON.stringify(savedRecipes))
 }
 
@@ -532,8 +532,18 @@ const FocacciaForm = ({ t }) => (
   </div>
 )
 
-const BriocheForm = ({ t, form }) => {
+const BriocheForm = ({ isExpertMode, t, form }) => {
   const [expertMode, setExpertMode] = useState(false)
+  const [flag, setFlag] = useState(false)
+
+  console.log("is expert mode ? ", isExpertMode)
+
+  useEffect(() => {
+    if (!flag) {
+      setExpertMode(isExpertMode)
+      setFlag(true)
+    }
+  }, [expertMode, flag])
 
   return (
     <div className="flour-box">
@@ -691,8 +701,8 @@ const BriocheForm = ({ t, form }) => {
   )
 }
 
-const NaanForm = ({ t, form }) => {
-  const [expertMode, setExpertMode] = useState(false)
+const NaanForm = ({ isExpertMode, t, form }) => {
+  const [expertMode, setExpertMode] = useState(isExpertMode)
 
   return (
     <div className="flour-box">
@@ -840,8 +850,8 @@ const NaanForm = ({ t, form }) => {
   )
 }
 
-const PitaForm = ({ t, form }) => {
-  const [expertMode, setExpertMode] = useState(false)
+const PitaForm = ({ isExpertMode, t, form }) => {
+  const [expertMode, setExpertMode] = useState(isExpertMode)
 
   return (
     <div className="flour-box">
@@ -959,6 +969,15 @@ const PizzaForm = ({ form, t }) => {
     }))
     form.setFieldsValue({ flours: updatedFlours })
   }
+
+  useEffect(() => {
+    const currentFlours = form.getFieldValue("flours") || []
+    currentFlours.forEach((flour, index) => {
+      if (sliderRefs.current[index] && flour.flourPercentage !== undefined) {
+        sliderRefs.current[index].setValue(flour.flourPercentage)
+      }
+    })
+  }, [form])
 
   useEffect(() => {
     // Aggiorna i riferimenti agli slider quando cambia il numero di farine
@@ -1665,10 +1684,13 @@ const App = () => {
   const [savedRecipesModalVisible, setSavedRecipesModalVisible] =
     useState(false)
   const [saveRecipeModalVisible, setSaveRecipeModalVisible] = useState(false)
+  const [isExpertMode, setIsExpertMode] = useState(false)
+  
 
   const handleSaveRecipe = (name) => {
     const currentValues = form.getFieldsValue()
-    saveRecipe(currentValues, name, doughType)
+    const isExpertMode = currentValues.expertMode
+    saveRecipe(currentValues, name, doughType, isExpertMode)
   }
 
   const fillExampleRecipe = () => {
@@ -1857,10 +1879,16 @@ const App = () => {
                 <FlourForm form={form} t={t} />
               ) : null}
               {doughType === "focaccia" ? <FocacciaForm t={t} /> : null}
-              {doughType === "brioche" ? <BriocheForm t={t} /> : null}
-              {doughType === "naan" ? <NaanForm t={t} /> : null}
+              {doughType === "brioche" ? (
+                <BriocheForm isExpertMode={isExpertMode} t={t} />
+              ) : null}
+              {doughType === "naan" ? (
+                <NaanForm isExpertMode={isExpertMode} t={t} />
+              ) : null}
               {doughType === "pizza" ? <PizzaForm form={form} t={t} /> : null}
-              {doughType === "pita" ? <PitaForm t={t} /> : null}
+              {doughType === "pita" ? (
+                <PitaForm isExpertMode={isExpertMode} t={t} />
+              ) : null}
               {doughType !== "brioche" &&
                 doughType !== "naan" &&
                 doughType !== "pita" && (
@@ -1955,6 +1983,8 @@ const App = () => {
         visible={savedRecipesModalVisible}
         onClose={() => setSavedRecipesModalVisible(false)}
         onLoadRecipe={(item) => {
+          console.log("item = ", item)
+          setIsExpertMode(item.isExpertMode)
           setDoughType(item.doughType)
           console.log("item = ", item)
           form.setFieldsValue(item.recipe)
