@@ -40,14 +40,20 @@ const { Header, Content, Footer } = Layout
 const { Title } = Typography
 const { Option } = Select
 
-const saveRecipe = (recipe, name) => {
+const saveRecipe = (recipe, name, doughType) => {
   let savedRecipes = JSON.parse(localStorage.getItem("savedRecipes")) || []
-  savedRecipes.push({ name, recipe })
+  savedRecipes.push({ name, recipe, doughType })
   localStorage.setItem("savedRecipes", JSON.stringify(savedRecipes))
 }
 
 const loadSavedRecipes = () => {
   return JSON.parse(localStorage.getItem("savedRecipes")) || []
+}
+
+const deleteRecipe = (recipeName) => {
+  let savedRecipes = JSON.parse(localStorage.getItem("savedRecipes")) || []
+  savedRecipes = savedRecipes.filter((recipe) => recipe.name !== recipeName)
+  localStorage.setItem("savedRecipes", JSON.stringify(savedRecipes))
 }
 
 const exampleRecipes = {
@@ -299,12 +305,24 @@ const DoughTypeSelector = ({ doughType, handleDoughTypeChange }) => {
       className="radio-group"
       style={{ marginBottom: 20, marginTop: 20 }}
     >
-      <Radio.Button value="sourdough">{t("Sourdough Bread")}</Radio.Button>
-      <Radio.Button value="pizza">{t("Pizza")}</Radio.Button>
-      <Radio.Button value="focaccia">{t("Focaccia")}</Radio.Button>
-      <Radio.Button value="brioche">{t("Brioche Buns")}</Radio.Button>
-      <Radio.Button value="naan">{t("Naan")}</Radio.Button>
-      <Radio.Button value="pita">{t("Pita")}</Radio.Button>
+      <Radio.Button style={{ borderRadius: 0 }} value="sourdough">
+        {t("Sourdough Bread")}
+      </Radio.Button>
+      <Radio.Button style={{ borderRadius: 0 }} value="pizza">
+        {t("Pizza")}
+      </Radio.Button>
+      <Radio.Button style={{ borderRadius: 0 }} value="focaccia">
+        {t("Focaccia")}
+      </Radio.Button>
+      <Radio.Button style={{ borderRadius: 0 }} value="brioche">
+        {t("Brioche Buns")}
+      </Radio.Button>
+      <Radio.Button style={{ borderRadius: 0 }} value="naan">
+        {t("Naan")}
+      </Radio.Button>
+      <Radio.Button style={{ borderRadius: 0 }} value="pita">
+        {t("Pita")}
+      </Radio.Button>
     </Radio.Group>
   )
 }
@@ -1472,6 +1490,8 @@ const ScaleRecipe = ({ form, t, doughType }) => {
 
 const SavedRecipesModal = ({ visible, onClose, onLoadRecipe, t }) => {
   const [savedRecipes, setSavedRecipes] = useState([])
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false)
+  const [recipeToDelete, setRecipeToDelete] = useState(null)
 
   useEffect(() => {
     if (visible) {
@@ -1479,28 +1499,57 @@ const SavedRecipesModal = ({ visible, onClose, onLoadRecipe, t }) => {
     }
   }, [visible])
 
+  const handleDeleteClick = (recipe) => {
+    setRecipeToDelete(recipe)
+    setDeleteModalVisible(true)
+  }
+
+  const handleDeleteConfirm = () => {
+    if (recipeToDelete) {
+      deleteRecipe(recipeToDelete.name)
+      setSavedRecipes(loadSavedRecipes())
+      setDeleteModalVisible(false)
+      setRecipeToDelete(null)
+    }
+  }
+
   return (
-    <Modal
-      title={t("My Recipes")}
-      visible={visible}
-      onCancel={onClose}
-      footer={null}
-    >
-      <List
-        dataSource={savedRecipes}
-        renderItem={(item) => (
-          <List.Item
-            actions={[
-              <Button onClick={() => onLoadRecipe(item.recipe)}>
-                {t("Load")}
-              </Button>,
-            ]}
-          >
-            {item.name}
-          </List.Item>
-        )}
-      />
-    </Modal>
+    <>
+      <Modal
+        title={t("My Recipes")}
+        open={visible}
+        onCancel={onClose}
+        footer={null}
+      >
+        <List
+          dataSource={savedRecipes}
+          renderItem={(item) => (
+            <List.Item
+              actions={[
+                <Button onClick={() => onLoadRecipe(item)}>{t("Load")}</Button>,
+                <Button
+                  icon={<DeleteOutlined />}
+                  onClick={() => handleDeleteClick(item)}
+                  danger
+                />,
+              ]}
+            >
+              {item.name}
+            </List.Item>
+          )}
+        />
+      </Modal>
+      <Modal
+        title={t("Confirm Deletion")}
+        open={deleteModalVisible}
+        onOk={handleDeleteConfirm}
+        onCancel={() => setDeleteModalVisible(false)}
+        okText={t("Delete")}
+        cancelText={t("Cancel")}
+      >
+        <p>{t("Are you sure you want to delete this recipe?")}</p>
+      </Modal>
+    </>
   )
 }
 
@@ -1549,7 +1598,7 @@ const App = () => {
 
   const handleSaveRecipe = (name) => {
     const currentValues = form.getFieldsValue()
-    saveRecipe(currentValues, name)
+    saveRecipe(currentValues, name, doughType)
   }
 
   const fillExampleRecipe = () => {
@@ -1833,8 +1882,10 @@ const App = () => {
       <SavedRecipesModal
         visible={savedRecipesModalVisible}
         onClose={() => setSavedRecipesModalVisible(false)}
-        onLoadRecipe={(recipe) => {
-          form.setFieldsValue(recipe)
+        onLoadRecipe={(item) => {
+          setDoughType(item.doughType)
+          console.log("item = ", item)
+          form.setFieldsValue(item.recipe)
           setSavedRecipesModalVisible(false)
         }}
         t={t}
