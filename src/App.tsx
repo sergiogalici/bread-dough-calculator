@@ -890,6 +890,7 @@ const NaanForm: React.FC<NaanFormProps> = ({ isExpertMode, t }) => {
           name="yogurtType"
           label={t("Yogurt Type")}
           style={{ width: 200 }}
+          rules={[{ required: true, message: t("Please select yogurt type") }]}
         >
           <Select style={{ width: 200 }}>
             <Option value={t("No Yogurt")}>{t("No Yogurt")}</Option>
@@ -902,6 +903,7 @@ const NaanForm: React.FC<NaanFormProps> = ({ isExpertMode, t }) => {
           name="liquidType"
           label={t("Liquid Type")}
           style={{ width: 200 }}
+          rules={[{ required: true, message: t("Please select liquid type") }]}
         >
           <Select style={{ width: 200 }}>
             <Option value={t("Water")}>{t("Water")}</Option>
@@ -1031,9 +1033,10 @@ const PitaForm: React.FC<PitaFormProps> = ({ isExpertMode, t }) => {
 interface PizzaFormProps {
   form: any
   t: any
+  doughType: string
 }
 
-const PizzaForm: React.FC<PizzaFormProps> = ({ form, t }) => {
+const PizzaForm: React.FC<PizzaFormProps> = ({ form, t, doughType }) => {
   const [sliderValues, setSliderValues] = useState<number[]>([])
   const flours = Form.useWatch("flours", form) || []
 
@@ -1050,6 +1053,17 @@ const PizzaForm: React.FC<PizzaFormProps> = ({ form, t }) => {
       )
     }
   }, [flours])
+
+  useEffect(() => {
+    if (flours.length > 0 && doughType === "pizza") {
+      const updatedFlours = flours.map((flour: any, index: number) => ({
+        ...flour,
+        flourPercentage: index === 0 ? 100 : 0,
+      }))
+      form.setFieldsValue({ flours: updatedFlours })
+      setSliderValues(updatedFlours.map((flour: any) => flour.flourPercentage))
+    }
+  }, [doughType])
 
   const updatePercentages = (index: number, newValue: number) => {
     const currentFlours = form.getFieldValue("flours") || []
@@ -1543,7 +1557,7 @@ const ResultsModal: React.FC<ResultsModalProps> = ({
           ) : (
             <>
               {doughType === "pizza" &&
-                results.flourComposition.map((flour: any, index: number) => (
+                results.flourComposition?.map((flour: any, index: number) => (
                   <Alert
                     key={index + "a"}
                     message={`${t(flour.name)}: ${flour.amount} g`}
@@ -1855,6 +1869,11 @@ const App: React.FC = () => {
   const handleDoughTypeChange = (type: string) => {
     setDoughType(type)
     form.resetFields()
+    if (type === "pizza") {
+      form.setFieldsValue({
+        flours: [{ flourPercentage: 100 }],
+      })
+    }
   }
 
   const changeLanguage = (lng: string) => {
@@ -1981,7 +2000,9 @@ const App: React.FC = () => {
               {doughType === "naan" ? (
                 <NaanForm isExpertMode={isExpertMode} t={t} form={form} />
               ) : null}
-              {doughType === "pizza" ? <PizzaForm form={form} t={t} /> : null}
+              {doughType === "pizza" ? (
+                <PizzaForm doughType={doughType} form={form} t={t} />
+              ) : null}
               {doughType === "pita" ? (
                 <PitaForm isExpertMode={isExpertMode} t={t} form={form} />
               ) : null}
