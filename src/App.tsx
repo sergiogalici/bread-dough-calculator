@@ -1367,7 +1367,7 @@ const ResultsModal: React.FC<ResultsModalProps> = ({
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="amount" fill="#8884d8" />
+                <Bar dataKey="g" fill="#8884d8" />
               </BarChart>
             </ResponsiveContainer>
           </div>
