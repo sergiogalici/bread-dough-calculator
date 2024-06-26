@@ -89,10 +89,10 @@ body,
 
 @media (min-width: 998px) {
   .desktop-lang-buttons {
-    display: block;
+    display: none;
   }
   .mobile-lang-buttons {
-    display: none;
+    display: block;
   }
 }
 

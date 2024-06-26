@@ -17,6 +17,7 @@ import {
   Slider,
   List,
   Input,
+  notification,
 } from "antd"
 import { PlusOutlined, DeleteOutlined, MenuOutlined } from "@ant-design/icons"
 import "./App.css"
@@ -87,6 +88,10 @@ const saveRecipe = (
   let savedRecipes = JSON.parse(localStorage.getItem("savedRecipes") || "[]")
   savedRecipes.push({ name, recipe, doughType, isExpertMode })
   localStorage.setItem("savedRecipes", JSON.stringify(savedRecipes))
+  notification.success({
+    message: "Recipe Saved",
+    description: "Your recipe has been saved successfully.",
+  })
 }
 
 const loadSavedRecipes = (): Recipe[] => {
@@ -99,6 +104,10 @@ const deleteRecipe = (recipeName: string) => {
     (recipe: Recipe) => recipe.name !== recipeName
   )
   localStorage.setItem("savedRecipes", JSON.stringify(savedRecipes))
+  notification.success({
+    message: "Recipe Deleted",
+    description: "The recipe has been deleted successfully.",
+  })
 }
 
 const exampleRecipes: { [key: string]: ExampleRecipe } = {
