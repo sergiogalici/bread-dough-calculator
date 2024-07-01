@@ -1360,7 +1360,7 @@ const ResultsModal: React.FC<ResultsModalProps> = ({
     >
       {results && results.totalFlourAmount > 0 ? (
         <div className="results-box">
-          <div style={{ width: "100%", height: 300 }}>
+          {/* <div style={{ width: "100%", height: 300 }}>
             <ResponsiveContainer>
               <BarChart data={chartData}>
                 <XAxis dataKey="name" />
@@ -1370,7 +1370,7 @@ const ResultsModal: React.FC<ResultsModalProps> = ({
                 <Bar dataKey="g" fill="#8884d8" />
               </BarChart>
             </ResponsiveContainer>
-          </div>
+          </div> */}
           <Alert
             message={`${t("Total flour")}: ${results.totalFlourAmount} g`}
             type="info"
